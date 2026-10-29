@@ -12,6 +12,7 @@ export type Database = {
       collections: {
         Row: {
           created_at: string;
+          creation_request_id: string;
           description: string | null;
           id: string;
           name: string;
@@ -22,6 +23,7 @@ export type Database = {
         };
         Insert: {
           created_at?: string;
+          creation_request_id?: string;
           description?: string | null;
           id?: string;
           name: string;
@@ -32,6 +34,7 @@ export type Database = {
         };
         Update: {
           created_at?: string;
+          creation_request_id?: string;
           description?: string | null;
           id?: string;
           name?: string;
@@ -210,6 +213,17 @@ export type Database = {
     };
     Views: Record<string, never>;
     Functions: {
+      create_collection_with_schema: {
+        Args: {
+          p_description: string | null;
+          p_fields: Json;
+          p_name: string;
+          p_preset_key: string;
+          p_request_id: string;
+          p_view_config: Json;
+        };
+        Returns: string;
+      };
       enforce_collection_field_limit: {
         Args: Record<PropertyKey, never>;
         Returns: unknown;
