@@ -1,0 +1,72 @@
+"use client";
+
+import type { ReactElement, ReactNode } from "react";
+
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+type ConfirmDialogProps = {
+  cancelLabel?: string;
+  confirmLabel: string;
+  description: ReactNode;
+  isPending?: boolean;
+  onConfirm: () => void;
+  onOpenChange: (open: boolean) => void;
+  open: boolean;
+  title: string;
+  trigger?: ReactElement;
+  variant?: "default" | "destructive";
+};
+
+function ConfirmDialog({
+  cancelLabel = "Cancel",
+  confirmLabel,
+  description,
+  isPending = false,
+  onConfirm,
+  onOpenChange,
+  open,
+  title,
+  trigger,
+  variant = "default",
+}: ConfirmDialogProps) {
+  return (
+    <Dialog onOpenChange={onOpenChange} open={open}>
+      {trigger ? <DialogTrigger asChild>{trigger}</DialogTrigger> : null}
+      <DialogContent role="alertdialog" showCloseButton={false}>
+        <div className="space-y-2">
+          <DialogTitle className="text-xl font-semibold">{title}</DialogTitle>
+          <DialogDescription className="text-foreground-muted text-base leading-6">
+            {description}
+          </DialogDescription>
+        </div>
+        <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+          <DialogClose asChild>
+            <Button disabled={isPending} type="button" variant="outline">
+              {cancelLabel}
+            </Button>
+          </DialogClose>
+          <Button
+            aria-busy={isPending}
+            disabled={isPending}
+            onClick={onConfirm}
+            type="button"
+            variant={variant}
+          >
+            {isPending ? "Working…" : confirmLabel}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+export { ConfirmDialog };
+export type { ConfirmDialogProps };

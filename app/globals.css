@@ -1,10 +1,51 @@
 @import "tailwindcss";
 
+@theme inline {
+  --color-art-butter: var(--art-butter);
+  --color-art-lavender: var(--art-lavender);
+  --color-art-mint: var(--art-mint);
+  --color-art-peach: var(--art-peach);
+  --color-art-rose: var(--art-rose);
+  --color-art-sage: var(--art-sage);
+  --color-art-sand: var(--art-sand);
+  --color-art-sky: var(--art-sky);
+  --color-background: var(--background);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-disabled-foreground: var(--disabled-foreground);
+  --color-disabled-surface: var(--disabled-surface);
+  --color-error: var(--error);
+  --color-focus: var(--focus);
+  --color-foreground: var(--foreground);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+}
+
 :root {
+  --art-butter: #f5eac8;
+  --art-lavender: #e6e0f4;
+  --art-mint: #dcede8;
+  --art-peach: #f5e1d6;
+  --art-rose: #f2dde6;
+  --art-sage: #dcebdd;
+  --art-sand: #eae1d4;
+  --art-sky: #dceaf4;
+  --background: #f6f5f3;
+  --border: #e5e3df;
+  --destructive: #b42318;
+  --disabled-foreground: #737373;
+  --disabled-surface: #e5e3df;
+  --error: #b42318;
+  --focus: #4f46e5;
+  --foreground: #242424;
+  --foreground-muted: #737373;
+  --surface: #ffffff;
+  --surface-muted: #eeedea;
   color-scheme: light;
   font-family: Arial, "Noto Sans Thai", Helvetica, sans-serif;
-  background: #f6f5f3;
-  color: #242424;
+  background: var(--background);
+  color: var(--foreground);
 }
 
 * {
@@ -14,7 +55,7 @@
 body {
   min-height: 100vh;
   margin: 0;
-  background: #f6f5f3;
+  background: var(--background);
 }
 
 button,

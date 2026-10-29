@@ -126,10 +126,10 @@ These values implement the approved non-blocking assumptions and may be changed 
 
 - **Critical path:** No, but required before UI completion
 - **Depends on:** M0-T01
-- **Scope:** Confirmed visual tokens and typography
+- **Scope:** Complete the confirmed visual tokens and typography, extending the minimal semantic color foundation required by M0-T02
 - **Expected commit:** `feat(design-system)`
 
-**Files:** modify `app/globals.css` and Tailwind configuration; create font setup and token tests; update `docs/design-system.md` only if implementation reveals an approved token correction.
+**Files:** audit and extend `app/globals.css` and Tailwind configuration; create font setup and token tests; update `docs/design-system.md` only if implementation reveals an approved token correction.
 
 **Subtasks:**
 
