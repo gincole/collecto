@@ -1,17 +1,19 @@
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+const { redirectMock } = vi.hoisted(() => ({
+  redirectMock: vi.fn(() => {
+    throw new Error("NEXT_REDIRECT");
+  }),
+}));
+
+vi.mock("next/navigation", () => ({ redirect: redirectMock }));
 
 import Home from "@/app/page";
 
 describe("Home", () => {
-  it("renders the product name and planning-state message", () => {
-    render(<Home />);
+  it("enters the authenticated journey through the Library route", () => {
+    expect(() => Home()).toThrow("NEXT_REDIRECT");
 
-    expect(
-      screen.getByRole("heading", { level: 1, name: "little things." }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText("Your personal collection library"),
-    ).toBeInTheDocument();
+    expect(redirectMock).toHaveBeenCalledWith("/library");
   });
 });

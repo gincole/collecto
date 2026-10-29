@@ -183,5 +183,6 @@ describe("design-system tokens", () => {
     expect(layout).toContain('variable: "--font-noto-thai"');
     expect(layout).toContain("plusJakartaSans.variable");
     expect(layout).toContain("notoSansThai.variable");
+    expect(layout).toContain('data-scroll-behavior="smooth"');
   });
 });

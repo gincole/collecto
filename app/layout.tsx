@@ -29,6 +29,7 @@ export default function RootLayout({
   return (
     <html
       className={`${plusJakartaSans.variable} ${notoSansThai.variable}`}
+      data-scroll-behavior="smooth"
       lang="en"
     >
       <body className="font-sans">{children}</body>

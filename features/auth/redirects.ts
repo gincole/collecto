@@ -1,3 +1,5 @@
+import type { Route } from "next";
+
 export const DEFAULT_AUTHENTICATED_PATH = "/library";
 
 const protectedPathPrefixes = ["/library", "/collections"] as const;
@@ -12,7 +14,7 @@ export function isProtectedPath(pathname: string) {
   );
 }
 
-export function getSafeReturnPath(returnTo: string | null | undefined) {
+export function getSafeReturnPath(returnTo: string | null | undefined): Route {
   if (!returnTo || !returnTo.startsWith("/") || returnTo.startsWith("//")) {
     return DEFAULT_AUTHENTICATED_PATH;
   }
@@ -34,7 +36,8 @@ export function getSafeReturnPath(returnTo: string | null | undefined) {
       return DEFAULT_AUTHENTICATED_PATH;
     }
 
-    return `${parsedUrl.pathname}${parsedUrl.search}`;
+    // The path is promoted only after same-origin and protected-route validation.
+    return `${parsedUrl.pathname}${parsedUrl.search}` as Route;
   } catch {
     return DEFAULT_AUTHENTICATED_PATH;
   }

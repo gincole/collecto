@@ -5,8 +5,14 @@ import { z } from "zod";
 import { parsePublicEnv } from "./public";
 
 const privateEnvSchema = z.object({
-  DEMO_USER_EMAIL: z.email().optional(),
-  SUPABASE_SECRET_KEY: z.string().min(1).optional(),
+  DEMO_USER_EMAIL: z.preprocess(
+    (value) => (value === "" ? undefined : value),
+    z.email().optional(),
+  ),
+  SUPABASE_SECRET_KEY: z.preprocess(
+    (value) => (value === "" ? undefined : value),
+    z.string().min(1).optional(),
+  ),
 });
 
 export function parseServerEnv(input: Record<string, string | undefined>) {

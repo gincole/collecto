@@ -4,3 +4,4 @@ export { ErrorState } from "./error-state";
 export { LoadingSkeleton } from "./loading-skeleton";
 export { PageContainer } from "./page-container";
 export { PresetArtwork } from "./preset-artwork";
+export { AppHeader } from "./app-header";
