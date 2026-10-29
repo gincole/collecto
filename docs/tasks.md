@@ -1,0 +1,73 @@
+# Task Tracker
+
+## Status rules
+
+Allowed statuses: `Not started`, `In progress`, `Blocked`, `Complete`, `Deferred P1`, and `Deferred P2`.
+
+For every task, update status, verification evidence, and actual commit hash in the same commit as the task implementation. Because a commit cannot contain its own stable SHA, `SELF` in the Actual commit column means the commit containing that row; report the resolved SHA immediately after committing. A task is `Complete` only when its acceptance criteria pass and its commit exists. After reporting the hash, stop for approval.
+
+Critical-path marker `Yes` means delay directly threatens the two-day MVP or production delivery.
+
+## P0 milestones and tasks
+
+| ID     | Milestone      | Task                                               | Depends on             | Critical | Planned commit            | Status      | Actual commit | Verification evidence                                                                   |
+| ------ | -------------- | -------------------------------------------------- | ---------------------- | -------- | ------------------------- | ----------- | ------------- | --------------------------------------------------------------------------------------- |
+| M0-T01 | Foundation     | Initialize App Router and toolchain                | Plan approval          | Yes      | `chore(app)`              | Complete    | SELF          | Prettier, ESLint, strict TypeScript, 3 Vitest tests, and Next.js production build pass. |
+| M0-T02 | Foundation     | Establish feature boundaries and shared primitives | M0-T01                 | Yes      | `chore(architecture)`     | Not started | —             | —                                                                                       |
+| M0-T03 | Foundation     | Implement design tokens and shell styles           | M0-T01                 | No       | `feat(design-system)`     | Not started | —             | —                                                                                       |
+| M1-T01 | Database       | Create schema and generated types                  | M0-T01                 | Yes      | `feat(database)`          | Not started | —             | —                                                                                       |
+| M1-T02 | Database       | Add RLS and ownership tests                        | M1-T01                 | Yes      | `feat(security)`          | Not started | —             | —                                                                                       |
+| M1-T03 | Database       | Configure private image Storage policies           | M1-T02                 | Yes      | `feat(storage)`           | Not started | —             | —                                                                                       |
+| M2-T01 | Authentication | Add SSR clients and session refresh                | M0-T01, M1-T02         | Yes      | `feat(auth)`              | Not started | —             | —                                                                                       |
+| M2-T02 | Authentication | Implement register login logout and account menu   | M2-T01, M0-T03         | Yes      | `feat(auth)`              | Not started | —             | —                                                                                       |
+| M3-T01 | Collections    | Define presets contracts and server operations     | M1-T02, M2-T02         | Yes      | `feat(collections)`       | Not started | —             | —                                                                                       |
+| M3-T02 | Collections    | Implement Library and Create wizard                | M3-T01, M0-T02, M0-T03 | Yes      | `feat(collections)`       | Not started | —             | —                                                                                       |
+| M3-T03 | Collections    | Implement identity settings and deletion           | M3-T02                 | No       | `feat(collections)`       | Not started | —             | —                                                                                       |
+| M4-T01 | Items          | Implement schema-driven CRUD without images        | M3-T01, M1-T02         | Yes      | `feat(items)`             | Not started | —             | —                                                                                       |
+| M4-T02 | Items          | Add private single-image lifecycle                 | M4-T01, M1-T03         | Yes      | `feat(images)`            | Not started | —             | —                                                                                       |
+| M4-T03 | Items          | Implement Item Details and deletion                | M4-T02                 | No       | `feat(items)`             | Not started | —             | —                                                                                       |
+| M5-T01 | Fields         | Implement Field and Option mutations               | M4-T01                 | Yes      | `feat(fields)`            | Not started | —             | —                                                                                       |
+| M5-T02 | Fields         | Implement Field and Option editors                 | M5-T01, M3-T03         | Yes      | `feat(fields)`            | Not started | —             | —                                                                                       |
+| M6-T01 | Gallery        | Implement responsive gallery and sorting           | M4-T03, M5-T01         | Yes      | `feat(gallery)`           | Not started | —             | —                                                                                       |
+| M6-T02 | Gallery        | Implement Gallery Settings draft workflow          | M6-T01                 | Yes      | `feat(gallery)`           | Not started | —             | —                                                                                       |
+| M6-T03 | Browse         | Implement Select virtual folders and URL state     | M6-T02, M5-T01         | Yes      | `feat(browse)`            | Not started | —             | —                                                                                       |
+| M7-T01 | Quality        | Complete application states and feedback           | M2-T02–M6-T03          | Yes      | `fix(ux)`                 | Not started | —             | —                                                                                       |
+| M7-T02 | Quality        | Accessibility and responsive conformance           | M7-T01                 | Yes      | `fix(accessibility)`      | Not started | —             | —                                                                                       |
+| M7-T03 | Quality        | Security and failure-path suite                    | M7-T01, M1-T03         | No       | `test(security)`          | Not started | —             | —                                                                                       |
+| M8-T01 | Delivery       | Add demo seed and protected reset                  | M6-T03, M7-T03         | Yes      | `feat(demo)`              | Not started | —             | —                                                                                       |
+| M8-T02 | Delivery       | Complete README and release verification           | M8-T01, M7-T02         | Yes      | `docs(release)`           | Not started | —             | —                                                                                       |
+| M8-T03 | Deployment     | Configure Vercel and smoke-test production         | M8-T02, authorization  | Yes      | `chore(deploy)` if needed | Not started | —             | —                                                                                       |
+
+## Deferred P1 tasks
+
+| ID     | Task                                           | Status      | Actual commit |
+| ------ | ---------------------------------------------- | ----------- | ------------- |
+| P1-T01 | Library and Item search                        | Deferred P1 | —             |
+| P1-T02 | Library sorting                                | Deferred P1 | —             |
+| P1-T03 | Forgot-password and recovery UI                | Deferred P1 | —             |
+| P1-T04 | Display name profile                           | Deferred P1 | —             |
+| P1-T05 | Original-image download                        | Deferred P1 | —             |
+| P1-T06 | Breadcrumbs and broad dirty-navigation prompts | Deferred P1 | —             |
+| P1-T07 | Enhanced Collection covers and illustrations   | Deferred P1 | —             |
+
+## Deferred P2 task groups
+
+| ID     | Task group                                     | Status      |
+| ------ | ---------------------------------------------- | ----------- |
+| P2-T01 | Public Collections sharing and collaboration   | Deferred P2 |
+| P2-T02 | Nested folders and advanced filtering          | Deferred P2 |
+| P2-T03 | Multiple saved gallery views                   | Deferred P2 |
+| P2-T04 | Multi-image Items duplicate and move           | Deferred P2 |
+| P2-T05 | Collection duplicate and pin                   | Deferred P2 |
+| P2-T06 | Theme avatar export account deletion and trash | Deferred P2 |
+| P2-T07 | Google OAuth                                   | Deferred P2 |
+
+## Two-day checkpoint record
+
+| Checkpoint              | Required completed tasks | Status      | Notes                                                                       |
+| ----------------------- | ------------------------ | ----------- | --------------------------------------------------------------------------- |
+| Day 1 foundation        | M0-T01 through M2-T02    | Not started | Supabase values are required before connected auth/RLS checks.              |
+| Day 1 vertical slice    | M3-T01, M3-T02, M4-T01   | Not started | Must demonstrate persisted Collection and Item without weakening ownership. |
+| Day 2 feature complete  | M4-T02 through M6-T03    | Not started | Must include images, fields, gallery settings, and Browse.                  |
+| Day 2 release candidate | M7-T01 through M8-T02    | Not started | All local checks and acceptance evidence complete.                          |
+| Deployment              | M8-T03                   | Not started | Vercel is intentionally deferred until authorized deployment.               |
