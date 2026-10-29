@@ -99,7 +99,7 @@ This table records non-atomic Storage cleanup work so failures are never silentl
 | `created_at`      | UTC timestamptz                                                                                  |
 | `updated_at`      | UTC timestamptz                                                                                  |
 
-Only protected server/admin workflows may access cleanup jobs. The precise FK strategy must preserve retry data after parent deletion and is finalized in M1-T01 with a migration test.
+Only protected server/admin workflows may access cleanup jobs. Cleanup records retain `owner_id` without an Auth foreign key so account deletion cannot erase pending retry work. Nullable Collection and Item foreign keys use `ON DELETE SET NULL`: the cleanup record and object path survive parent deletion while stale relational references are cleared. This behavior is covered by a migration test.
 
 ## Gallery view configuration
 
