@@ -35,18 +35,18 @@ function EmptyState({
     <section
       aria-labelledby={titleId}
       className={cn(
-        "border-border bg-surface flex min-h-64 flex-col items-center justify-center gap-4 rounded-2xl border border-dashed p-6 text-center sm:p-8",
+        "border-border bg-surface rounded-card flex min-h-64 flex-col items-center justify-center gap-4 border border-dashed p-6 text-center sm:p-8",
         className,
       )}
     >
       <div
         aria-hidden="true"
-        className="bg-surface-muted text-foreground-muted flex size-12 items-center justify-center rounded-2xl [&_svg]:size-6"
+        className="bg-surface-muted text-foreground-muted rounded-card flex size-12 items-center justify-center [&_svg]:size-6"
       >
         {icon}
       </div>
       <div className="max-w-md space-y-2">
-        <Heading className="text-foreground text-xl font-semibold" id={titleId}>
+        <Heading className="text-card-title text-foreground" id={titleId}>
           {title}
         </Heading>
         <p className="text-foreground-muted text-base leading-6">

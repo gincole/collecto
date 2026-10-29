@@ -6,7 +6,7 @@ function Skeleton({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "bg-surface-muted animate-pulse rounded-xl motion-reduce:animate-none",
+        "bg-surface-muted rounded-control animate-pulse motion-reduce:animate-none",
         className,
       )}
       {...props}

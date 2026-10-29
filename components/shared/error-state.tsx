@@ -38,18 +38,18 @@ function ErrorState({
     <section
       aria-labelledby={titleId}
       className={cn(
-        "border-error/25 bg-surface flex min-h-64 flex-col items-center justify-center gap-4 rounded-2xl border p-6 text-center sm:p-8",
+        "border-error/25 bg-surface rounded-card flex min-h-64 flex-col items-center justify-center gap-4 border p-6 text-center sm:p-8",
         className,
       )}
     >
       <div
         aria-hidden="true"
-        className="bg-error/10 text-error flex size-12 items-center justify-center rounded-2xl [&_svg]:size-6"
+        className="bg-error/10 text-error rounded-card flex size-12 items-center justify-center [&_svg]:size-6"
       >
         <CircleAlert />
       </div>
       <div className="max-w-md space-y-2">
-        <Heading className="text-foreground text-xl font-semibold" id={titleId}>
+        <Heading className="text-card-title text-foreground" id={titleId}>
           {title}
         </Heading>
         <p className="text-foreground-muted text-base leading-6">

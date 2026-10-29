@@ -12,22 +12,23 @@ Tokens must be centralized as CSS variables and mapped through Tailwind/shadcn s
 
 ### Core colors
 
-| Token              | Value     | Use                                         |
-| ------------------ | --------- | ------------------------------------------- |
-| `background`       | `#F6F5F3` | Page canvas                                 |
-| `surface`          | `#FFFFFF` | Cards, sheets, dialogs, inputs              |
-| `surface-muted`    | `#EEEDEA` | Secondary surfaces and subtle controls      |
-| `foreground`       | `#242424` | Main text and primary actions               |
-| `foreground-muted` | `#737373` | Supporting copy after contrast verification |
-| `border`           | `#E5E3DF` | Card and input outlines                     |
-| `art-lavender`     | `#E6E0F4` | Books and selected artwork                  |
-| `art-sage`         | `#DCEBDD` | Meals                                       |
-| `art-peach`        | `#F5E1D6` | Warm category artwork                       |
-| `art-butter`       | `#F5EAC8` | Travel                                      |
-| `art-sky`          | `#DCEAF4` | Movies                                      |
-| `art-rose`         | `#F2DDE6` | Favorites                                   |
-| `art-sand`         | `#EAE1D4` | Shopping                                    |
-| `art-mint`         | `#DCEDE8` | Additional presets                          |
+| Token              | Value     | Use                                                                   |
+| ------------------ | --------- | --------------------------------------------------------------------- |
+| `background`       | `#F6F5F3` | Page canvas                                                           |
+| `surface`          | `#FFFFFF` | Cards, sheets, dialogs, inputs                                        |
+| `surface-muted`    | `#EEEDEA` | Secondary surfaces and subtle controls                                |
+| `foreground`       | `#242424` | Main text and primary actions                                         |
+| `foreground-muted` | `#6B6B6B` | Supporting copy; adjusted to pass AA on all approved neutral surfaces |
+| `border`           | `#E5E3DF` | Decorative card outlines and separators                               |
+| `control-border`   | `#8F8A84` | Input and outlined-control boundaries                                 |
+| `art-lavender`     | `#E6E0F4` | Books and selected artwork                                            |
+| `art-sage`         | `#DCEBDD` | Meals                                                                 |
+| `art-peach`        | `#F5E1D6` | Warm category artwork                                                 |
+| `art-butter`       | `#F5EAC8` | Travel                                                                |
+| `art-sky`          | `#DCEAF4` | Movies                                                                |
+| `art-rose`         | `#F2DDE6` | Favorites                                                             |
+| `art-sand`         | `#EAE1D4` | Shopping                                                              |
+| `art-mint`         | `#DCEDE8` | Additional presets                                                    |
 
 ### Semantic state colors
 
@@ -42,6 +43,23 @@ Tokens must be centralized as CSS variables and mapped through Tailwind/shadcn s
 | `disabled-foreground` | `#737373`     | Disabled label; never used for required instructional text |
 
 M0-T03 must verify these values in context and may adjust them only to meet contrast while preserving their semantic role. Do not use pastel artwork colors as small text colors.
+
+### Contrast audit
+
+The implementation audit adjusted `foreground-muted` from the proposed `#737373` to `#6B6B6B`. The original value measured 4.35:1 on the warm page background and 4.05:1 on the muted surface, below the 4.5:1 normal-text target. It also introduced `control-border` for interactive boundaries because the subtle decorative border does not meet the 3:1 non-text contrast target. The approved visual direction remains unchanged.
+
+| Pair                              | Ratio   | Result                     |
+| --------------------------------- | ------- | -------------------------- |
+| Foreground on background          | 14.25:1 | Pass AA and AAA            |
+| Foreground on surface             | 15.52:1 | Pass AA and AAA            |
+| Muted foreground on background    | 4.89:1  | Pass AA                    |
+| Muted foreground on surface       | 5.33:1  | Pass AA                    |
+| Muted foreground on muted surface | 4.55:1  | Pass AA                    |
+| Error on surface                  | 6.57:1  | Pass AA                    |
+| Success on surface                | 5.69:1  | Pass AA                    |
+| Focus indicator on background     | 5.77:1  | Pass 3:1 non-text contrast |
+| Control border on background      | 3.14:1  | Pass 3:1 non-text contrast |
+| Control border on surface         | 3.42:1  | Pass 3:1 non-text contrast |
 
 ### Typography
 

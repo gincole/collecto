@@ -1,17 +1,17 @@
 export default function Home() {
   return (
-    <main className="mx-auto flex min-h-screen max-w-5xl items-center px-5 py-12 sm:px-8">
+    <main className="max-w-page px-page-mobile sm:px-page-tablet lg:px-page-desktop mx-auto flex min-h-screen items-center py-12">
       <section aria-labelledby="page-title" className="space-y-4">
-        <p className="text-sm font-semibold tracking-[0.2em] text-neutral-500 uppercase">
+        <p className="text-label text-foreground-muted tracking-[0.2em] uppercase">
           Personal collection library
         </p>
         <h1
-          className="text-4xl font-bold tracking-tight text-neutral-900 sm:text-6xl"
+          className="text-display-mobile sm:text-display text-foreground tracking-tight"
           id="page-title"
         >
           little things.
         </h1>
-        <p className="max-w-xl text-lg leading-8 text-neutral-600">
+        <p className="text-foreground-muted max-w-xl text-lg leading-8">
           Your personal collection library
         </p>
       </section>

@@ -18,8 +18,8 @@ function PageContainer<T extends ElementType = "div">({
   return (
     <Component
       className={cn(
-        "mx-auto w-full min-w-0 px-4 py-6 sm:px-6 sm:py-8 lg:px-8",
-        width === "wide" ? "max-w-7xl" : "max-w-3xl",
+        "px-page-mobile sm:px-page-tablet lg:px-page-desktop mx-auto w-full min-w-0 py-6 sm:py-8",
+        width === "wide" ? "max-w-page" : "max-w-narrow",
         className,
       )}
       {...props}

@@ -22,10 +22,10 @@ function DialogContent({
 }) {
   return (
     <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay className="bg-foreground/50 fixed inset-0 z-50" />
+      <DialogPrimitive.Overlay className="dialog-overlay bg-foreground/50 fixed inset-0 z-50" />
       <DialogPrimitive.Content
         className={cn(
-          "border-border bg-surface text-foreground focus-visible:ring-focus fixed top-1/2 left-1/2 z-50 grid w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 rounded-2xl border p-6 shadow-xl outline-none focus-visible:ring-2 sm:w-full",
+          "dialog-content border-border bg-surface text-foreground focus-ring rounded-dialog shadow-dialog fixed top-1/2 left-1/2 z-50 grid w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 border p-6 sm:w-full",
           className,
         )}
         {...props}
@@ -34,7 +34,7 @@ function DialogContent({
         {showCloseButton ? (
           <DialogPrimitive.Close
             aria-label="Close dialog"
-            className="text-foreground-muted hover:bg-surface-muted focus-visible:ring-focus absolute top-3 right-3 inline-flex size-11 items-center justify-center rounded-xl outline-none focus-visible:ring-2"
+            className="touch-target text-foreground-muted hover:bg-surface-muted focus-ring rounded-control absolute top-3 right-3 inline-flex items-center justify-center"
           >
             <X aria-hidden="true" />
           </DialogPrimitive.Close>

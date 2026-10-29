@@ -5,7 +5,7 @@ import type { ComponentProps } from "react";
 import { cn } from "@/lib/utils/cn";
 
 const buttonVariants = cva(
-  "inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 text-sm font-semibold whitespace-nowrap transition-[color,background-color,border-color,opacity,transform] outline-none active:scale-[0.98] motion-reduce:transition-none motion-reduce:active:scale-100 focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 disabled:pointer-events-none disabled:bg-disabled-surface disabled:text-disabled-foreground disabled:opacity-100 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "touch-target duration-base ease-standard focus-ring inline-flex items-center justify-center gap-2 rounded-control px-4 text-sm font-semibold whitespace-nowrap transition-[color,background-color,border-color,opacity,transform] active:scale-[0.98] motion-reduce:transition-none motion-reduce:active:scale-100 disabled:pointer-events-none disabled:bg-disabled-surface disabled:text-disabled-foreground disabled:opacity-100 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     defaultVariants: {
       size: "default",
@@ -19,14 +19,11 @@ const buttonVariants = cva(
         sm: "h-11 px-3",
       },
       variant: {
-        default:
-          "bg-foreground text-surface hover:opacity-85 focus-visible:ring-focus",
-        destructive:
-          "bg-destructive text-surface hover:opacity-85 focus-visible:ring-focus",
-        ghost:
-          "bg-transparent text-foreground hover:bg-surface-muted focus-visible:ring-focus",
+        default: "bg-foreground text-surface hover:opacity-85",
+        destructive: "bg-destructive text-surface hover:opacity-85",
+        ghost: "bg-transparent text-foreground hover:bg-surface-muted",
         outline:
-          "border border-border bg-surface text-foreground hover:bg-surface-muted focus-visible:ring-focus",
+          "border border-control-border bg-surface text-foreground hover:bg-surface-muted",
       },
     },
   },
