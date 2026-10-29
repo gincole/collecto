@@ -1,5 +1,9 @@
 begin;
 
+create extension if not exists pgtap with schema extensions;
+
+select extensions.plan(1);
+
 do $$
 declare
   test_user_id uuid := '10000000-0000-0000-0000-000000000001';
@@ -200,5 +204,8 @@ begin
   end;
 end;
 $$;
+
+select extensions.pass('core schema invariants hold');
+select * from extensions.finish();
 
 rollback;
