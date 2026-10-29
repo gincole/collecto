@@ -16,6 +16,7 @@
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "test:storage": "node supabase/tests/storage_api.mjs",
     "test:watch": "vitest",
     "test:e2e": "playwright test"
   },
