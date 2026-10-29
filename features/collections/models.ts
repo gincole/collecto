@@ -22,6 +22,7 @@ const collectionRowSchema = z.object({
   description: z.string().nullable(),
   field_definitions: z.array(fieldDefinitionRowSchema),
   id: z.uuid(),
+  items: z.array(z.object({ count: z.number().int().nonnegative() })),
   name: z.string(),
   preset_key: collectionPresetKeySchema.nullable(),
   updated_at: z.string(),
@@ -49,6 +50,7 @@ export function mapCollectionRecord(input: unknown) {
       }))
       .sort((left, right) => left.position - right.position),
     id: row.id,
+    itemCount: row.items[0]?.count ?? 0,
     name: row.name,
     presetKey: row.preset_key,
     updatedAt: row.updated_at,

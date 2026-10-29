@@ -9,7 +9,6 @@ import {
   collectionCreateSchema,
   collectionIdSchema,
   collectionUpdateSchema,
-  type CollectionCreateInput,
   type CollectionUpdateInput,
 } from "./schemas";
 
@@ -108,7 +107,7 @@ export async function getCollection(
 }
 
 export async function createCollection(
-  input: CollectionCreateInput,
+  input: unknown,
   gateway: CollectionGateway,
   createId?: () => string,
 ): Promise<CollectionOperationResult<CollectionIdentity>> {

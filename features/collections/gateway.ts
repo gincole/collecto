@@ -16,7 +16,7 @@ export function createCollectionGateway(
     const { data, error } = await client
       .from("collections")
       .select(
-        "id, name, description, preset_key, view_config, created_at, updated_at, field_definitions(id, name, type, required, position, field_options(id, label, position))",
+        "id, name, description, preset_key, view_config, created_at, updated_at, items(count), field_definitions(id, name, type, required, position, field_options(id, label, position))",
       )
       .eq("owner_id", ownerId)
       .eq("id", collectionId)
@@ -83,7 +83,7 @@ export function createCollectionGateway(
       const { data, error } = await client
         .from("collections")
         .select(
-          "id, name, description, preset_key, view_config, created_at, updated_at, field_definitions(id, name, type, required, position, field_options(id, label, position))",
+          "id, name, description, preset_key, view_config, created_at, updated_at, items(count), field_definitions(id, name, type, required, position, field_options(id, label, position))",
         )
         .eq("owner_id", ownerId)
         .order("created_at", { ascending: false });

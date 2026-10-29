@@ -17,6 +17,7 @@ const collectionRecord = {
   description: null,
   fields: [],
   id: collectionId,
+  itemCount: 0,
   name: "Collection",
   presetKey: "blank" as const,
   updatedAt: "2026-10-29T00:00:00.000Z",

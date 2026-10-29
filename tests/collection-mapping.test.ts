@@ -50,6 +50,7 @@ describe("Collection database mapping", () => {
       id: "00000000-0000-4000-8000-000000000000",
       name: "Collection",
       preset_key: "book",
+      items: [{ count: 7 }],
       updated_at: "2026-10-29T00:00:00.000Z",
       view_config: viewConfig,
     });
@@ -62,7 +63,11 @@ describe("Collection database mapping", () => {
       "First",
       "Second",
     ]);
-    expect(result).toMatchObject({ presetKey: "book", viewConfig });
+    expect(result).toMatchObject({
+      itemCount: 7,
+      presetKey: "book",
+      viewConfig,
+    });
   });
 
   it("rejects malformed gallery JSON from the database", () => {
@@ -74,6 +79,7 @@ describe("Collection database mapping", () => {
         id: "00000000-0000-4000-8000-000000000000",
         name: "Collection",
         preset_key: "blank",
+        items: [{ count: 0 }],
         updated_at: "2026-10-29T00:00:00.000Z",
         view_config: { columns: 99 },
       }),

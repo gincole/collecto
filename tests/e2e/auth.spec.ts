@@ -45,11 +45,11 @@ test.describe("authentication journey", () => {
 
     await expect(page).toHaveURL(/\/library$/);
     await expect(
-      page.getByRole("heading", { name: "My Library" }),
+      page.getByRole("heading", { name: "My Collections" }),
     ).toBeVisible();
     await page.reload();
     await expect(
-      page.getByRole("heading", { name: "My Library" }),
+      page.getByRole("heading", { name: "My Collections" }),
     ).toBeVisible();
 
     const secondContext = await browser.newContext();
@@ -66,7 +66,7 @@ test.describe("authentication journey", () => {
     await expect(page).toHaveURL(/\/login$/);
     await secondPage.reload();
     await expect(
-      secondPage.getByRole("heading", { name: "My Library" }),
+      secondPage.getByRole("heading", { name: "My Collections" }),
     ).toBeVisible();
 
     await page.getByLabel("Email").fill(email);
