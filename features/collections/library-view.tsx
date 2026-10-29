@@ -1,4 +1,5 @@
 import { Ellipsis, PackageOpen } from "lucide-react";
+import type { Route } from "next";
 import Link from "next/link";
 
 import { EmptyState, PresetArtwork } from "@/components/shared";
@@ -60,24 +61,22 @@ export function LibraryView({ collections }: LibraryViewProps) {
                 <Ellipsis aria-hidden="true" className="size-5" />
               </summary>
               <div className="border-border bg-surface shadow-sheet rounded-control absolute right-0 bottom-full z-10 mb-1 w-40 border p-1">
-                <button
+                <Link
                   aria-label={`Rename ${collection.name}`}
-                  className="touch-target text-disabled-foreground w-full rounded-lg px-3 text-left text-sm"
-                  disabled
-                  title="Available in Collection settings"
-                  type="button"
+                  className="touch-target hover:bg-surface-muted focus-ring flex w-full items-center rounded-lg px-3 text-left text-sm"
+                  href={`/collections/${collection.id}/settings` as Route}
                 >
                   Rename
-                </button>
-                <button
+                </Link>
+                <Link
                   aria-label={`Delete ${collection.name}`}
-                  className="touch-target text-disabled-foreground w-full rounded-lg px-3 text-left text-sm"
-                  disabled
-                  title="Available in Collection settings"
-                  type="button"
+                  className="touch-target text-destructive hover:bg-surface-muted focus-ring flex w-full items-center rounded-lg px-3 text-left text-sm"
+                  href={
+                    `/collections/${collection.id}/settings#delete-collection` as Route
+                  }
                 >
                   Delete
-                </button>
+                </Link>
               </div>
             </details>
           </article>

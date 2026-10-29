@@ -17,6 +17,7 @@ const collectionRecord = {
   description: null,
   fields: [],
   id: collectionId,
+  imageCount: 0,
   itemCount: 0,
   name: "Collection",
   presetKey: "blank" as const,
@@ -42,7 +43,7 @@ function gateway(
       error: null,
     })),
     deleteOwned: vi.fn(async () => ({
-      data: { id: collectionId },
+      data: { id: collectionId, scheduledImageCount: 0 },
       error: null,
     })),
     getOwned: vi.fn(async () => ({ data: collectionRecord, error: null })),
@@ -172,20 +173,53 @@ describe("Collection server operations", () => {
     });
   });
 
-  it("authorizes update and delete through owner-scoped gateway calls", async () => {
+  it("authorizes update and empty Collection deletion through owner-scoped gateway calls", async () => {
     const store = gateway();
 
     await expect(
       updateCollection({ collectionId, name: "Updated" }, store),
     ).resolves.toEqual({ data: { id: collectionId }, status: "success" });
-    await expect(deleteCollection(collectionId, store)).resolves.toEqual({
-      data: { id: collectionId },
+    await expect(
+      deleteCollection({ collectionId, confirmationName: "" }, store),
+    ).resolves.toEqual({
+      data: { id: collectionId, scheduledImageCount: 0 },
       status: "success",
     });
     expect(store.updateOwned).toHaveBeenCalledWith(
       userId,
       expect.objectContaining({ collectionId, name: "Updated" }),
     );
-    expect(store.deleteOwned).toHaveBeenCalledWith(userId, collectionId);
+    expect(store.deleteOwned).toHaveBeenCalledWith(userId, {
+      collectionId,
+      confirmationName: "",
+    });
+  });
+
+  it("requires the exact Collection name before deleting populated Collections", async () => {
+    const populated = gateway({
+      getOwned: vi.fn(async () => ({
+        data: { ...collectionRecord, itemCount: 2, name: "My Books" },
+        error: null,
+      })),
+    });
+
+    await expect(
+      deleteCollection(
+        { collectionId, confirmationName: "my books" },
+        populated,
+      ),
+    ).resolves.toMatchObject({
+      confirmationName: "My Books",
+      fieldErrors: { confirmationName: ["Type My Books to confirm."] },
+      status: "validation_error",
+    });
+    expect(populated.deleteOwned).not.toHaveBeenCalled();
+
+    await expect(
+      deleteCollection(
+        { collectionId, confirmationName: "My Books" },
+        populated,
+      ),
+    ).resolves.toMatchObject({ status: "success" });
   });
 });

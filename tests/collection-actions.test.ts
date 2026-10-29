@@ -17,6 +17,8 @@ vi.mock("next/navigation", () => ({ redirect: redirectMock }));
 import {
   createCollectionAction,
   createCollectionFromWizardAction,
+  deleteCollectionFromSettingsAction,
+  updateCollectionFromSettingsAction,
 } from "@/features/collections/actions";
 
 const requestId = "00000000-0000-4000-8000-000000000001";
@@ -110,5 +112,104 @@ describe("Collection Server Actions", () => {
     ).rejects.toThrow("NEXT_REDIRECT");
     expect(revalidatePathMock).toHaveBeenCalledWith("/library");
     expect(redirectMock).toHaveBeenCalledWith(`/collections/${createdId}`);
+  });
+
+  it("updates Collection identity and revalidates its routes", async () => {
+    const update = vi.fn(() => ({
+      eq: vi.fn(() => ({
+        eq: vi.fn(() => ({
+          select: vi.fn(() => ({
+            maybeSingle: vi.fn(async () => ({
+              data: { id: createdId },
+              error: null,
+            })),
+          })),
+        })),
+      })),
+    }));
+    createClientMock.mockResolvedValue({
+      auth: {
+        getUser: vi.fn(async () => ({
+          data: { user: { id: "00000000-0000-4000-8000-000000000099" } },
+          error: null,
+        })),
+      },
+      from: vi.fn(() => ({ update })),
+    });
+    const formData = new FormData();
+    formData.set("name", "Renamed");
+    formData.set("description", "Updated description");
+
+    await expect(
+      updateCollectionFromSettingsAction(
+        createdId,
+        { status: "idle" },
+        formData,
+      ),
+    ).resolves.toMatchObject({ message: "Changes saved.", status: "success" });
+    expect(revalidatePathMock).toHaveBeenCalledWith(
+      `/collections/${createdId}`,
+    );
+    expect(revalidatePathMock).toHaveBeenCalledWith("/library");
+  });
+
+  it("deletes through the cleanup-scheduling RPC and redirects safely", async () => {
+    const maybeSingle = vi.fn(async () => ({
+      data: {
+        created_at: "2026-10-29T00:00:00.000Z",
+        description: null,
+        field_definitions: [],
+        id: createdId,
+        items: [{ count: 0 }],
+        name: "Empty",
+        preset_key: "blank",
+        updated_at: "2026-10-29T00:00:00.000Z",
+        view_config: {
+          aspectRatio: "3:4",
+          columns: 3,
+          imageFit: "cover",
+          showDetails: true,
+          sortBy: "createdAt",
+          sortDirection: "desc",
+          spacing: "normal",
+          visibleFieldIds: ["title"],
+        },
+      },
+      error: null,
+    }));
+    const rpc = vi.fn(async () => ({
+      data: { id: createdId, scheduled_image_count: 0 },
+      error: null,
+    }));
+    createClientMock.mockResolvedValue({
+      auth: {
+        getUser: vi.fn(async () => ({
+          data: { user: { id: "00000000-0000-4000-8000-000000000099" } },
+          error: null,
+        })),
+      },
+      from: vi.fn(() => ({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({ eq: vi.fn(() => ({ maybeSingle })) })),
+        })),
+      })),
+      rpc,
+    });
+    const formData = new FormData();
+    formData.set("confirmationName", "");
+
+    await expect(
+      deleteCollectionFromSettingsAction(
+        createdId,
+        { status: "idle" },
+        formData,
+      ),
+    ).rejects.toThrow("NEXT_REDIRECT");
+    expect(rpc).toHaveBeenCalledWith("delete_collection_with_cleanup", {
+      p_collection_id: createdId,
+      p_confirmation_name: "",
+    });
+    expect(revalidatePathMock).toHaveBeenCalledWith("/library");
+    expect(redirectMock).toHaveBeenCalledWith("/library");
   });
 });

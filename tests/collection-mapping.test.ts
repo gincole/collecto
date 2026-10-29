@@ -85,4 +85,29 @@ describe("Collection database mapping", () => {
       }),
     ).toThrow();
   });
+
+  it("counts exact Items and private images for Collection settings", () => {
+    const result = mapCollectionRecord({
+      created_at: "2026-10-29T00:00:00.000Z",
+      description: null,
+      field_definitions: [],
+      id: "00000000-0000-4000-8000-000000000000",
+      items: [
+        {
+          id: "00000000-0000-4000-8000-000000000001",
+          image_path: "owner/collection/item/image.webp",
+        },
+        {
+          id: "00000000-0000-4000-8000-000000000002",
+          image_path: null,
+        },
+      ],
+      name: "Collection",
+      preset_key: "blank",
+      updated_at: "2026-10-29T00:00:00.000Z",
+      view_config: viewConfig,
+    });
+
+    expect(result).toMatchObject({ imageCount: 1, itemCount: 2 });
+  });
 });

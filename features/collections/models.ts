@@ -22,7 +22,12 @@ const collectionRowSchema = z.object({
   description: z.string().nullable(),
   field_definitions: z.array(fieldDefinitionRowSchema),
   id: z.uuid(),
-  items: z.array(z.object({ count: z.number().int().nonnegative() })),
+  items: z.array(
+    z.union([
+      z.object({ count: z.number().int().nonnegative() }),
+      z.object({ id: z.uuid(), image_path: z.string().nullable() }),
+    ]),
+  ),
   name: z.string(),
   preset_key: collectionPresetKeySchema.nullable(),
   updated_at: z.string(),
@@ -33,6 +38,12 @@ export type CollectionRecord = ReturnType<typeof mapCollectionRecord>;
 
 export function mapCollectionRecord(input: unknown) {
   const row = collectionRowSchema.parse(input);
+  const aggregate = row.items.find(
+    (item): item is { count: number } => "count" in item,
+  );
+  const itemRows = row.items.filter(
+    (item): item is { id: string; image_path: string | null } => "id" in item,
+  );
 
   return {
     createdAt: row.created_at,
@@ -50,7 +61,8 @@ export function mapCollectionRecord(input: unknown) {
       }))
       .sort((left, right) => left.position - right.position),
     id: row.id,
-    itemCount: row.items[0]?.count ?? 0,
+    imageCount: itemRows.filter((item) => item.image_path !== null).length,
+    itemCount: aggregate?.count ?? itemRows.length,
     name: row.name,
     presetKey: row.preset_key,
     updatedAt: row.updated_at,

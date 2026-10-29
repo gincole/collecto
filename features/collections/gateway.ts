@@ -16,7 +16,7 @@ export function createCollectionGateway(
     const { data, error } = await client
       .from("collections")
       .select(
-        "id, name, description, preset_key, view_config, created_at, updated_at, items(count), field_definitions(id, name, type, required, position, field_options(id, label, position))",
+        "id, name, description, preset_key, view_config, created_at, updated_at, items(id, image_path), field_definitions(id, name, type, required, position, field_options(id, label, position))",
       )
       .eq("owner_id", ownerId)
       .eq("id", collectionId)
@@ -65,14 +65,25 @@ export function createCollectionGateway(
 
       return { data: data ? { id: data } : null, error };
     },
-    async deleteOwned(ownerId: string, collectionId: string) {
-      return client
-        .from("collections")
-        .delete()
-        .eq("owner_id", ownerId)
-        .eq("id", collectionId)
-        .select("id")
-        .maybeSingle();
+    async deleteOwned(ownerId, input) {
+      const { data, error } = await client.rpc(
+        "delete_collection_with_cleanup",
+        {
+          p_collection_id: input.collectionId,
+          p_confirmation_name: input.confirmationName,
+        },
+      );
+      if (error || !data) return { data: null, error };
+      if (data.id !== input.collectionId) {
+        return { data: null, error: { code: "INVALID_DATABASE_RESPONSE" } };
+      }
+      return {
+        data: {
+          id: data.id,
+          scheduledImageCount: data.scheduled_image_count,
+        },
+        error: null,
+      };
     },
     getOwned,
     async getUser() {

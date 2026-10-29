@@ -14,6 +14,7 @@ vi.mock("next/navigation", () => ({
 
 import LibraryLoading from "@/app/(app)/library/loading";
 import { CollectionWizard } from "@/features/collections/collection-wizard";
+import { CollectionSettings } from "@/features/collections/collection-settings";
 import { LibraryError } from "@/features/collections/library-error";
 import { LibraryView } from "@/features/collections/library-view";
 import type { CollectionRecord } from "@/features/collections/models";
@@ -23,6 +24,7 @@ const collection: CollectionRecord = {
   description: "Stories worth keeping",
   fields: [],
   id: "00000000-0000-4000-8000-000000000001",
+  imageCount: 3,
   itemCount: 8,
   name: "My Books",
   presetKey: "book",
@@ -220,10 +222,151 @@ describe("Library view", () => {
       screen.getByLabelText("Collection actions for My Books"),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: "Rename My Books" }),
-    ).toBeDisabled();
+      screen.getByRole("link", { name: "Rename My Books" }),
+    ).toHaveAttribute("href", `/collections/${collection.id}/settings`);
     expect(
-      screen.getByRole("button", { name: "Delete My Books" }),
-    ).toBeDisabled();
+      screen.getByRole("link", { name: "Delete My Books" }),
+    ).toHaveAttribute(
+      "href",
+      `/collections/${collection.id}/settings#delete-collection`,
+    );
+  });
+});
+
+describe("Collection settings", () => {
+  it("saves identity changes and preserves recoverable errors", async () => {
+    const user = userEvent.setup();
+    const updateAction = vi.fn(async () => ({
+      message: "Could not save changes. Try again.",
+      status: "error" as const,
+    }));
+    render(
+      <CollectionSettings
+        collection={collection}
+        deleteAction={vi.fn()}
+        updateAction={updateAction}
+      />,
+    );
+
+    const name = screen.getByLabelText("Collection name");
+    await user.clear(name);
+    await user.type(name, "Renamed Books");
+    expect(screen.getByRole("button", { name: "Save changes" })).toBeEnabled();
+    await user.click(screen.getByRole("button", { name: "Save changes" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Could not save changes",
+    );
+    expect(name).toHaveValue("Renamed Books");
+  });
+
+  it("requires exact typed confirmation for populated deletion and returns focus", async () => {
+    const user = userEvent.setup();
+    render(
+      <CollectionSettings
+        collection={{ ...collection, itemCount: 2 }}
+        deleteAction={vi.fn()}
+        updateAction={vi.fn()}
+      />,
+    );
+
+    const trigger = screen.getByRole("button", { name: "Delete collection" });
+    await user.click(trigger);
+    const dialog = screen.getByRole("alertdialog", {
+      name: "Permanently delete My Books?",
+    });
+    expect(dialog).toHaveTextContent("2 items");
+    expect(dialog).toHaveTextContent("3 private images");
+    const confirm = screen.getByRole("button", { name: "Delete permanently" });
+    expect(confirm).toBeDisabled();
+    await user.type(
+      screen.getByLabelText("Type My Books to confirm"),
+      "My Books",
+    );
+    expect(confirm).toBeEnabled();
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+    expect(trigger).toHaveFocus();
+  });
+
+  it("allows retry with the current name after a concurrent rename", async () => {
+    const user = userEvent.setup();
+    const deleteAction = vi.fn(async () => ({
+      fieldErrors: { confirmationName: "Type Renamed Elsewhere to confirm." },
+      requiredConfirmationName: "Renamed Elsewhere",
+      status: "error" as const,
+    }));
+    render(
+      <CollectionSettings
+        collection={{ ...collection, itemCount: 1 }}
+        deleteAction={deleteAction}
+        updateAction={vi.fn()}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Delete collection" }));
+    await user.type(
+      screen.getByLabelText("Type My Books to confirm"),
+      "My Books",
+    );
+    await user.click(
+      screen.getByRole("button", { name: "Delete permanently" }),
+    );
+
+    expect(
+      await screen.findByLabelText("Type Renamed Elsewhere to confirm"),
+    ).toBeInTheDocument();
+    await user.clear(
+      screen.getByLabelText("Type Renamed Elsewhere to confirm"),
+    );
+    await user.type(
+      screen.getByLabelText("Type Renamed Elsewhere to confirm"),
+      "Renamed Elsewhere",
+    );
+    expect(
+      screen.getByRole("button", { name: "Delete permanently" }),
+    ).toBeEnabled();
+  });
+
+  it("does not require typed confirmation for an empty Collection", async () => {
+    const user = userEvent.setup();
+    render(
+      <CollectionSettings
+        collection={{ ...collection, itemCount: 0 }}
+        deleteAction={vi.fn()}
+        updateAction={vi.fn()}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Delete collection" }));
+    expect(
+      screen.queryByRole("textbox", { name: /confirm/i }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Delete permanently" }),
+    ).toBeEnabled();
+  });
+
+  it("reveals typed confirmation when an empty Collection becomes populated", async () => {
+    const user = userEvent.setup();
+    const deleteAction = vi.fn(async () => ({
+      fieldErrors: { confirmationName: "Type My Books to confirm." },
+      requiredConfirmationName: "My Books",
+      status: "error" as const,
+    }));
+    render(
+      <CollectionSettings
+        collection={{ ...collection, itemCount: 0 }}
+        deleteAction={deleteAction}
+        updateAction={vi.fn()}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Delete collection" }));
+    await user.click(
+      screen.getByRole("button", { name: "Delete permanently" }),
+    );
+
+    expect(
+      await screen.findByLabelText("Type My Books to confirm"),
+    ).toBeInTheDocument();
   });
 });

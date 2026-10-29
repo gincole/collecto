@@ -57,6 +57,11 @@ export const collectionUpdateSchema = z
     },
   );
 
+export const collectionDeleteSchema = z.object({
+  collectionId: collectionIdSchema,
+  confirmationName: z.string().max(DATABASE_LIMITS.collectionName),
+});
+
 export const galleryConfigSchema = z.object({
   aspectRatio: z.enum(["1:1", "2:3", "3:4", "4:3", "16:9"]),
   columns: z.number().int().min(1).max(5),
@@ -78,4 +83,6 @@ export type CollectionCreateInput = z.input<typeof collectionCreateSchema>;
 export type CollectionCreateData = z.output<typeof collectionCreateSchema>;
 export type CollectionUpdateInput = z.input<typeof collectionUpdateSchema>;
 export type CollectionUpdateData = z.output<typeof collectionUpdateSchema>;
+export type CollectionDeleteInput = z.input<typeof collectionDeleteSchema>;
+export type CollectionDeleteData = z.output<typeof collectionDeleteSchema>;
 export type GalleryConfig = z.infer<typeof galleryConfigSchema>;

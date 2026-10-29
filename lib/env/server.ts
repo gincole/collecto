@@ -5,6 +5,10 @@ import { z } from "zod";
 import { parsePublicEnv } from "./public";
 
 const privateEnvSchema = z.object({
+  STORAGE_CLEANUP_SECRET: z.preprocess(
+    (value) => (value === "" ? undefined : value),
+    z.string().min(16).optional(),
+  ),
   DEMO_USER_EMAIL: z.preprocess(
     (value) => (value === "" ? undefined : value),
     z.email().optional(),

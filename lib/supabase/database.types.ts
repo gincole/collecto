@@ -213,6 +213,14 @@ export type Database = {
     };
     Views: Record<string, never>;
     Functions: {
+      claim_storage_cleanup_jobs: {
+        Args: { p_limit: number; p_stale_before: string };
+        Returns: {
+          attempt_count: number;
+          id: string;
+          object_path: string;
+        }[];
+      };
       create_collection_with_schema: {
         Args: {
           p_description: string | null;
@@ -223,6 +231,16 @@ export type Database = {
           p_view_config: Json;
         };
         Returns: string;
+      };
+      delete_collection_with_cleanup: {
+        Args: {
+          p_collection_id: string;
+          p_confirmation_name: string;
+        };
+        Returns: {
+          id: string;
+          scheduled_image_count: number;
+        };
       };
       enforce_collection_field_limit: {
         Args: Record<PropertyKey, never>;

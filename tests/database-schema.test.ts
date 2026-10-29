@@ -89,6 +89,32 @@ describe("core database schema", () => {
     );
   });
 
+  it("schedules private image cleanup before permanent Collection deletion", () => {
+    const migration = readFileSync(
+      join(
+        process.cwd(),
+        "supabase/migrations/20261029223000_delete_collection_with_cleanup.sql",
+      ),
+      "utf8",
+    );
+
+    expect(migration).toMatch(
+      /create or replace function public\.delete_collection_with_cleanup/,
+    );
+    expect(migration).toMatch(/insert into public\.storage_cleanup_jobs/);
+    expect(migration).toMatch(/from public\.items/);
+    expect(migration).toMatch(/image_path is not null/);
+    expect(migration).toMatch(/delete from public\.collections/);
+    expect(migration).toMatch(/owner_id = v_user_id/);
+    expect(migration).toMatch(/grant execute[\s\S]*to authenticated/);
+    expect(migration).toMatch(/claim_storage_cleanup_jobs/);
+    expect(migration).toMatch(
+      /status = 'processing'[\s\S]*updated_at < p_stale_before/,
+    );
+    expect(migration).toMatch(/for update skip locked/);
+    expect(migration).toMatch(/grant execute[\s\S]*to service_role/);
+  });
+
   it("adds the query indexes required by the database design", () => {
     const migration = readFileSync(migrationPath, "utf8");
 

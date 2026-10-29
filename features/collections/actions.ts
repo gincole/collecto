@@ -70,5 +70,99 @@ export async function updateCollectionAction(input: CollectionUpdateInput) {
 
 export async function deleteCollectionAction(collectionId: string) {
   const client = await createClient();
-  return deleteCollection(collectionId, createCollectionGateway(client));
+  return deleteCollection(
+    { collectionId, confirmationName: "" },
+    createCollectionGateway(client),
+  );
+}
+
+export type CollectionSettingsState = {
+  fieldErrors?: {
+    confirmationName?: string;
+    description?: string;
+    name?: string;
+  };
+  message?: string;
+  requiredConfirmationName?: string;
+  savedIdentity?: { description: string; name: string };
+  status: "idle" | "error" | "success";
+};
+
+export async function updateCollectionFromSettingsAction(
+  collectionId: string,
+  _previousState: CollectionSettingsState,
+  formData: FormData,
+): Promise<CollectionSettingsState> {
+  const name = formData.get("name");
+  const description = formData.get("description");
+  const result = await updateCollectionAction({
+    collectionId,
+    description: typeof description === "string" ? description : "",
+    name: typeof name === "string" ? name : "",
+  });
+  if (result.status === "success") {
+    revalidatePath(`/collections/${collectionId}`);
+    revalidatePath("/library");
+    return {
+      message: "Changes saved.",
+      savedIdentity: {
+        description: typeof description === "string" ? description : "",
+        name: typeof name === "string" ? name : "",
+      },
+      status: "success",
+    };
+  }
+  if (result.status === "validation_error") {
+    return {
+      fieldErrors: {
+        description: result.fieldErrors?.description?.[0],
+        name: result.fieldErrors?.name?.[0],
+      },
+      status: "error",
+    };
+  }
+  return {
+    message:
+      result.status === "unauthorized"
+        ? "Your session has ended. Log in and try again."
+        : "Could not save changes. Try again.",
+    status: "error",
+  };
+}
+
+export async function deleteCollectionFromSettingsAction(
+  collectionId: string,
+  _previousState: CollectionSettingsState,
+  formData: FormData,
+): Promise<CollectionSettingsState> {
+  const client = await createClient();
+  const confirmationName = formData.get("confirmationName");
+  const result = await deleteCollection(
+    {
+      collectionId,
+      confirmationName:
+        typeof confirmationName === "string" ? confirmationName : "",
+    },
+    createCollectionGateway(client),
+  );
+  if (result.status === "success") {
+    revalidatePath("/library");
+    redirect("/library");
+  }
+  if (result.status === "validation_error") {
+    return {
+      fieldErrors: {
+        confirmationName: result.fieldErrors?.confirmationName?.[0],
+      },
+      requiredConfirmationName: result.confirmationName,
+      status: "error",
+    };
+  }
+  return {
+    message:
+      result.status === "unauthorized"
+        ? "Your session has ended. Log in and try again."
+        : "Could not delete the collection. Try again.",
+    status: "error",
+  };
 }
