@@ -1,13 +1,13 @@
 # Demo data and admin reset
 
-M8-T01 supplies fictional **My Books**, **Food Memories**, and **My Collectibles**, with six Items each. They use Text, Number, Date, Rating and Select values, optional empty membership, ordered Fields/options, and three gallery ratios. No image files are seeded; the existing missing-image treatment is used. The seed contains no account password or private user content.
+The demo seed supplies fictional **My Books**, **Food Memories**, and **My Collectibles**, with six Items each. They use Text, Number, Date, Rating and Select values, optional empty membership, ordered Fields and options, and three gallery ratios. No image files are seeded; the existing missing-image treatment is used. The seed contains no account password or private user content.
 
 ## One-time setup
 
 1. Apply `20261030180000_admin_demo_reset.sql` through the normal migration workflow to the intended database. This adds an RLS-protected admin marker and a service-role-only seed/reset function; it does not seed or delete data by itself.
 2. In Supabase Auth, ensure the approved demo account exists. Its configured email is `test@gmail.com`. Copy its UUID from Auth > Users. The seed command never creates an account or changes its password.
 3. In ignored `.env.local` (or `.env`), set `NEXT_PUBLIC_SUPABASE_URL`, server-only `SUPABASE_SECRET_KEY`, `DEMO_USER_EMAIL`, and `DEMO_USER_ID`. The CLI loads `.env` then `.env.local`; existing process variables take precedence. Never prefix the admin key with `NEXT_PUBLIC_` or commit populated files. The application uses `DEMO_USER_EMAIL` only on the server to show the shared-demo disclosure.
-4. Confirm the target Supabase project, email and UUID before running. Both CLI and database verify the account ID/email pair. Hosted execution is an operator action; this development task only tested disposable local accounts.
+4. Confirm the target Supabase project, email and UUID before running. Both CLI and database verify the account ID and email pair. Validate the workflow with disposable local accounts before operating on a hosted project.
 
 The CLI requires Node 22.18+ (or Node 24+) for native TypeScript fixture loading. No new package is required.
 
@@ -35,4 +35,4 @@ The shared demo notice explains that visitors share writable data, other visitor
 
 `corepack pnpm test:demo` uses the loopback-only local Supabase test configuration. It creates random temporary users, seeds twice, checks three Collections/six Items each, verifies two independent sessions observe edits, checks denied public RPC access and owner confirmation, proves failed/malformed reset rollback, coordinates a separate Item image writer with reset, compares reset counts/content structure, verifies durable cleanup of the writer's newly committed path and another owner's sentinel, then removes its temporary cleanup jobs/users. It does not touch the real demo account.
 
-The full database/unit suites continue to cover RLS, Field types, image cleanup and last-write-wins recovery. Browser acceptance and hosted seed execution remain unperformed. Deployment is a separate authorized task.
+The database and unit suites cover RLS, Field types, image cleanup, and last-write-wins recovery. Hosted execution must be performed deliberately by an authorized operator after confirming the target project and account.

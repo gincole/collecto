@@ -2,7 +2,7 @@
 
 ## Direction
 
-The current visual authority is root DESIGN.md (Awesomic), approved by the user on 30 October 2026. See docs/visual-direction.md for the explicit mapping and superseded original defaults. The interface uses editorial zinc neutrals, a bold geometric type hierarchy, generous rounded cards, compact controls, and hairline borders. The product remains **collecto**; no marketing-site sections or new workflows are introduced.
+The current visual authority is root `DESIGN.md`, based on the Awesomic reference. See `docs/visual-direction.md` for its application mapping. The interface uses editorial zinc neutrals, a bold geometric type hierarchy, generous rounded cards, compact controls, and hairline borders.
 
 DM Sans is the reference's approved substitute for unavailable Cosmica assets. Noto Sans Thai remains a script fallback. Item photographs retain their original colors. Preset icons retain semantic keys with neutral tile surfaces.
 
@@ -52,7 +52,7 @@ Visual sizes preserve logical heading levels. Long Unicode names wrap; text and 
 
 - 4 px base scale; 28 px desktop panel padding, reduced to 16–20 px on mobile.
 - 36 px content cards/dialogs, 14 px controls, 12 px badges, 40 px artwork tiles; pill navigation.
-- 1200 px outer page container, 1024 px form container, and existing 440 px Auth card. Major Library sections use 80 px desktop spacing; compact forms retain shorter task-based groups.
+- 1200 px outer page container, 1024 px form container, and 440 px Auth card. Major Library sections use 80 px desktop spacing; compact forms retain shorter semantic groups.
 - No content-card shadows. Primary actions have a subtle inset highlight; floating menus/sheets/dialogs retain restrained elevation.
 - Skeletons use cloud-gray fills so they remain visible against both white cards and the zinc canvas.
 - 44 px minimum touch targets; large primary actions may use 48 px. All text inputs remain at least 16 px.
@@ -156,8 +156,8 @@ Test 320, 375, 640, 768, 1024, and 1440 px. Never allow a saved column preferenc
 - Safe areas and software keyboards do not cover the last control, errors, or Save.
 - Reserve image dimensions to limit unexpected layout shift.
 
-M7-T02 code/component evidence and the unverified browser/device acceptance matrix are recorded in `docs/accessibility-audit.md`; passing component checks alone does not close that task.
+Passing component checks alone does not establish full accessibility conformance. Manual keyboard, zoom, screen-reader, contrast, responsive-layout, and real-device testing remain necessary.
 
-### Async interaction feedback (M7-T02B)
+### Async interaction feedback
 
 Internal links use the shared NavigationLink and Next useLinkStatus progress feedback while destination route skeletons load. The root skeleton also covers initial session/layout work. Pending progress is portaled at the viewport top without affecting layout and respects reduced motion. Browse uses loaded data for immediate optimistic views, retains native modified links and validated URL navigation, and reconciles authoritative server props. It does not replace correct loaded content with artificial skeletons. Retries use Retrying labels and repeat-request guards; schema order/Option operations announce visible pending status. Private image renderers use the shared LoadingImage skeleton within a reserved aspect ratio until load or error, including cached images, replacements, and retry.

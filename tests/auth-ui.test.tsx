@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { AppHeader } from "@/components/shared/app-header";
 import { AuthForm } from "@/features/auth/auth-form";
+import { AuthShell } from "@/features/auth/auth-shell";
 import {
   loginCredentialsSchema,
   registrationCredentialsSchema,
@@ -108,6 +109,18 @@ describe("authentication service", () => {
 });
 
 describe("authentication UI", () => {
+  it("does not show back navigation in the default auth shell", () => {
+    render(
+      <AuthShell>
+        <p>Authentication content</p>
+      </AuthShell>,
+    );
+
+    expect(
+      screen.queryByRole("link", { name: "Back" }),
+    ).not.toBeInTheDocument();
+  });
+
   it("renders an accessible login form without deferred account features", () => {
     render(
       <AuthForm action={vi.fn()} mode="login" returnTo="/collections/abc" />,

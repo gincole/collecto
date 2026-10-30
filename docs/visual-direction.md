@@ -1,71 +1,61 @@
-# Approved visual direction — 30 October 2026
+# Visual Direction
 
-The user explicitly requested applying the newly added root `DESIGN.md` across the existing project. Its current reference is **Awesomic**, not the earlier untracked ElevenLabs draft. This instruction supersedes the original UX specification's pastel palette, Plus Jakarta Sans, surface geometry, and elevation defaults. It does not change the Product and Technical Specification's behavior or MVP scope.
+The Collecto interface applies the visual language in root `DESIGN.md` to a private collection-management product. The reference informs typography, color, geometry, spacing, and motion without introducing marketing-site sections or changing product behavior.
 
-## Application mapping
+## Color and typography
 
-- Use the reference's zinc canvas `#f4f4f5`, white surfaces, `#fafafa` recessed surfaces, obsidian actions `#09090b`, and steel supporting text `#52525b`.
-- Use DM Sans, the reference's explicitly permitted Cosmica substitute. No Cosmica assets were provided. Retain Noto Sans Thai as a script fallback, rather than losing Unicode content support.
-- Map display/page/section/card/body/caption roles to the reference hierarchy. Use 64 px Library display headings on desktop, 40 px page headings, 32 px section headings, and 20 px card headings. Scale down on narrow screens; form inputs remain at least 16 px.
-- Compact destructive/discard confirmation titles use the reference's 20 px subheading role consistently. The M7-T02L modal refinement uses 24 px primary editor titles and 20 px section headings; page heading roles remain unchanged.
-- Use 36 px content cards, 14 px buttons/inputs, 12 px badges, 40 px artwork tiles, and pill navigation. Keep full-screen sheets edge-to-edge and preserve native control semantics.
-- Use a centered 1200 px outer page container, 28 px desktop panel padding, and 80 px major Library section rhythm. Compact forms and dense galleries retain task-appropriate spacing; mobile panels use 16–20 px padding.
-- Remove content-card drop shadows. Keep restrained elevation for floating menus, sheets, and dialogs. Primary buttons use a subtle inset highlight and dark border.
-- Keep Lucide preset icons and stable preset keys; map their legacy pastel-named color tokens to zinc neutrals. These are functional category identifiers, not new decorative imagery. Keep private Item photographs in color, without overlays or duotone treatment.
-- Orange is reserved by the reference for credential/category highlight badges. The current application has no credential badges, so do not invent promotional chips or apply orange to general controls. Do not introduce magenta decoration.
-- Preserve red destructive/error semantics and green success semantics as safety/accessibility exceptions to the neutral brand palette. Focus and selection use dark zinc, with outlines/checks and text rather than color alone. Decorative hairline borders remain separate from contrast-compliant interactive boundaries.
-- Preserve existing routes, CRUD, Field semantics, gallery configuration, privacy, pending feedback, and confirmation behavior. Do not add marketing heroes, social proof, signup capture, or other functionality illustrated by the reference website.
+- Use the zinc canvas `#f4f4f5`, white surfaces, `#fafafa` recessed surfaces, obsidian actions `#09090b`, and steel supporting text `#52525b`.
+- Use DM Sans as the primary typeface and retain Noto Sans Thai as a script fallback.
+- Use responsive type tokens for display, page, section, card, body, label, and caption roles.
+- Keep editable controls at a minimum of 16 px text on small screens.
+- Preserve semantic red for destructive and error states and semantic green for success states.
+- Reserve orange for genuine credential or category highlights. Do not use it for general controls, links, or decoration.
 
-## Verification boundary
+## Shape and elevation
 
-M7-T02C applies this mapping across shared primitives, Auth, Library, Collection setup/settings, Browse, gallery/live preview, Field/Option editors, Item forms/details, dialogs, feedback, and loading/error/empty states. Token/contrast and component tests verify contracts; formatter, lint, TypeScript, dependency audit, and production build verify integration. Browser/viewport testing remains excluded by the user's instruction, so this task does not close the full M7-T02 visual/accessibility acceptance audit.
+- Content cards use 20 px corners on larger screens and 16 px corners on small screens.
+- Dialogs use 24 px corners on larger screens and 20 px corners on small screens.
+- Buttons, inputs, and compact controls use 14 px corners.
+- Badges use 12 px corners, while navigation pills may use fully rounded geometry.
+- Content cards use hairline borders instead of drop shadows.
+- Floating menus, sheets, and dialogs may use restrained elevation to preserve layering.
+- Primary buttons use the dark action surface with a subtle inset highlight and border.
 
-## Modal composition refinement — M7-T02L
+## Layout
 
-The user's 30 October 2026 review replaces boxed form sections inside dialogs
-with open, spaced groups, removes the shared modal header divider, and permits
-an accessible but visually hidden shell title when the content already introduces
-the screen (New Collection). Keep X dismissal and fixed footer actions.
+- Use a centered outer page container with a maximum width of 1200 px.
+- Use a maximum width of 1024 px for forms and a 440 px Auth card.
+- Major Library sections use an 80 px desktop rhythm; compact forms use smaller semantic groups.
+- Mobile panels use 16 to 20 px padding. Dialogs use 16 px mobile and 28 px desktop outer insets.
+- Responsive composition must prevent horizontal overflow and preserve practical touch targets of at least 44 by 44 px.
+- Displayed names may use a one-line ellipsis when space is constrained, while accessible labels and title attributes preserve the full value. Prose continues to wrap.
 
-Use the same existing typography tokens: 24 px primary modal/editor titles,
-20 px modal section headings, and 20 px compact confirmation titles. Body text,
-labels, input sizes and page typography retain their existing roles. Shared
-`data-form-heading` and `data-form-panel` markers apply these rules within
-`.dialog-content` only; page panels retain their layout. Field rows, inputs,
-buttons, image controls and actual gallery-preview cards retain their boundaries.
-Preset buttons center both their artwork and label. No interaction or persistence
-contract changes.
+## Components
 
-## Modal chrome refinement — M7-T02S
+### Cards and artwork
 
-The user's latest review restores header dividers, balanced header/footer padding,
-section dividers and a larger scroll-end gap. This supersedes M7-T02L/M presentation
-rules about divider removal and a zero-height wizard header. All modal families use
-the same DialogHeader/Body/Footer with outlined Close controls. Wizard headers show
-the small step label, while body heading sizes remain unchanged. Disabled buttons
-keep their layout geometry with transparent borders and no shadow. The visible
-Blank choice becomes a dark Custom card with Sparkles artwork; the `blank` data key
-and empty schema remain unchanged. See implementation-plan M7-T02S for verification.
+Collection and folder cards share the same surface, border, radius, typography, and hover treatment. Preset artwork uses Lucide icons and stable semantic preset keys. Private Item photographs keep their original colors without decorative overlays or duotone effects.
 
-## Modal spacing and direct wizard header — M7-T02T
+### Forms and fields
 
-Restore a 16 px mobile / 28 px desktop outer panel inset in all dialogs, preserving
-the inner body gutter and extra bottom scroll space. Header/footer margins match
-the body padding so their dividers align with section dividers rather than the
-outer modal edge; both include horizontal safe areas. Wizard steps are rendered
-directly in the title slot with their existing small text size, with no portal or
-duplicate body label. This refines M7-T02S without changing field/page behavior.
+Inputs, labels, help text, and validation messages use consistent type and spacing tokens. Native date controls retain platform semantics. Field and option ordering provides drag interaction plus keyboard and touch alternatives.
 
-## Compact consistency pass — M7-T02AE
+### Dialogs
 
-The user's subsequent review requests a tighter, more balanced scale, smaller
-mobile typography, restrained radii, ellipsized displayed names and consistent
-native date controls. This supersedes the earlier numeric type/radius mapping,
-while retaining its palette, font family, control geometry and behavior.
+All modal flows use the same header, scrollable body, and fixed footer structure. Header, body, and footer dividers align to the same inset. Dialogs retain an accessible title, X dismissal, Escape and backdrop behavior where safe, focus management, dirty-state protection, and pending-state guards.
 
-See `docs/design-system-audit.md` for the full coverage and role matrix. Responsive
-`--type-*` and `--shape-*` values now supply all shared utility aliases. Editable
-controls retain the existing 16 px minimum, and all targets stay at least 44 px.
-Cards use 20/16 px desktop/mobile corners, dialogs 24/20 px and controls 14 px.
-Displayed names use one-line ellipses while preserving full text for accessibility;
-prose continues to wrap. No browser/device visual acceptance is claimed.
+Primary editor titles use the modal title role, section headings use the section role, and compact destructive confirmations use the smaller confirmation title role. Wizard steps appear directly in the header title area without duplicating the label in the body.
+
+### Gallery
+
+The live gallery and settings preview share presentation rules. Saved column preferences may be reduced by the available width to prevent overflow. One-column mode uses a horizontal card. Image aspect-ratio space is reserved before loading to reduce layout shift.
+
+### Feedback and motion
+
+Pending actions show immediate feedback and block duplicate submission. Success and error messages use semantic colors and accessible text. Motion is short and restrained, and every animation must respect `prefers-reduced-motion`.
+
+## Accessibility boundary
+
+Focus, selection, validation, and destructive states cannot rely on color alone. Every icon-only action requires an accessible name, dialogs return focus appropriately, and all critical interactions must work with a keyboard.
+
+Automated component and accessibility tests help protect these contracts. They do not replace manual keyboard, zoom, screen-reader, rendered contrast, responsive-layout, and real-device testing.

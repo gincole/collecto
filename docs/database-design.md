@@ -28,16 +28,16 @@ Application validation limits are fixed for the MVP: Collection name 100 charact
 
 ### collections
 
-| Column        | Contract                                                     |
-| ------------- | ------------------------------------------------------------ |
-| `id`          | UUID primary key, generated                                  |
-| `owner_id`    | UUID not null, references `auth.users`                       |
-| `name`        | Required trimmed text; application maximum defined in M1-T01 |
-| `description` | Nullable text                                                |
-| `preset_key`  | Nullable approved preset key                                 |
-| `view_config` | JSONB not null with approved default                         |
-| `created_at`  | UTC timestamptz not null                                     |
-| `updated_at`  | UTC timestamptz not null and maintained on update            |
+| Column        | Contract                                                  |
+| ------------- | --------------------------------------------------------- |
+| `id`          | UUID primary key, generated                               |
+| `owner_id`    | UUID not null, references `auth.users`                    |
+| `name`        | Required trimmed text with an application-defined maximum |
+| `description` | Nullable text                                             |
+| `preset_key`  | Nullable approved preset key                              |
+| `view_config` | JSONB not null with approved default                      |
+| `created_at`  | UTC timestamptz not null                                  |
+| `updated_at`  | UTC timestamptz not null and maintained on update         |
 
 Index `(owner_id, created_at desc)`. Application validation enforces the full view-config schema; practical database checks protect top-level JSON shape.
 
@@ -189,7 +189,7 @@ Never claim cross-service atomicity.
 
 ## Migration and verification strategy
 
-M8-T01 adds `demo_seed_runs` as an RLS-protected, admin-only idempotency marker. The `seed_demo_library` security-definer function grants execution only to `service_role`, checks the configured Auth UUID/email pair, requires explicit reset confirmation, serializes seed calls, locks owner/Collection/Item rows before the image snapshot, queues private-image cleanup, and replaces only the selected demo owner's data in one transaction. No public route calls it. See `docs/demo-operations.md` for operator setup and reset consequences.
+`demo_seed_runs` is an RLS-protected, admin-only idempotency marker. The `seed_demo_library` security-definer function grants execution only to `service_role`, checks the configured Auth UUID/email pair, requires explicit reset confirmation, serializes seed calls, locks owner, Collection, and Item rows before the image snapshot, queues private-image cleanup, and replaces only the selected demo owner's data in one transaction. No public route calls it. See `docs/demo-operations.md` for operator setup and reset consequences.
 
 - Use timestamped, forward-only Supabase migrations.
 - Apply migrations to a clean local database before connected environments.

@@ -241,29 +241,27 @@ The actual structure may adapt to the initialized repository, but preserve these
 - Do not suppress lint, type, security, or accessibility errors without a documented reason and approval when the suppression weakens a requirement.
 - Do not make unrelated refactors in an atomic feature task.
 
-## Task tracker
+## Work tracking
 
-- Use `docs/tasks.md` as the repository task tracker unless the user explicitly selects an external tracker.
-- Every implementation task must define scope, requirement references, acceptance criteria, verification commands, status, and resulting commit hash.
+- Use the active user request or linked GitHub issue as the scope authority.
+- Every implementation task must define requirement references, acceptance criteria, and verification commands before editing.
 - Break work into atomic, independently verifiable tasks. A task should produce one coherent behavior or foundation and one logical commit.
-- Mark a task complete only after verification passes and the commit exists.
-- Update the task tracker as part of the same commit as the code and tests it describes. Never make a separate bookkeeping-only completion commit.
-- If new work is discovered, add a new task rather than silently expanding the current task.
+- Mark work complete only after its acceptance criteria and relevant verification pass.
+- If new work is discovered, report it separately rather than silently expanding the current scope.
 
 ## Required task workflow
 
 For every application-development task:
 
-1. Read `AGENTS.md`, the relevant specifications, approved decisions, and current task entry.
+1. Read `AGENTS.md`, the relevant specifications, approved decisions, and linked issue or request.
 2. Inspect the current repository state and existing patterns.
 3. Restate the atomic task boundary and acceptance criteria before editing.
 4. Implement only that task, including tests and necessary documentation.
 5. Run relevant formatting, lint, typecheck, tests, security checks, and build verification.
-6. Update `docs/tasks.md` with the actual outcome and verification results.
-7. Review the diff for secrets, unrelated changes, generated noise, and requirement drift.
-8. Create one logical Git commit using the rules below.
-9. Report the commit hash, summary, and verification performed.
-10. Stop and wait for explicit approval before starting another task.
+6. Review the diff for secrets, unrelated changes, generated noise, and requirement drift.
+7. Create one logical Git commit using the rules below.
+8. Report the commit hash, summary, and verification performed.
+9. Stop and wait for explicit approval before starting another task.
 
 Do not combine multiple atomic tasks merely to reduce the number of commits. Do not continue automatically after reporting a task commit.
 
@@ -274,7 +272,6 @@ Do not combine multiple atomic tasks merely to reduce the number of commits. Do 
 - Every commit must include a bullet-point body describing the changes actually included. A subject-only commit is not allowed.
 - Use an imperative, specific subject. Do not claim broader work than the diff contains.
 - Run all relevant verification checks before committing.
-- Update `docs/tasks.md` as part of the same commit.
 - Never commit broken code, failing tests, secrets, populated environment files, credentials, signed URLs, or debug artifacts.
 - Inspect staged changes before committing.
 - Do not amend, rebase, squash, reset, force-push, or otherwise rewrite previous commits without explicit approval.

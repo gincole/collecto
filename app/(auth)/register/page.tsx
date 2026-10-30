@@ -12,7 +12,7 @@ export default async function RegisterPage({
   const safeReturnTo = returnTo ? getSafeReturnPath(returnTo) : undefined;
 
   return (
-    <AuthShell>
+    <AuthShell showBack>
       <div className="mb-8 space-y-2 text-center">
         <p className="text-foreground-muted text-sm font-medium">Collecto</p>
         <h1 className="text-page-title-mobile sm:text-page-title">
