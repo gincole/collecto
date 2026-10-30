@@ -43,7 +43,7 @@ export function ImageUploader({
         </p>
       </div>
       {displayedUrl && failedUrl !== displayedUrl ? (
-        <div className="border-border bg-surface-muted rounded-control relative overflow-hidden border">
+        <div className="border-border bg-surface-muted rounded-card relative overflow-hidden border">
           <LoadingImage
             alt="Item preview"
             className="aspect-[4/3] w-full object-contain"
@@ -52,7 +52,7 @@ export function ImageUploader({
           />
         </div>
       ) : (
-        <div className="border-border text-foreground-muted bg-surface-muted rounded-control flex aspect-[4/3] items-center justify-center border border-dashed">
+        <div className="border-border text-foreground-muted bg-surface-muted rounded-card flex aspect-[4/3] items-center justify-center border border-dashed">
           <ImagePlus aria-hidden="true" className="mr-2 size-5" />{" "}
           {displayedUrl
             ? "Preview could not be loaded. Choose or replace the image to retry."

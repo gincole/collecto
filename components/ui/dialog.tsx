@@ -25,7 +25,7 @@ function DialogContent({
       <DialogPrimitive.Overlay className="dialog-overlay bg-foreground/50 fixed inset-0 z-50" />
       <DialogPrimitive.Content
         className={cn(
-          "dialog-content border-border bg-surface text-foreground focus-ring rounded-dialog shadow-dialog fixed top-1/2 left-1/2 z-50 grid w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 border p-6 sm:w-full",
+          "dialog-content border-border bg-surface text-foreground focus-ring rounded-dialog shadow-dialog sm:p-panel fixed top-1/2 left-1/2 z-50 grid w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 border p-5 sm:w-full",
           className,
         )}
         {...props}

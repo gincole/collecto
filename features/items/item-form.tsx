@@ -10,7 +10,7 @@ import {
 } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Input, Textarea } from "@/components/ui/form-control";
+import { Input, Select, Textarea } from "@/components/ui/form-control";
 import { DATABASE_LIMITS } from "@/lib/validation/limits";
 
 import type { ItemFieldDefinition, ItemRecord } from "./types";
@@ -52,17 +52,14 @@ function DynamicField({
   let control;
   if (field.type === "select")
     control = (
-      <select
-        {...common}
-        className="border-control-border bg-surface focus:border-focus focus:ring-focus/20 rounded-control min-h-11 w-full border px-3 text-base outline-none focus:ring-4"
-      >
+      <Select {...common}>
         <option value="">Choose an option</option>
         {field.options.map((option) => (
           <option key={option.id} value={option.id}>
             {option.label}
           </option>
         ))}
-      </select>
+      </Select>
     );
   else if (field.type === "rating")
     control = (

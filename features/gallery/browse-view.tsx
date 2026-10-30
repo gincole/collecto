@@ -85,7 +85,7 @@ export function BrowseView({
                   (field?.id ?? null) === tab.id ? "page" : undefined
                 }
                 className={cn(
-                  "touch-target focus-ring rounded-control inline-flex shrink-0 items-center justify-center border px-4 text-sm font-semibold whitespace-nowrap",
+                  "touch-target focus-ring rounded-pill inline-flex shrink-0 items-center justify-center border px-4 text-sm font-semibold whitespace-nowrap",
                   (field?.id ?? null) === tab.id
                     ? "border-selection-border bg-art-lavender"
                     : "border-border bg-surface hover:bg-surface-muted",
@@ -122,7 +122,7 @@ export function BrowseView({
                     navigate(event, { fieldId: field.id, optionId: folder.id })
                   }
                   aria-label={`Open ${folder.label}, ${folder.count} ${folder.count === 1 ? "item" : "items"}`}
-                  className="focus-ring border-border bg-surface rounded-card duration-base block h-full border p-3 transition-transform motion-safe:hover:-translate-y-0.5"
+                  className="focus-ring border-border bg-surface rounded-card duration-base block h-full border transition-transform motion-safe:hover:-translate-y-0.5"
                   href={
                     browseHref(collection.id, {
                       fieldId: field.id,
@@ -130,15 +130,17 @@ export function BrowseView({
                     }) as Route
                   }
                 >
-                  <div className="bg-art-sage rounded-control text-foreground flex h-28 items-center justify-center">
+                  <div className="bg-surface-muted rounded-t-card text-foreground flex h-28 items-center justify-center">
                     <FolderOpen aria-hidden="true" className="size-10" />
                   </div>
-                  <h3 className="text-card-title-mobile mt-3 font-semibold break-words">
-                    {folder.label}
-                  </h3>
-                  <p className="text-foreground-muted mt-1 text-sm">
-                    {folder.count} {folder.count === 1 ? "item" : "items"}
-                  </p>
+                  <div className="sm:p-panel space-y-2 p-4">
+                    <h3 className="text-card-title-mobile sm:text-card-title font-semibold break-words">
+                      {folder.label}
+                    </h3>
+                    <p className="text-foreground-muted text-sm">
+                      {folder.count} {folder.count === 1 ? "item" : "items"}
+                    </p>
+                  </div>
                 </Link>
               </li>
             ))}

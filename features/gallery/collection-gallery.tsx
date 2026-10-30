@@ -45,7 +45,7 @@ export function CollectionHeader({
           </summary>
           <div className="border-border bg-surface shadow-sheet rounded-control absolute right-0 z-20 mt-1 w-48 border p-1">
             <Link
-              className="touch-target hover:bg-surface-muted focus-ring flex items-center rounded-lg px-3 text-sm"
+              className="touch-target hover:bg-surface-muted focus-ring rounded-control flex items-center px-3 text-sm"
               href={`/collections/${collection.id}/settings` as Route}
             >
               Collection settings

@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { Noto_Sans_Thai, Plus_Jakarta_Sans } from "next/font/google";
+import { DM_Sans, Noto_Sans_Thai } from "next/font/google";
 import type { ReactNode } from "react";
 
 import "./globals.css";
 import { FeedbackProvider } from "@/components/shared/feedback";
 
-const plusJakartaSans = Plus_Jakarta_Sans({
+const dmSans = DM_Sans({
   display: "swap",
   subsets: ["latin"],
-  variable: "--font-plus-jakarta",
+  variable: "--font-dm-sans",
   weight: "variable",
 });
 
@@ -29,7 +29,7 @@ export default function RootLayout({
 }: Readonly<{ children: ReactNode }>) {
   return (
     <html
-      className={`${plusJakartaSans.variable} ${notoSansThai.variable}`}
+      className={`${dmSans.variable} ${notoSansThai.variable}`}
       data-scroll-behavior="smooth"
       lang="en"
     >

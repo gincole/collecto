@@ -24,7 +24,7 @@ function BuiltInFields() {
   return (
     <section
       aria-label="Built-in fields"
-      className="border-border bg-surface rounded-card border p-4 sm:p-6"
+      className="border-border bg-surface rounded-card sm:p-panel border p-4"
     >
       <div className="mb-4 space-y-1">
         <h2 className="text-section-title-mobile sm:text-section-title">
@@ -93,7 +93,7 @@ function FieldManager({
       <section
         aria-label="Custom fields"
         aria-busy={pending}
-        className="border-border bg-surface rounded-card border p-4 sm:p-6"
+        className="border-border bg-surface rounded-card sm:p-panel border p-4"
       >
         <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-1">
@@ -152,7 +152,7 @@ function FieldManager({
                         : ""}
                     </p>
                     {field.required ? (
-                      <span className="bg-art-lavender rounded-pill mt-2 inline-flex px-2 py-0.5 text-xs font-semibold">
+                      <span className="bg-surface-muted border-border rounded-badge mt-2 inline-flex border px-2 py-0.5 text-xs font-semibold">
                         Required
                       </span>
                     ) : null}

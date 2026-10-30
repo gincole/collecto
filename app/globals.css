@@ -24,55 +24,60 @@
   --color-surface: var(--surface);
   --color-surface-muted: var(--surface-muted);
   --font-sans:
-    var(--font-plus-jakarta), var(--font-noto-thai), "Noto Sans Thai",
-    ui-sans-serif, system-ui, sans-serif;
-  --text-display: 3rem;
-  --text-display--line-height: 1.1;
-  --text-display--font-weight: 700;
-  --text-display-mobile: 2.125rem;
-  --text-display-mobile--line-height: 1.15;
-  --text-display-mobile--font-weight: 700;
-  --text-page-title: 2.25rem;
-  --text-page-title--line-height: 1.15;
+    var(--font-dm-sans), var(--font-noto-thai), "Noto Sans Thai", ui-sans-serif,
+    system-ui, sans-serif;
+  --text-display: 4rem;
+  --text-display--line-height: 1.12;
+  --text-display--font-weight: 600;
+  --text-display-mobile: 2.5rem;
+  --text-display-mobile--line-height: 1.12;
+  --text-display-mobile--font-weight: 600;
+  --text-page-title: 2.5rem;
+  --text-page-title--line-height: 1.28;
   --text-page-title--font-weight: 600;
-  --text-page-title-mobile: 1.875rem;
+  --text-page-title-mobile: 2rem;
   --text-page-title-mobile--line-height: 1.2;
   --text-page-title-mobile--font-weight: 600;
-  --text-section-title: 1.5rem;
-  --text-section-title--line-height: 1.3;
+  --text-section-title: 2rem;
+  --text-section-title--line-height: 1.28;
   --text-section-title--font-weight: 600;
-  --text-section-title-mobile: 1.375rem;
+  --text-section-title-mobile: 1.5rem;
   --text-section-title-mobile--line-height: 1.3;
   --text-section-title-mobile--font-weight: 600;
-  --text-card-title: 1.125rem;
+  --text-card-title: 1.25rem;
   --text-card-title--line-height: 1.4;
   --text-card-title--font-weight: 600;
-  --text-card-title-mobile: 1rem;
+  --text-card-title-mobile: 1.125rem;
   --text-card-title-mobile--line-height: 1.4;
   --text-card-title-mobile--font-weight: 600;
-  --text-body: 1rem;
-  --text-body--line-height: 1.5rem;
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.45;
   --text-body-sm: 0.875rem;
   --text-body-sm--line-height: 1.25rem;
   --text-label: 0.875rem;
   --text-label--line-height: 1.25rem;
   --text-label--font-weight: 500;
-  --text-caption: 0.8125rem;
-  --text-caption--line-height: 1rem;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.64;
   --spacing: 0.25rem;
   --spacing-page-mobile: 1rem;
   --spacing-page-tablet: 1.5rem;
   --spacing-page-desktop: 2rem;
-  --container-page: 80rem;
+  --container-page: 75rem;
   --container-narrow: 48rem;
   --container-form: 64rem;
-  --radius-control: 0.75rem;
-  --radius-card: 1rem;
-  --radius-dialog: 1.5rem;
-  --radius-pill: 999px;
-  --shadow-card: 0 1px 2px rgb(36 36 36 / 6%), 0 4px 12px rgb(36 36 36 / 5%);
-  --shadow-sheet: 0 12px 32px rgb(36 36 36 / 14%);
-  --shadow-dialog: 0 20px 48px rgb(36 36 36 / 18%);
+  --spacing-panel: 1.75rem;
+  --spacing-section: 5rem;
+  --radius-control: 0.875rem;
+  --radius-card: 2.25rem;
+  --radius-dialog: 2.25rem;
+  --radius-badge: 0.75rem;
+  --radius-artwork: 2.5rem;
+  --radius-pill: 10000px;
+  --shadow-card: none;
+  --shadow-button: inset 0 0.5px 0 rgb(255 255 255 / 50%);
+  --shadow-sheet: 0 4px 12px rgb(0 0 0 / 4%);
+  --shadow-dialog: 0 8px 24px rgb(0 0 0 / 8%);
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
   --duration-fast: 120ms;
   --duration-base: 150ms;
@@ -92,28 +97,28 @@
 }
 
 :root {
-  --art-butter: #f5eac8;
-  --art-lavender: #e6e0f4;
-  --art-mint: #dcede8;
-  --art-peach: #f5e1d6;
-  --art-rose: #f2dde6;
-  --art-sage: #dcebdd;
-  --art-sand: #eae1d4;
-  --art-sky: #dceaf4;
-  --background: #f6f5f3;
-  --border: #e5e3df;
-  --control-border: #8f8a84;
+  --art-butter: #f4f4f5;
+  --art-lavender: #ececee;
+  --art-mint: #f4f4f5;
+  --art-peach: #f4f4f5;
+  --art-rose: #ececee;
+  --art-sage: #ececee;
+  --art-sand: #f4f4f5;
+  --art-sky: #ececee;
+  --background: #f4f4f5;
+  --border: #ececee;
+  --control-border: #71717a;
   --destructive: #b42318;
-  --disabled-foreground: #737373;
-  --disabled-surface: #e5e3df;
+  --disabled-foreground: #71717a;
+  --disabled-surface: #ececee;
   --error: #b42318;
-  --focus: #4f46e5;
-  --foreground: #242424;
-  --foreground-muted: #6b6b6b;
-  --selection-border: #3b315f;
+  --focus: #18181b;
+  --foreground: #09090b;
+  --foreground-muted: #52525b;
+  --selection-border: #18181b;
   --success: #067647;
   --surface: #ffffff;
-  --surface-muted: #eeedea;
+  --surface-muted: #fafafa;
   color-scheme: light;
   background: var(--background);
   color: var(--foreground);
@@ -122,6 +127,7 @@
 html {
   background: var(--background);
   scroll-behavior: smooth;
+  scrollbar-gutter: stable;
 }
 
 * {
@@ -134,10 +140,10 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family:
-    var(--font-plus-jakarta), var(--font-noto-thai), "Noto Sans Thai",
-    ui-sans-serif, system-ui, sans-serif;
-  font-size: 1rem;
-  line-height: 1.5;
+    var(--font-dm-sans), var(--font-noto-thai), "Noto Sans Thai", ui-sans-serif,
+    system-ui, sans-serif;
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }

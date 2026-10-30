@@ -68,14 +68,14 @@ function ImagePanel({ item }: { item: ItemRecord }) {
   const [attempt, setAttempt] = useState(0);
   if (!item.imagePath)
     return (
-      <div className="border-border bg-surface-muted text-foreground-muted rounded-control flex aspect-[4/3] items-center justify-center border border-dashed">
+      <div className="border-border bg-surface-muted text-foreground-muted rounded-card flex aspect-[4/3] items-center justify-center border border-dashed">
         <ImageOff aria-hidden="true" className="mr-2 size-5" /> No image
       </div>
     );
   if (failed)
     return (
       <div className="space-y-3">
-        <div className="bg-surface-muted rounded-control flex aspect-[4/3] items-center justify-center">
+        <div className="bg-surface-muted rounded-card flex aspect-[4/3] items-center justify-center">
           <ImageOff aria-hidden="true" />
         </div>
         <FeedbackMessage kind="error">
@@ -95,7 +95,7 @@ function ImagePanel({ item }: { item: ItemRecord }) {
     );
   return (
     <div className="space-y-3">
-      <div className="border-border bg-surface-muted rounded-control relative overflow-hidden border">
+      <div className="border-border bg-surface-muted rounded-card relative overflow-hidden border">
         <LoadingImage
           alt={item.title}
           className="aspect-[4/3] w-full object-contain"

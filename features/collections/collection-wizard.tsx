@@ -79,7 +79,7 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
     <>
       <div className="space-y-8">
         <div className="flex items-center justify-between gap-4">
-          <p className="text-foreground-muted text-sm font-semibold tracking-[0.14em] uppercase">
+          <p className="text-foreground-muted text-sm font-medium">
             Step {step} of 2
           </p>
           <div className="flex items-center gap-1">
@@ -132,9 +132,9 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
                     aria-label={`${option.label} preset`}
                     aria-pressed={selected}
                     className={cn(
-                      "focus-ring rounded-card bg-surface relative flex min-h-36 flex-col items-start justify-between gap-4 border-2 p-3 text-left transition-[border-color,transform,box-shadow] motion-safe:hover:-translate-y-0.5 sm:min-h-40 sm:p-4",
+                      "focus-ring rounded-card bg-surface sm:p-panel relative flex min-h-36 flex-col items-start justify-between gap-4 border-2 p-5 text-left transition-[border-color,transform] motion-safe:hover:-translate-y-0.5 sm:min-h-40",
                       selected
-                        ? "border-selection-border shadow-card"
+                        ? "border-selection-border"
                         : "border-border hover:border-control-border",
                     )}
                     key={option.key}
@@ -274,7 +274,7 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
                   </div>
                 </div>
 
-                <div className="border-border bg-surface rounded-card border p-4 sm:p-5">
+                <div className="border-border bg-surface rounded-card sm:p-panel border p-4">
                   <div className="mb-4 flex items-center gap-2">
                     <ListChecks aria-hidden="true" className="size-5" />
                     <h2 className="text-card-title">Default fields</h2>

@@ -16,7 +16,7 @@ const columnClasses: Record<GalleryConfig["columns"], string> = {
   2: "grid-cols-1 @[20.5rem]:grid-cols-2",
   3: "grid-cols-1 @[20.5rem]:grid-cols-2 @[42rem]:grid-cols-3",
   4: "grid-cols-1 @[20.5rem]:grid-cols-2 @[42rem]:grid-cols-3 @[56rem]:grid-cols-4",
-  5: "grid-cols-1 @[20.5rem]:grid-cols-2 @[42rem]:grid-cols-3 @[56rem]:grid-cols-4 @[72rem]:grid-cols-5",
+  5: "grid-cols-1 @[20.5rem]:grid-cols-2 @[42rem]:grid-cols-3 @[56rem]:grid-cols-4 @[68rem]:grid-cols-5",
 };
 
 // The server snapshot keeps hydration stable; subsequent rendering uses browser locale.
@@ -42,7 +42,7 @@ function GalleryCard({
   return (
     <article
       className={cn(
-        "border-border bg-surface rounded-card duration-gallery ease-standard h-full border p-2 transition-[transform,border-color] motion-safe:hover:-translate-y-0.5",
+        "border-border bg-surface rounded-card duration-gallery ease-standard h-full border transition-[transform,border-color] motion-safe:hover:-translate-y-0.5",
         horizontal
           ? "grid grid-cols-[minmax(6rem,35%)_minmax(0,1fr)] items-center gap-4"
           : "@max-[20.5rem]:grid @max-[20.5rem]:grid-cols-[minmax(6rem,35%)_minmax(0,1fr)] @max-[20.5rem]:items-center @max-[20.5rem]:gap-4",
@@ -57,7 +57,10 @@ function GalleryCard({
       />
       {displayValues.length ? (
         <div
-          className={cn("min-w-0 space-y-1 px-2 py-2", horizontal && "px-0")}
+          className={cn(
+            "sm:p-panel min-w-0 space-y-2 p-4",
+            horizontal && "pl-0 sm:pl-0",
+          )}
         >
           {displayValues.map((value, index) => (
             <p

@@ -2,106 +2,69 @@
 
 ## Direction
 
-The MVP uses soft playful minimalism with editorial restraint: a warm neutral canvas, white surfaces, dark readable text, rounded geometry, muted pastel artwork, generous whitespace, and restrained elevation. Item imagery carries content; controls remain quiet and legible. Avoid decorative gradients, heavy card shadows, 3D artwork, and ornamental CRUD forms.
+The current visual authority is root DESIGN.md (Awesomic), approved by the user on 30 October 2026. See docs/visual-direction.md for the explicit mapping and superseded original defaults. The interface uses editorial zinc neutrals, a bold geometric type hierarchy, generous rounded cards, compact controls, and hairline borders. The product remains **little things.**; no marketing-site sections or new workflows are introduced.
 
-The branded product name is **little things.** MVP interface copy is English. User content supports Unicode, including Thai. Use Plus Jakarta Sans for English and a Noto Sans Thai-capable fallback.
+DM Sans is the reference's approved substitute for unavailable Cosmica assets. Noto Sans Thai remains a script fallback. Item photographs retain their original colors. Preset icons retain semantic keys with neutral tile surfaces.
 
 ## Token contract
 
-Tokens must be centralized as CSS variables and mapped through Tailwind/shadcn semantic names. Feature components must not duplicate raw values.
+All values are centralized in app/globals.css and mapped through Tailwind semantic names. Reuse tokens across all features; do not introduce local brand palettes.
 
-### Core colors
+### Colors
 
-| Token              | Value     | Use                                                                   |
-| ------------------ | --------- | --------------------------------------------------------------------- |
-| `background`       | `#F6F5F3` | Page canvas                                                           |
-| `surface`          | `#FFFFFF` | Cards, sheets, dialogs, inputs                                        |
-| `surface-muted`    | `#EEEDEA` | Secondary surfaces and subtle controls                                |
-| `foreground`       | `#242424` | Main text and primary actions                                         |
-| `foreground-muted` | `#6B6B6B` | Supporting copy; adjusted to pass AA on all approved neutral surfaces |
-| `border`           | `#E5E3DF` | Decorative card outlines and separators                               |
-| `control-border`   | `#8F8A84` | Input and outlined-control boundaries                                 |
-| `art-lavender`     | `#E6E0F4` | Books and selected artwork                                            |
-| `art-sage`         | `#DCEBDD` | Meals                                                                 |
-| `art-peach`        | `#F5E1D6` | Warm category artwork                                                 |
-| `art-butter`       | `#F5EAC8` | Travel                                                                |
-| `art-sky`          | `#DCEAF4` | Movies                                                                |
-| `art-rose`         | `#F2DDE6` | Favorites                                                             |
-| `art-sand`         | `#EAE1D4` | Shopping                                                              |
-| `art-mint`         | `#DCEDE8` | Additional presets                                                    |
+| Token                    | Value              | Role                                          |
+| ------------------------ | ------------------ | --------------------------------------------- |
+| background               | #f4f4f5            | Zinc page canvas                              |
+| surface                  | #ffffff            | Cards, inputs, dialogs                        |
+| surface-muted            | #fafafa            | Recessed and secondary surfaces               |
+| foreground               | #09090b            | Primary text and filled actions               |
+| foreground-muted         | #52525b            | Supporting text and metadata                  |
+| border                   | #ececee            | Decorative hairline outlines                  |
+| control-border           | #71717a            | Accessible control boundaries                 |
+| focus / selection-border | #18181b            | Focus and selected outlines                   |
+| destructive / error      | #b42318            | Safety and validation semantics               |
+| success                  | #067647            | Successful operation semantics                |
+| disabled-surface         | #ececee            | Disabled controls                             |
+| disabled-foreground      | #71717a            | Disabled labels                               |
+| art-*                    | #ececee or #f4f4f5 | Neutral preset surfaces; legacy keys retained |
 
-### Semantic state colors
+Semantic red/green are explicit safety exceptions to the achromatic brand palette. No generic orange buttons, links, text, or decorative magenta are added. The reference reserves orange for credential/category highlight badges; the application does not invent those badges.
 
-| Token                 | Initial value | Use                                                        |
-| --------------------- | ------------- | ---------------------------------------------------------- |
-| `focus`               | `#4F46E5`     | Focus ring on light surfaces                               |
-| `destructive`         | `#B42318`     | Destructive actions and critical error text                |
-| `error`               | `#B42318`     | Validation and failure text                                |
-| `success`             | `#067647`     | Success text and status                                    |
-| `selection-border`    | `#3B315F`     | Selected preset/card outline                               |
-| `disabled-surface`    | `#E5E3DF`     | Disabled control background                                |
-| `disabled-foreground` | `#737373`     | Disabled label; never used for required instructional text |
-
-M0-T03 must verify these values in context and may adjust them only to meet contrast while preserving their semantic role. Do not use pastel artwork colors as small text colors.
-
-### Contrast audit
-
-The implementation audit adjusted `foreground-muted` from the proposed `#737373` to `#6B6B6B`. The original value measured 4.35:1 on the warm page background and 4.05:1 on the muted surface, below the 4.5:1 normal-text target. It also introduced `control-border` for interactive boundaries because the subtle decorative border does not meet the 3:1 non-text contrast target. The approved visual direction remains unchanged.
-
-| Pair                              | Ratio   | Result                     |
-| --------------------------------- | ------- | -------------------------- |
-| Foreground on background          | 14.25:1 | Pass AA and AAA            |
-| Foreground on surface             | 15.52:1 | Pass AA and AAA            |
-| Muted foreground on background    | 4.89:1  | Pass AA                    |
-| Muted foreground on surface       | 5.33:1  | Pass AA                    |
-| Muted foreground on muted surface | 4.55:1  | Pass AA                    |
-| Error on surface                  | 6.57:1  | Pass AA                    |
-| Success on surface                | 5.69:1  | Pass AA                    |
-| Focus indicator on background     | 5.77:1  | Pass 3:1 non-text contrast |
-| Control border on background      | 3.14:1  | Pass 3:1 non-text contrast |
-| Control border on surface         | 3.42:1  | Pass 3:1 non-text contrast |
+Unit checks require normal and semantic text to meet 4.5:1 on supported neutral surfaces, and control boundaries to meet 3:1. Decorative borders are not used as the only indication of an interactive control. Selected presets retain both strong outline and check; Browse retains aria-current.
 
 ### Typography
 
-| Role          | Desktop           | Mobile        |
-| ------------- | ----------------- | ------------- |
-| Display       | 40–48 px, 600–700 | 30–34 px      |
-| Page title    | 30–36 px, 600     | 26–30 px      |
-| Section title | 22–24 px, 600     | 20–22 px      |
-| Card title    | 16–18 px, 600     | 15–16 px      |
-| Body          | 15–16 px, 400     | 14–16 px      |
-| Form input    | 16 px minimum     | 16 px minimum |
-| Label         | 13–14 px, 500     | 13–14 px      |
-| Caption       | 12–13 px          | 12–13 px      |
+| Role            | Desktop       | Mobile        | Weight |
+| --------------- | ------------- | ------------- | ------ |
+| Library display | 64 px / 1.12  | 40 px / 1.12  | 600    |
+| Page title      | 40 px / 1.28  | 32 px / 1.2   | 600    |
+| Section title   | 32 px / 1.28  | 24 px / 1.3   | 600    |
+| Card title      | 20 px / 1.4   | 18 px / 1.4   | 600    |
+| Body            | 15 px / 1.45  | 15 px / 1.45  | 400    |
+| Controls        | 16 px minimum | 16 px minimum | 400    |
+| Buttons         | 14 px         | 14 px         | 400    |
+| Labels          | 14 px         | 14 px         | 500    |
+| Caption         | 12 px / 1.64  | 12 px / 1.64  | 400    |
 
-Use logical heading order. Visual size does not change semantic heading level.
+Visual sizes preserve logical heading levels. Long Unicode names wrap; text and controls remain usable on narrow screens.
 
-### Spacing radius and elevation
+### Geometry, spacing, elevation, and motion
 
-- Base spacing unit: 4 px.
-- Approved spacing steps: 4, 8, 12, 16, 24, 32, and 48 px.
-- Surface radii: 12, 16, and 24 px. Pills use 999 px.
-- Use small shadows for selected floating cards, medium for sheets, and large only for dialogs. Gallery cards do not receive a heavy shadow by default.
-- Minimum interactive target: 44×44 px. Mobile primary actions may be 48–52 px high.
-
-### Motion
-
-| Interaction     | Standard                    | Reduced motion           |
-| --------------- | --------------------------- | ------------------------ |
-| Card hover      | translate Y -2 px, 150 ms   | no translation           |
-| Button feedback | color/border, 150 ms        | immediate                |
-| Dialog          | fade/scale, 180 ms          | immediate or subtle fade |
-| Sheet           | slide, 220 ms               | no slide                 |
-| Selection       | border/background, 120 ms   | immediate                |
-| Gallery reflow  | 180–240 ms when performant  | immediate                |
-| Image load      | reserved skeleton then fade | no fade                  |
+- 4 px base scale; 28 px desktop panel padding, reduced to 16–20 px on mobile.
+- 36 px content cards/dialogs, 14 px controls, 12 px badges, 40 px artwork tiles; pill navigation.
+- 1200 px outer page container, 1024 px form container, and existing 440 px Auth card. Major Library sections use 80 px desktop spacing; compact forms retain shorter task-based groups.
+- No content-card shadows. Primary actions have a subtle inset highlight; floating menus/sheets/dialogs retain restrained elevation.
+- Skeletons use cloud-gray fills so they remain visible against both white cards and the zinc canvas.
+- 44 px minimum touch targets; large primary actions may use 48 px. All text inputs remain at least 16 px.
+- Stable root scrollbar gutter prevents centered content moving between short and long pages.
+- Existing hover/selection/dialog/sheet/image transitions remain restrained and respect reduced motion. Toast timings and pending semantics remain unchanged.
 
 ## Responsive foundations
 
 | Dimension        | Mobile under 640     | Tablet 640–1023      | Desktop 1024 and wider        |
 | ---------------- | -------------------- | -------------------- | ----------------------------- |
 | Page padding     | 16–20 px             | 24–32 px             | 32–48 px                      |
-| Container        | full available width | centered             | centered, max 1200–1280 px    |
+| Container        | full available width | centered             | centered, max 1200 px         |
 | Global nav       | compact top header   | compact top header   | full top navigation           |
 | Collection grid  | 1–2 columns          | 2–3 columns          | 3–4 or auto-fit at 240–260 px |
 | Preset grid      | 2 columns            | 3 columns            | 4 columns where possible      |
@@ -126,12 +89,12 @@ Test 320, 375, 640, 768, 1024, and 1440 px. Never allow a saved column preferenc
 
 - Applies approved padding and max-width behavior.
 - Never forces horizontal scrolling at 320 px.
-- Use the 80 rem `page` token for Library/gallery, the 64 rem `form` token for Collection setup, Settings, and Item forms/details, and the existing 27.5 rem Auth card. Keep form headings aligned with their content; different content roles need not share one width.
+- Use the 75 rem `page` token for Library/gallery, the 64 rem `form` token for Collection setup, Settings, and Item forms/details, and the existing 27.5 rem Auth card. Keep form headings aligned with their content; different content roles need not share one width.
 
 ### PresetArtwork
 
 - Props: semantic preset key, size, and variant.
-- Resolves Lucide icon and pastel token internally.
+- Resolves Lucide icon and neutral token internally.
 - Decorative instances are hidden from assistive technology; meaningful instances receive an accessible label outside the artwork.
 - Never expose image filenames or fixed Collection-card dimensions.
 
@@ -158,9 +121,9 @@ Test 320, 375, 640, 768, 1024, and 1440 px. Never allow a saved column preferenc
 
 ### Cards
 
-- Collection card: Option C artwork, name, Item count, overflow actions.
+- Collection card: neutral Lucide artwork, name, Item count, overflow actions.
 - Preset card: artwork, label, selected outline, and check indicator.
-- Folder card: Option C artwork, option label, and count, including zero.
+- Folder card: neutral Lucide artwork, option label, and count, including zero.
 - Gallery card: reserved image area and optional ordered text. Details OFF means no text, including Title.
 - Cards used as navigation must be keyboard operable with visible focus.
 

@@ -11,6 +11,7 @@ The project is the private personal collection application branded **little thin
 Use the project sources in this order:
 
 1. `../Personal_Collection_Library_Updated_Product_Technical_Spec.docx` controls functional behavior, scope, data, architecture, security, and acceptance criteria.
+   `DESIGN.md` is the user-approved visual direction as of 30 October 2026. It supersedes earlier visual palette, font, radius, and elevation defaults; preserve functional behavior, accessibility, and responsive form factors. See `docs/visual-direction.md` for the application mapping.
 2. `../Personal_Collection_Library_UX_UI_Specification_Expanded_v2.docx` controls detailed interaction, responsive behavior, accessibility, components, and visual design when it does not conflict with the Product and Technical Specification.
 3. `../Personal_Collection_Annotated_Screen_Designs_REVISED.pdf` is a visual reference. It does not override written rules or promote a P1 or P2 feature into P0.
 4. `../docs/decisions.md` records approved resolutions and defaults. `../docs/requirements-review.md` records the consolidated requirements and known assumptions.
@@ -34,7 +35,7 @@ Examples of deferred work include search and library sorting, image download, br
 - Use React Server Components by default. Add `"use client"` only at the smallest interactive boundary that needs browser state, effects, event handlers, or client-only APIs.
 - Use Server Actions for authenticated mutations when appropriate. Use Route Handlers for HTTP responses, signed or authenticated file delivery, webhooks, and operations that require an explicit HTTP boundary.
 - Use Tailwind CSS for styling and shadcn/ui primitives for accessible foundational controls.
-- Use Lucide icons. MVP preset artwork is a semantic Lucide icon on an approved pastel background.
+- Use Lucide icons. MVP preset artwork is a semantic Lucide icon on a neutral background under the approved DESIGN.md direction.
 - Use Supabase Auth, PostgreSQL, Row Level Security, and private Storage.
 - Use Zod at every untrusted input boundary. Client validation improves UX; server validation is authoritative.
 - Deploy to Vercel when deployment is explicitly requested. Do not configure or push a deployment early without approval.
@@ -166,10 +167,10 @@ The actual structure may adapt to the initialized repository, but preserve these
 
 - Centralize colors, typography, spacing, radii, elevation, motion, breakpoints, and semantic states. Do not scatter raw design values through feature components.
 - Map tokens through Tailwind and shadcn/ui theme variables where possible.
-- Use the approved warm neutral base and muted pastel palette from the UX specification.
+- Use the DESIGN.md zinc-neutral palette, restrained accents, and border-led surfaces.
 - Use semantic tokens for background, surface, foreground, muted foreground, border, focus, destructive, error, success, disabled, and selection states.
 - Verify contrast; do not assume a proposed pastel or muted color is accessible.
-- Use Plus Jakarta Sans for English UI and a fallback stack that safely renders Unicode content. Include Noto Sans Thai support when Thai content is rendered.
+- Use DM Sans, the DESIGN.md substitute for Cosmica, for English UI and a fallback stack that safely renders Unicode content. Include Noto Sans Thai support when Thai content is rendered.
 - Maintain the approved type hierarchy and 4 px spacing scale.
 - Use restrained shadows and motion. Respect `prefers-reduced-motion`.
 - Do not use pale accent colors for small body text.

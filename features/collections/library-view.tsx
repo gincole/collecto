@@ -34,18 +34,18 @@ export function LibraryView({ collections }: LibraryViewProps) {
     <ul className="grid min-w-0 grid-cols-1 gap-4 min-[360px]:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
       {collections.map((collection) => (
         <li key={collection.id}>
-          <article className="border-border bg-surface rounded-card shadow-card duration-base ease-standard relative h-full border p-2 transition-[transform,border-color,box-shadow] motion-safe:hover:-translate-y-0.5">
+          <article className="border-border bg-surface rounded-card duration-base ease-standard relative h-full border transition-[transform,border-color] motion-safe:hover:-translate-y-0.5">
             <Link
               aria-label={`Open ${collection.name}`}
-              className="focus-ring rounded-control block"
+              className="focus-ring rounded-card block h-full"
               href={`/collections/${collection.id}`}
             >
               <PresetArtwork
-                className="h-28 w-full sm:h-36"
+                className="rounded-t-card h-28 w-full rounded-b-none sm:h-36"
                 presetKey={collection.presetKey ?? "blank"}
                 size="lg"
               />
-              <div className="space-y-1 px-2 pt-3 pr-10 pb-2">
+              <div className="sm:p-panel space-y-2 p-4 pr-12 sm:pr-14">
                 <h2 className="text-card-title-mobile sm:text-card-title line-clamp-2">
                   {collection.name}
                 </h2>
@@ -54,7 +54,7 @@ export function LibraryView({ collections }: LibraryViewProps) {
                 </p>
               </div>
             </Link>
-            <details className="group absolute right-2 bottom-2">
+            <details className="group absolute right-3 bottom-3">
               <summary
                 aria-label={`Collection actions for ${collection.name}`}
                 className="touch-target focus-ring hover:bg-surface-muted rounded-control flex cursor-pointer list-none items-center justify-center [&::-webkit-details-marker]:hidden"
@@ -64,7 +64,7 @@ export function LibraryView({ collections }: LibraryViewProps) {
               <div className="border-border bg-surface shadow-sheet rounded-control absolute right-0 bottom-full z-10 mb-1 w-40 border p-1">
                 <Link
                   aria-label={`Rename ${collection.name}`}
-                  className="touch-target hover:bg-surface-muted focus-ring flex w-full items-center rounded-lg px-3 text-left text-sm"
+                  className="touch-target hover:bg-surface-muted focus-ring rounded-control flex w-full items-center px-3 text-left text-sm"
                   href={`/collections/${collection.id}/settings` as Route}
                 >
                   Rename

@@ -39,7 +39,7 @@ function ErrorState({
     <section
       aria-labelledby={titleId}
       className={cn(
-        "border-error/25 bg-surface rounded-card flex min-h-64 flex-col items-center justify-center gap-4 border p-6 text-center sm:p-8",
+        "border-error/25 bg-surface rounded-card sm:p-panel flex min-h-64 flex-col items-center justify-center gap-4 border p-5 text-center",
         className,
       )}
     >

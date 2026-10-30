@@ -104,7 +104,7 @@ export function CollectionSettings({
     <div className="space-y-6 pt-6">
       <section
         aria-labelledby="collection-general-heading"
-        className="border-border bg-surface rounded-card border p-4 sm:p-6"
+        className="border-border bg-surface rounded-card sm:p-panel border p-4"
       >
         <div className="mb-6 space-y-1">
           <h2
@@ -200,7 +200,7 @@ export function CollectionSettings({
 
       <section
         aria-labelledby="delete-collection-heading"
-        className="border-destructive/40 bg-surface rounded-card border p-4 sm:p-6"
+        className="border-destructive/40 bg-surface rounded-card sm:p-panel border p-4"
         id="delete-collection"
       >
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

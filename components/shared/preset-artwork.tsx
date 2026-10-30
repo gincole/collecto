@@ -60,7 +60,7 @@ function PresetArtwork({
         "text-foreground inline-flex shrink-0 items-center justify-center",
         color,
         sizeStyles[size].container,
-        variant === "tile" ? "rounded-card" : "rounded-pill",
+        variant === "tile" ? "rounded-artwork" : "rounded-pill",
         className,
       )}
       data-preset={presetKey}

@@ -18,7 +18,7 @@ Audited on 30 October 2026 against the Product and Technical Specification, UX/U
 
 - Removed an unlayered `font: inherit` reset that overrode Tailwind control typography. Inputs retain a minimum 16 px font; labels and buttons use the existing type tokens.
 - Shared buttons do not shrink in flex layouts. The Delete section's text can wrap, preserving the action label and icon.
-- Collection setup, Settings, and Item pages use a 64 rem form container; gallery/Library retain the 80 rem content container and Auth retains its 27.5 rem card. These widths intentionally follow content roles. Form headings and content now align.
+- Collection setup, Settings, and Item pages use a 64 rem form container; M7-T02C changes gallery/Library to the reference's 75 rem outer container, while Auth retains its 27.5 rem card. These widths intentionally follow content roles. Form headings and content align.
 - Reused semantic surface, border, radius, error, and success tokens for image controls and feedback. Kept existing restrained transitions and reduced-motion support instead of adding decorative animation.
 - M7-T02A replaces the original permanent notification region with a timed top toast, retaining live roles, manual dismissal, interaction pauses, and reduced-motion support. Inline errors remain next to the active form or dialog; successful Settings/Gallery saves no longer leave permanent banners.
 - Redirect notices use fixed, allowlisted codes and are removed from the URL after consumption; arbitrary URL text is not rendered as feedback.
@@ -28,7 +28,7 @@ Audited on 30 October 2026 against the Product and Technical Specification, UX/U
 - M7-T02A audits all seven form locations: Auth, Collection wizard, Collection identity, Collection deletion, Item Add/Edit, Item deletion, and Logout. They use `noValidate`; server validation and inline errors remain authoritative. There are no `window.alert`, `window.confirm`, or `window.prompt` calls in application code. Field/Option and Gallery editors use explicit action buttons rather than native form submission. All persisted delete actions now share the documented destructive-control contract.
 - Item forms check native `validity.badInput` before serializing Number/Rating/Date controls. Unfinished input is retained for a custom inline error and cannot silently clear an optional saved value.
 - M7-T02B addresses Browse transitions with immediate optimistic views from already-loaded Items while the validated server URL synchronizes. Clicking the current view avoids a redundant request. The remaining server reads and ownership checks are retained; no network-latency reduction is claimed.
-- Still missing: stable scrollbar gutter across short and long pages to avoid centered-header movement. This remains M7-T02 work.
+- M7-T02C reserves a stable root scrollbar gutter to prevent centered-header movement. Browser confirmation remains excluded.
 
 - M7-T01A: customize preset Fields before final Create. The current wizard is an explicitly described preview; adding editing requires a separate validated creation contract and atomic persistence tests. Persisted custom Field types remain immutable under B02.
 - M7-T02: complete the cross-screen typography, spacing, focus, contrast, touch-target, and responsive conformance audit. Static/unit checks cannot establish final visual quality. User browser testing can supply additional evidence while automated browser testing remains excluded.
@@ -56,3 +56,9 @@ This code audit covers every application Link, imperative navigation, form/actio
 | Full-size private image in a new tab                                           | Native browser navigation to the authorized image route; no application-level prefetch or private URL cache added                                     |
 
 Navigation progress is portaled outside cards to avoid transformed or clipped ancestors. It does not move content or add a blocking overlay. Image placeholders and progress animation respect reduced motion. Existing server ownership checks, validated query recovery, private-image authorization, and persistence remain unchanged.
+
+## M7-T02C visual coverage
+
+The user-approved root DESIGN.md now supplies the zinc palette, DM Sans substitution, card/control/badge/artwork radii, compact type, panel padding, and restrained elevation. See docs/visual-direction.md for explicit supersession of the earlier visual defaults and safety/accessibility exceptions. Shared tokens apply to all existing routes and states. Auth and dynamic Item Select controls now reuse the same form primitives. Library, folders, presets, gallery/live preview, Settings panels, dialogs and sheets receive the corresponding layout treatment. The Library skeleton follows its larger heading and section spacing; all previous loading and notification behavior remains intact.
+
+The 1200 px outer page container leaves less gallery space than the previous 1280 px container, so five-column mode activates at 68 rem of gallery width rather than the now-unreachable 72 rem. One-column horizontal cards, narrow-screen column caps, ratios, image fitting, and details toggles are preserved. Contrast/token tests and existing component tests check the mapped contracts; the compiled production CSS is checked for the generated custom layout/type styles. Browser visual, real viewport, scroll-lock, and manual focus confirmation remain part of M7-T02 and are not claimed complete.

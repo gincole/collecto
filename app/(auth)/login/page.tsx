@@ -14,7 +14,7 @@ export default async function LoginPage({
   return (
     <AuthShell>
       <div className="mb-8 space-y-2 text-center">
-        <p className="text-foreground-muted text-sm font-semibold tracking-[0.16em] uppercase">
+        <p className="text-foreground-muted text-sm font-medium">
           little things.
         </p>
         <h1 className="text-page-title-mobile sm:text-page-title">

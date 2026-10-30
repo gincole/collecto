@@ -570,6 +570,14 @@ Use shared deletion triggers/menu links and permanent-confirmation styling while
 - **Acceptance:** Browse tabs, folders, and folder-back render immediately from loaded Items while synchronizing the URL; authoritative server state and ownership checks remain intact. Navigation has feedback before route skeletons arrive, including initial layout loading. Retries, Field/Option mutations, wizard cancellation, and private images visibly indicate pending work. Local draft edits remain immediate. Preserve modified links, errors, image retry, reduced motion, and reserved image geometry.
 - **Verification:** deferred-request component tests, existing ownership/route and mutation tests, formatter, lint, strict TypeScript, full Vitest suite, dependency audit, production build, and diff review. Browser and hosted checks excluded per user instruction; no claim of measured end-to-end latency or final visual conformance.
 
+### M7-T02C Apply DESIGN.md across the application
+
+- **Depends on:** M7-T02B (complete)
+- **Scope:** explicit user request to adopt the new Awesomic visual reference throughout existing screens. See `docs/visual-direction.md` for authority changes and accessibility exceptions.
+- **Acceptance:** use the zinc palette, DM Sans substitute with Thai fallback, reference typography, 36 px cards/14 px controls, 1200 px page container, consistent panel padding, border-led content surfaces, and restrained floating elevation. Cover Auth, header, Library, wizard, Collection/Field settings, Browse/folders, gallery/preview, Item forms/details, dialogs, feedback and loading/error/empty states. Preserve CRUD, privacy, confirmation, gallery columns 1–5, all ratios, responsive form factors, minimum input/touch sizes, contrast and pending feedback. Reserve a stable scrollbar gutter.
+- **Verification:** design token/contrast regressions and existing component tests, formatter, ESLint, strict TypeScript, full Vitest suite, dependency audit, configured production build, and focused diff review. No browser/hosted tests per user instruction; full M7-T02 conformance remains separate.
+- **Expected commit:** `style(ui)` with the source reference, authority mapping, and task tracker included.
+
 ### M7-T03 Complete security and failure-path test suite
 
 - **Critical path:** No, but release-blocking P0

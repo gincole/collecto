@@ -1,5 +1,6 @@
 "use client";
 
+import { Input } from "@/components/ui/form-control";
 import Link from "@/components/shared/navigation-link";
 import { useActionState, useEffect, useRef } from "react";
 import { useFeedback } from "@/components/shared/feedback";
@@ -74,19 +75,19 @@ export function AuthForm({ action, mode, returnTo }: AuthFormProps) {
       className="space-y-5"
     >
       {returnTo ? (
-        <input name="returnTo" type="hidden" value={returnTo} />
+        <Input name="returnTo" type="hidden" value={returnTo} />
       ) : null}
       <div className="space-y-2">
         <label className="text-label block" htmlFor={`${mode}-email`}>
           Email
         </label>
-        <input
+        <Input
           aria-describedby={
             state.fieldErrors?.email ? `${mode}-email-error` : undefined
           }
           aria-invalid={Boolean(state.fieldErrors?.email)}
           autoComplete="email"
-          className="border-control-border bg-surface focus-ring rounded-control h-12 w-full border px-3 text-base"
+          className="h-11"
           id={`${mode}-email`}
           inputMode="email"
           name="email"
@@ -103,13 +104,13 @@ export function AuthForm({ action, mode, returnTo }: AuthFormProps) {
         <label className="text-label block" htmlFor={`${mode}-password`}>
           Password
         </label>
-        <input
+        <Input
           aria-describedby={
             state.fieldErrors?.password ? `${mode}-password-error` : undefined
           }
           aria-invalid={Boolean(state.fieldErrors?.password)}
           autoComplete={registering ? "new-password" : "current-password"}
-          className="border-control-border bg-surface focus-ring rounded-control h-12 w-full border px-3 text-base"
+          className="h-11"
           id={`${mode}-password`}
           minLength={8}
           name="password"
@@ -130,7 +131,7 @@ export function AuthForm({ action, mode, returnTo }: AuthFormProps) {
           >
             Confirm password
           </label>
-          <input
+          <Input
             aria-describedby={
               state.fieldErrors?.confirmPassword
                 ? "register-confirm-password-error"
@@ -138,7 +139,7 @@ export function AuthForm({ action, mode, returnTo }: AuthFormProps) {
             }
             aria-invalid={Boolean(state.fieldErrors?.confirmPassword)}
             autoComplete="new-password"
-            className="border-control-border bg-surface focus-ring rounded-control h-12 w-full border px-3 text-base"
+            className="h-11"
             id="register-confirm-password"
             minLength={8}
             name="confirmPassword"

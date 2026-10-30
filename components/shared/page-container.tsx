@@ -18,7 +18,7 @@ function PageContainer<T extends ElementType = "div">({
   return (
     <Component
       className={cn(
-        "px-page-mobile sm:px-page-tablet lg:px-page-desktop mx-auto w-full min-w-0 py-6 sm:py-8",
+        "px-page-mobile sm:px-page-tablet lg:px-page-desktop mx-auto w-full min-w-0 py-8 sm:py-12",
         width === "wide"
           ? "max-w-page"
           : width === "form"

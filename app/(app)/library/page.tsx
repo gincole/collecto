@@ -13,10 +13,10 @@ export default async function LibraryPage() {
     <PageContainer as="main">
       <header className="flex flex-col gap-5 py-2 sm:flex-row sm:items-end sm:justify-between sm:py-4">
         <div className="space-y-2">
-          <p className="text-foreground-muted text-sm font-semibold tracking-[0.16em] uppercase">
+          <p className="text-foreground-muted text-sm">
             Your private collection space
           </p>
-          <h1 className="text-page-title-mobile sm:text-page-title">
+          <h1 className="text-display-mobile sm:text-display">
             My Collections
           </h1>
           <p className="text-foreground-muted max-w-xl">
@@ -28,7 +28,7 @@ export default async function LibraryPage() {
         </Button>
       </header>
 
-      <section aria-label="Collections" className="pt-6 sm:pt-8">
+      <section aria-label="Collections" className="sm:pt-section pt-8">
         {result.status === "success" ? (
           <LibraryView collections={result.data} />
         ) : (

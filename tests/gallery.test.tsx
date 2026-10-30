@@ -204,7 +204,7 @@ describe("responsive gallery", () => {
       2: "@[20.5rem]:grid-cols-2",
       3: "@[42rem]:grid-cols-3",
       4: "@[56rem]:grid-cols-4",
-      5: "@[72rem]:grid-cols-5",
+      5: "@[68rem]:grid-cols-5",
     } as const;
 
     for (const columns of [1, 2, 3, 4, 5] as const) {

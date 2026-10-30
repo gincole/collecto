@@ -321,7 +321,7 @@ export function EditFieldDialog({
         showCloseButton={!busy}
       >
         <div className="space-y-1 pr-10">
-          <DialogTitle className="text-section-title">
+          <DialogTitle className="text-section-title-mobile sm:text-section-title">
             Edit {field.name}
           </DialogTitle>
           <DialogDescription className="text-foreground-muted">
@@ -505,7 +505,7 @@ export function AddFieldDialog({
         showCloseButton={!pending}
       >
         <div className="space-y-1 pr-10">
-          <DialogTitle className="text-section-title">
+          <DialogTitle className="text-section-title-mobile sm:text-section-title">
             Add custom field
           </DialogTitle>
           <DialogDescription className="text-foreground-muted">

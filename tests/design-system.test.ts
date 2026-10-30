@@ -48,6 +48,47 @@ function contrastRatio(foreground: string, background: string) {
 }
 
 describe("design-system tokens", () => {
+  it("applies the approved DESIGN.md zinc palette and border-led geometry", () => {
+    for (const [token, value] of Object.entries({
+      background: "#f4f4f5",
+      surface: "#ffffff",
+      "surface-muted": "#fafafa",
+      foreground: "#09090b",
+      "foreground-muted": "#52525b",
+      border: "#ececee",
+      "radius-card": "2.25rem",
+      "radius-control": "0.875rem",
+      "radius-badge": "0.75rem",
+      "radius-artwork": "2.5rem",
+      "container-page": "75rem",
+      "shadow-card": "none",
+      "text-display": "4rem",
+      "text-page-title": "2.5rem",
+      "text-section-title": "2rem",
+    }))
+      expect(readCssProperty(token), token).toBe(value);
+    expect(css).toContain("scrollbar-gutter: stable");
+    for (const name of [
+      "lavender",
+      "sage",
+      "peach",
+      "butter",
+      "sky",
+      "rose",
+      "sand",
+      "mint",
+    ]) {
+      const color = readCssProperty(`art-${name}`);
+      const rgb = color
+        .slice(1)
+        .match(/.{2}/g)
+        ?.map((channel) => Number.parseInt(channel, 16));
+      expect(
+        rgb && Math.max(...rgb) - Math.min(...rgb),
+        name,
+      ).toBeLessThanOrEqual(6);
+    }
+  });
   it("defines the complete semantic and preset color contract", () => {
     const requiredColors = [
       "background",
@@ -161,8 +202,8 @@ describe("design-system tokens", () => {
     }
 
     expect(readCssProperty("text-label--font-weight")).toBe("500");
-    expect(readCssProperty("text-card-title-mobile")).toBe("1rem");
-    expect(readCssProperty("text-caption")).toBe("0.8125rem");
+    expect(readCssProperty("text-card-title-mobile")).toBe("1.125rem");
+    expect(readCssProperty("text-caption")).toBe("0.75rem");
   });
 
   it("provides global focus, touch target, and reduced-motion foundations", () => {
@@ -177,11 +218,11 @@ describe("design-system tokens", () => {
   });
 
   it("configures optimized English and Thai font variables on the root layout", () => {
-    expect(layout).toContain("Plus_Jakarta_Sans");
+    expect(layout).toContain("DM_Sans");
     expect(layout).toContain("Noto_Sans_Thai");
-    expect(layout).toContain('variable: "--font-plus-jakarta"');
+    expect(layout).toContain('variable: "--font-dm-sans"');
     expect(layout).toContain('variable: "--font-noto-thai"');
-    expect(layout).toContain("plusJakartaSans.variable");
+    expect(layout).toContain("dmSans.variable");
     expect(layout).toContain("notoSansThai.variable");
     expect(layout).toContain('data-scroll-behavior="smooth"');
   });

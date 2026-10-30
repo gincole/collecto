@@ -27,14 +27,14 @@ export function AppHeader({ email, logoutAction }: AppHeaderProps) {
   }, [logoutState, notify]);
 
   return (
-    <header className="border-border bg-surface/95 sticky top-0 z-20 border-b backdrop-blur">
+    <header className="bg-surface sticky top-0 z-20">
       <div className="max-w-page px-page-mobile sm:px-page-tablet lg:px-page-desktop mx-auto flex h-16 items-center justify-between gap-4">
-        <Link className="text-card-title tracking-tight" href="/library">
+        <Link className="text-card-title font-semibold" href="/library">
           little things.
         </Link>
         <nav aria-label="Primary" className="flex items-center gap-1 sm:gap-3">
           <Link
-            className="touch-target focus-ring rounded-control inline-flex items-center px-2 text-sm font-semibold sm:px-3"
+            className="touch-target focus-ring hover:bg-surface-muted rounded-pill inline-flex items-center px-3 text-sm sm:px-4"
             href="/library"
           >
             My Library
