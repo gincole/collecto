@@ -9,6 +9,9 @@ const mocks = vi.hoisted(() => ({
   option: vi.fn(),
   refresh: vi.fn(),
   notify: vi.fn(),
+  update: vi.fn(),
+  impact: vi.fn(),
+  remove: vi.fn(),
 }));
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ refresh: mocks.refresh }),
@@ -21,7 +24,13 @@ vi.mock("@/features/collections/actions", () => ({
   deleteCollectionFromSettingsAction: vi.fn(),
 }));
 vi.mock("@/features/fields/action-bindings", () => ({
-  fieldActions: { createField: mocks.create, createOption: mocks.option },
+  fieldActions: {
+    createField: mocks.create,
+    createOption: mocks.option,
+    updateField: mocks.update,
+    getFieldImpact: mocks.impact,
+    deleteField: mocks.remove,
+  },
 }));
 
 const collection: CollectionRecord = {
@@ -47,6 +56,12 @@ const collection: CollectionRecord = {
 };
 beforeEach(() => {
   vi.clearAllMocks();
+  mocks.update.mockResolvedValue({ status: "success" });
+  mocks.impact.mockResolvedValue({
+    status: "success",
+    data: { affectedItemCount: 2 },
+  });
+  mocks.remove.mockResolvedValue({ status: "success" });
   mocks.create.mockResolvedValue({
     status: "success",
     data: { id: "00000000-0000-4000-8000-000000000002" },
@@ -54,6 +69,74 @@ beforeEach(() => {
 });
 
 describe("Collection Settings Add Field step", () => {
+  const field = {
+    id: "00000000-0000-4000-8000-000000000003",
+    name: "Author",
+    type: "text" as const,
+    required: false,
+    position: 0,
+    options: [],
+  };
+  it("edits in the same modal, preserves settings, and guards pending saves", async () => {
+    const user = userEvent.setup(),
+      close = vi.fn(),
+      request = Promise.withResolvers<{ status: "error" }>();
+    render(
+      <SettingsModal
+        collection={{ ...collection, fields: [field] }}
+        onClose={close}
+      />,
+    );
+    const dialog = screen.getByRole("dialog");
+    await user.type(screen.getByLabelText("Collection name"), " draft");
+    expect(screen.queryByRole("button", { name: "Delete Author" })).toBeNull();
+    await user.click(screen.getByRole("button", { name: "Edit Author" }));
+    expect(screen.getAllByRole("dialog", { hidden: true })).toHaveLength(1);
+    expect(screen.getByRole("dialog", { name: "Edit Author" })).toBe(dialog);
+    await user.click(screen.getByRole("button", { name: "Back" }));
+    expect(screen.getByRole("button", { name: "Edit Author" })).toHaveFocus();
+    await user.click(screen.getByRole("button", { name: "Edit Author" }));
+    await user.clear(screen.getByLabelText("Field name"));
+    await user.type(screen.getByLabelText("Field name"), "Writer");
+    mocks.update.mockReturnValueOnce(request.promise);
+    await user.click(screen.getByRole("button", { name: "Save field" }));
+    expect(screen.getByRole("button", { name: "Back" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Close" })).toBeDisabled();
+    await act(async () => {
+      request.resolve({ status: "error" });
+    });
+    expect(await screen.findByRole("alert")).toBeVisible();
+    expect(screen.getByLabelText("Field name")).toHaveValue("Writer");
+    await user.click(screen.getByRole("button", { name: "Save field" }));
+    expect(screen.getByRole("dialog", { name: "Collection settings" })).toBe(
+      dialog,
+    );
+    expect(screen.getByLabelText("Collection name")).toHaveValue("Books draft");
+    expect(close).not.toHaveBeenCalled();
+  });
+  it("deletes from the editor's danger section with impact confirmation", async () => {
+    const user = userEvent.setup();
+    render(
+      <SettingsModal
+        collection={{ ...collection, fields: [field] }}
+        onClose={vi.fn()}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Edit Author" }));
+    expect(screen.getByRole("heading", { name: "Delete field" })).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Delete Author" }));
+    expect(await screen.findByText(/2 items have a value/)).toBeVisible();
+    await user.click(
+      screen.getByRole("button", { name: "Delete permanently" }),
+    );
+    expect(
+      await screen.findByRole("dialog", { name: "Collection settings" }),
+    ).toBeVisible();
+    expect(mocks.remove).toHaveBeenCalledExactlyOnceWith({
+      collectionId: collection.id,
+      fieldId: field.id,
+    });
+  });
   it("reuses one modal and fixed footer, then restores the unsaved settings draft and focus", async () => {
     const user = userEvent.setup();
     render(<SettingsModal collection={collection} onClose={vi.fn()} />);

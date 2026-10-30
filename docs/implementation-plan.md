@@ -1021,3 +1021,37 @@ no body duplicate, outer padding and divider gutter contracts, existing form and
 modal tests, deployment gate, emitted CSS inspection, independent review and
 staged diff/secret checks. No browser checks, dependencies or schema changes.
 One focused fix(ui) commit; no push.
+
+## M7-T02U: Consistent modal actions and inline Field editing
+
+User-approved scope: remove Add Item modal Cancel and right-align image controls;
+audit modal action sizing; make Collection Settings Edit Field another screen in
+the existing modal; move Field deletion into that editor using the Collection
+Delete danger-section/impact-confirmation pattern; reorder Gallery Settings and
+replace its small finite dropdowns with selection buttons. Depends on M7-T02T.
+
+Reuse EditFieldForm for the local Settings step and standalone editor wrapper.
+Keep collection identity drafts mounted, restore the Edit trigger on Back/save,
+and return to Settings after confirmed deletion. Delete stays only inside the
+editor, with a distinct destructive confirmation matching Collection deletion.
+Preserve stable IDs, Field type immutability, Option editing/retry, ownership,
+impact checks, pending exit guards and generic errors. Remove row/drag-preview
+Delete controls. If a Field disappears remotely, provide a safe Back route.
+
+Add Item's modal footer has Save only; page-mode Cancel stays unchanged. Image
+chooser controls align right in modals. Use the common 44 px action and icon
+button heights throughout modal flows; remove the compact Option action override.
+Preset choice cards retain their approved card geometry.
+
+Gallery rows: Sort order, Columns, Image ratio, Image fit, Spacing, Show details.
+All headings have Lucide icons. Sort remains the shared dropdown, aligned right;
+the other five use a reusable pill-style segmented radio control based on Button,
+with roving focus/arrow/Home/End keyboard behavior, wrapping on narrow screens and
+44 px targets. Show details choices are Show and Not show. Preserve option values,
+live preview, visible fields, validation, draft cancellation and persistence.
+
+Verification: same-surface Edit/back/failure/pending/save/delete regressions,
+Add Item action alignment, Gallery ordering/icons/radios/keyboard/size and existing
+preview/save/axe checks; full deployment gate, independent review and staged
+secret/diff inspection. No browser testing, dependencies or schema changes. One
+focused fix(ui) commit, no push.

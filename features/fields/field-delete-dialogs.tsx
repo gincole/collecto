@@ -5,6 +5,7 @@ import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
 import { DeleteButton } from "@/components/shared/delete-button";
+import { useFlowBusy } from "@/components/shared/flow-modal";
 import {
   Dialog,
   DialogClose,
@@ -31,12 +32,21 @@ type DeleteTarget = {
   subject: "Field" | "Option";
 };
 
-function DeleteSchemaDialog({ target }: { target: DeleteTarget }) {
+function DeleteSchemaDialog({
+  target,
+  onDeleted,
+  disabled,
+}: {
+  target: DeleteTarget;
+  onDeleted?: () => void;
+  disabled?: boolean;
+}) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [impact, setImpact] = useState<number>();
   const [message, setMessage] = useState<string>();
   const [pending, startTransition] = useTransition();
+  useFlowBusy(pending);
 
   function handleOpenChange(nextOpen: boolean) {
     if (pending) return;
@@ -60,6 +70,7 @@ function DeleteSchemaDialog({ target }: { target: DeleteTarget }) {
       const result = await target.remove();
       if (result.status === "success") {
         setOpen(false);
+        onDeleted?.();
         router.refresh();
       } else setMessage(errorMessage(result, target.subject, "delete"));
     });
@@ -68,7 +79,11 @@ function DeleteSchemaDialog({ target }: { target: DeleteTarget }) {
   return (
     <Dialog onOpenChange={handleOpenChange} open={open}>
       <DialogTrigger asChild>
-        <DeleteButton aria-label={`Delete ${target.name}`} type="button" />
+        <DeleteButton
+          disabled={disabled}
+          aria-label={`Delete ${target.name}`}
+          type="button"
+        />
       </DialogTrigger>
       <DialogContent
         role="alertdialog"
@@ -133,13 +148,19 @@ export function DeleteFieldDialog({
   actions,
   collectionId,
   field,
+  onDeleted,
+  disabled,
 }: {
   actions: FieldManagerActions;
   collectionId: string;
   field: Field;
+  onDeleted?: () => void;
+  disabled?: boolean;
 }) {
   return (
     <DeleteSchemaDialog
+      onDeleted={onDeleted}
+      disabled={disabled}
       target={{
         description: (impact) =>
           `${impact} ${impact === 1 ? "item has" : "items have"} a value for this Field. Those values and any Gallery reference will be permanently removed.`,

@@ -136,6 +136,51 @@ describe("Gallery Settings validation and persistence", () => {
 });
 
 describe("Gallery Settings draft", () => {
+  it("puts icon-labelled Sort first and uses standard-size choice buttons for the other settings", async () => {
+    const user = userEvent.setup();
+    render(
+      <GallerySettings
+        collection={collection}
+        items={[]}
+        saveAction={vi.fn()}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Gallery settings" }));
+    const rows = document.querySelectorAll("[data-gallery-setting]");
+    expect(
+      Array.from(rows).map((row) => row.getAttribute("data-gallery-setting")),
+    ).toEqual([
+      "Sort order",
+      "Columns",
+      "Image ratio",
+      "Image fit",
+      "Spacing",
+      "Show details",
+    ]);
+    for (const row of rows)
+      expect(row.querySelector("svg[aria-hidden=true]")).not.toBeNull();
+    expect(screen.getByRole("combobox", { name: "Sort order" })).toBeVisible();
+    expect(screen.queryByRole("combobox", { name: "Columns" })).toBeNull();
+    const columns = screen.getByRole("radiogroup", { name: "Columns" });
+    for (const choice of within(columns).getAllByRole("radio"))
+      expect(choice).toHaveClass("h-11");
+    within(columns).getByRole("radio", { name: "3" }).focus();
+    await user.keyboard("{ArrowRight}");
+    expect(within(columns).getByRole("radio", { name: "4" })).toHaveAttribute(
+      "aria-checked",
+      "true",
+    );
+    await user.click(
+      within(
+        screen.getByRole("radiogroup", { name: "Show details" }),
+      ).getByRole("radio", { name: "Not show" }),
+    );
+    expect(
+      within(
+        screen.getByRole("radiogroup", { name: "Show details" }),
+      ).getByRole("radio", { name: "Not show" }),
+    ).toHaveAttribute("aria-checked", "true");
+  });
   it("keeps sheet controls labelled and accessible in its open state", async () => {
     const user = userEvent.setup();
     render(
@@ -258,7 +303,11 @@ describe("Gallery Settings draft", () => {
     expect(within(dialog).getByText("Sample item")).toBeInTheDocument();
     await chooseOption(user, screen.getByLabelText("Columns"), "5");
     await user.click(screen.getByLabelText("Description"));
-    await user.click(screen.getByLabelText("Show details"));
+    await chooseOption(
+      user,
+      screen.getByRole("radiogroup", { name: "Show details" }),
+      "false",
+    );
     expect(within(dialog).queryByText("Sample item")).not.toBeInTheDocument();
     expect(save).not.toHaveBeenCalled();
     await user.click(screen.getByRole("button", { name: "Save changes" }));
@@ -290,7 +339,12 @@ describe("Gallery Settings draft", () => {
     await user.click(screen.getByRole("button", { name: "Discard changes" }));
     expect(trigger).toHaveFocus();
     await user.click(trigger);
-    expect(screen.getByLabelText("Columns")).toHaveTextContent("3");
+    expect(
+      within(screen.getByRole("radiogroup", { name: "Columns" })).getByRole(
+        "radio",
+        { name: "3" },
+      ),
+    ).toHaveAttribute("aria-checked", "true");
     expect(save).not.toHaveBeenCalled();
   });
   it("enforces the field cap, supports keyboard ordering, and preserves a failed draft", async () => {

@@ -209,6 +209,7 @@ export function ItemForm({
         }
       >
         <ImageUploader
+          alignActions={modal ? "end" : "start"}
           error={state.fieldErrors?.image}
           hasImage={Boolean(item?.imagePath)}
           itemId={item?.id}
@@ -272,25 +273,27 @@ export function ItemForm({
         </div>
       </div>
       <ModalActions>
-        <Button asChild variant="outline">
-          <Link
-            aria-disabled={isPending}
-            onClick={(event) => {
-              if (isPending) event.preventDefault();
-              else if (dismissFlow) {
-                event.preventDefault();
-                dismissFlow();
+        {!(modal && mode === "create") ? (
+          <Button asChild variant="outline">
+            <Link
+              aria-disabled={isPending}
+              onClick={(event) => {
+                if (isPending) event.preventDefault();
+                else if (dismissFlow) {
+                  event.preventDefault();
+                  dismissFlow();
+                }
+              }}
+              href={
+                item
+                  ? `/collections/${collectionId}/items/${item.id}`
+                  : `/collections/${collectionId}`
               }
-            }}
-            href={
-              item
-                ? `/collections/${collectionId}/items/${item.id}`
-                : `/collections/${collectionId}`
-            }
-          >
-            Cancel
-          </Link>
-        </Button>
+            >
+              Cancel
+            </Link>
+          </Button>
+        ) : null}
         <Button
           form={formId}
           aria-busy={isPending}

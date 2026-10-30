@@ -254,6 +254,10 @@ describe("ready local dialogs", () => {
     const opener = screen.getByRole("button", { name: "Add item" });
     await user.click(opener);
     expect(screen.getByLabelText("Author")).toBeVisible();
+    expect(screen.queryByRole("link", { name: "Cancel" })).toBeNull();
+    expect(
+      screen.getByLabelText("Item image").closest("[data-image-actions]"),
+    ).toHaveClass("justify-end");
     expect(mocks.createItem).not.toHaveBeenCalled();
     await user.type(screen.getByLabelText(/Title/), "Memory");
     const save = screen.getByRole("button", { name: "Save item" });

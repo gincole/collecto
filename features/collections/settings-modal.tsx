@@ -1,9 +1,11 @@
 "use client";
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { AddFieldForm } from "@/features/fields/add-field-form";
+import { EditFieldForm } from "@/features/fields/field-editors";
 import { useFeedback } from "@/components/shared/feedback";
 import { fieldActionsWithFeedback } from "@/features/fields/feedback-actions";
-import { FlowModal } from "@/components/shared/flow-modal";
+import { FlowModal, ModalActions } from "@/components/shared/flow-modal";
+import { Button } from "@/components/ui/button";
 import { FieldManager } from "@/features/fields/field-manager";
 import { fieldActions } from "@/features/fields/action-bindings";
 import {
@@ -24,7 +26,12 @@ export function SettingsModal({
   initialSection?: "delete";
   returnFocus?: RefObject<HTMLElement | null>;
 }) {
-  const [step, setStep] = useState<"settings" | "add-field">("settings");
+  const [step, setStep] = useState<"settings" | "add-field" | "edit-field">(
+    "settings",
+  );
+  const [editFieldId, setEditFieldId] = useState<string>();
+  const editField = collection.fields.find((field) => field.id === editFieldId);
+  const restoreTarget = useRef<HTMLButtonElement | null>(null);
   const addFieldTriggerRef = useRef<HTMLButtonElement>(null);
   const restoreFocus = useRef(false);
   const notify = useFeedback();
@@ -39,12 +46,21 @@ export function SettingsModal({
   useEffect(() => {
     if (step === "settings" && restoreFocus.current) {
       restoreFocus.current = false;
-      addFieldTriggerRef.current?.focus();
+      (restoreTarget.current?.isConnected
+        ? restoreTarget.current
+        : addFieldTriggerRef.current
+      )?.focus();
     }
   }, [step]);
   return (
     <FlowModal
-      title={step === "settings" ? "Collection settings" : "Add custom field"}
+      title={
+        step === "settings"
+          ? "Collection settings"
+          : step === "add-field"
+            ? "Add custom field"
+            : `Edit ${editField?.name ?? "field"}`
+      }
       onClose={onClose}
       returnFocus={returnFocus}
     >
@@ -63,7 +79,15 @@ export function SettingsModal({
           )}
         >
           <FieldManager
-            onAddField={() => setStep("add-field")}
+            onAddField={() => {
+              restoreTarget.current = addFieldTriggerRef.current;
+              setStep("add-field");
+            }}
+            onEditField={(field, trigger) => {
+              restoreTarget.current = trigger;
+              setEditFieldId(field.id);
+              setStep("edit-field");
+            }}
             addFieldTriggerRef={addFieldTriggerRef}
             actions={fieldActions}
             collectionId={collection.id}
@@ -79,6 +103,32 @@ export function SettingsModal({
           onCancel={showSettings}
           onCreated={showSettings}
         />
+      ) : null}
+      {step === "edit-field" ? (
+        editField ? (
+          <EditFieldForm
+            key={editField.id}
+            actions={actions}
+            collectionId={collection.id}
+            field={editField}
+            cancelLabel="Back"
+            onCancel={showSettings}
+            onSaved={showSettings}
+            onDeleted={() => {
+              restoreTarget.current = addFieldTriggerRef.current;
+              showSettings();
+            }}
+          />
+        ) : (
+          <>
+            <p role="alert">This Field is no longer available.</p>
+            <ModalActions>
+              <Button onClick={showSettings} variant="outline">
+                Back
+              </Button>
+            </ModalActions>
+          </>
+        )
       ) : null}
     </FlowModal>
   );

@@ -12,10 +12,12 @@ export function ImageUploader({
   error,
   itemId,
   hasImage,
+  alignActions = "start",
 }: {
   error?: string;
   itemId?: string;
   hasImage: boolean;
+  alignActions?: "start" | "end";
 }) {
   const [preview, setPreview] = useState<string>();
   const [removed, setRemoved] = useState(false);
@@ -64,7 +66,10 @@ export function ImageUploader({
         type="hidden"
         value={removed ? "true" : "false"}
       />
-      <div className="flex flex-wrap gap-2">
+      <div
+        data-image-actions
+        className={`flex flex-wrap gap-2 ${alignActions === "end" ? "justify-end" : ""}`}
+      >
         <label
           className={`${buttonVariants({ variant: "outline" })} focus-within:outline-focus cursor-pointer focus-within:outline-2 focus-within:outline-offset-2`}
         >

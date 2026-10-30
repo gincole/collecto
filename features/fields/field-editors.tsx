@@ -1,13 +1,12 @@
 "use client";
 
-import { Plus } from "lucide-react";
+import { Plus, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogHeader,
   DialogBody,
@@ -19,7 +18,8 @@ import {
 import { Input } from "@/components/ui/form-control";
 import { DATABASE_LIMITS } from "@/lib/validation/limits";
 
-import { DeleteOptionDialog } from "./field-delete-dialogs";
+import { ModalActions, useFlowBusy } from "@/components/shared/flow-modal";
+import { DeleteFieldDialog, DeleteOptionDialog } from "./field-delete-dialogs";
 import {
   editorClassName,
   errorMessage,
@@ -138,7 +138,6 @@ function OptionEditor({
                     () => optionRefs.current[option.id]?.focus(),
                   )
                 }
-                size="sm"
                 type="button"
                 variant="outline"
               >
@@ -239,17 +238,26 @@ function OptionEditor({
   );
 }
 
-export function EditFieldDialog({
+export function EditFieldForm({
   actions,
   collectionId,
   field,
+  onSaved,
+  onCancel,
+  onDeleted = onSaved,
+  onPendingChange,
+  cancelLabel = "Cancel",
 }: {
   actions: FieldManagerActions;
   collectionId: string;
   field: Field;
+  onSaved: () => void;
+  onCancel: () => void;
+  onDeleted?: () => void;
+  onPendingChange?: (pending: boolean) => void;
+  cancelLabel?: string;
 }) {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
   const [name, setName] = useState(field.name);
   const [required, setRequired] = useState(field.required);
   const [message, setMessage] = useState<string>();
@@ -257,11 +265,6 @@ export function EditFieldDialog({
   const [optionPending, setOptionPending] = useState(false);
   const nameRef = useRef<HTMLInputElement>(null);
   const busy = pending || optionPending;
-
-  function handleOpenChange(nextOpen: boolean) {
-    if (!nextOpen && busy) return;
-    setOpen(nextOpen);
-  }
 
   function handleSave() {
     setMessage(undefined);
@@ -273,7 +276,7 @@ export function EditFieldDialog({
         required,
       });
       if (result.status === "success") {
-        setOpen(false);
+        onSaved();
         router.refresh();
       } else setMessage(errorMessage(result, "Field"));
     });
@@ -283,8 +286,122 @@ export function EditFieldDialog({
     if (message) nameRef.current?.focus();
   }, [message]);
 
+  useFlowBusy(busy);
+  useEffect(() => {
+    nameRef.current?.focus();
+  }, []);
+  useEffect(() => {
+    onPendingChange?.(busy);
+  }, [busy, onPendingChange]);
   return (
-    <Dialog onOpenChange={handleOpenChange} open={open}>
+    <>
+      <p className="text-foreground-muted">
+        Rename this Field, change whether it is required, and manage Select
+        options without changing stable IDs.
+      </p>
+      <div className="mt-5 space-y-5">
+        <div className="space-y-2">
+          <label
+            className="text-label block"
+            htmlFor={`field-name-${field.id}`}
+          >
+            Field name
+          </label>
+          <Input
+            id={`field-name-${field.id}`}
+            maxLength={DATABASE_LIMITS.fieldName}
+            onChange={(event) => setName(event.target.value)}
+            ref={nameRef}
+            value={name}
+          />
+        </div>
+        <dl className="border-border bg-surface-muted rounded-control flex items-center justify-between gap-4 border px-3 py-2">
+          <dt className="text-foreground-muted text-sm">Field type</dt>
+          <dd className="font-semibold">
+            <FieldTypeLabel type={field.type} />
+          </dd>
+        </dl>
+        <RequiredControl required={required} setRequired={setRequired} />
+        {field.type === "select" ? (
+          <OptionEditor
+            actions={actions}
+            collectionId={collectionId}
+            field={field}
+            onPendingChange={setOptionPending}
+          />
+        ) : null}
+        {message ? (
+          <p className="text-error" role="alert">
+            {message}
+          </p>
+        ) : null}
+      </div>
+      <section
+        data-modal-section
+        aria-labelledby={`delete-field-heading-${field.id}`}
+        className="mt-6 space-y-3"
+      >
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0 space-y-1">
+            <h2
+              data-form-heading="section"
+              id={`delete-field-heading-${field.id}`}
+            >
+              Delete field
+            </h2>
+            <p className="text-foreground-muted">
+              Permanently delete this Field and its values from every Item. This
+              cannot be undone.
+            </p>
+          </div>
+          <DeleteFieldDialog
+            actions={actions}
+            collectionId={collectionId}
+            field={field}
+            disabled={busy}
+            onDeleted={onDeleted}
+          />
+        </div>
+      </section>
+      <ModalActions className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+        <Button
+          disabled={busy}
+          onClick={onCancel}
+          type="button"
+          variant="outline"
+        >
+          {cancelLabel === "Back" ? <ArrowLeft aria-hidden="true" /> : null}
+          {cancelLabel}
+        </Button>
+        <Button
+          aria-busy={pending}
+          disabled={busy || !name.trim()}
+          onClick={handleSave}
+          type="button"
+        >
+          {pending ? "Saving…" : "Save field"}
+        </Button>
+      </ModalActions>
+    </>
+  );
+}
+
+export function EditFieldDialog({
+  actions,
+  collectionId,
+  field,
+}: {
+  actions: FieldManagerActions;
+  collectionId: string;
+  field: Field;
+}) {
+  const [open, setOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
+  function changeOpen(next: boolean) {
+    if (!busy) setOpen(next);
+  }
+  return (
+    <Dialog open={open} onOpenChange={changeOpen}>
       <DialogTrigger asChild>
         <Button
           aria-label={`Edit ${field.name}`}
@@ -296,13 +413,13 @@ export function EditFieldDialog({
       </DialogTrigger>
       <DialogContent
         className={editorClassName}
+        closeDisabled={busy}
         onEscapeKeyDown={(event) => {
           if (busy) event.preventDefault();
         }}
         onInteractOutside={(event) => {
           if (busy) event.preventDefault();
         }}
-        closeDisabled={busy}
       >
         <DialogHeader>
           <DialogTitle
@@ -313,65 +430,22 @@ export function EditFieldDialog({
           </DialogTitle>
         </DialogHeader>
         <DialogBody>
-          <DialogDescription className="text-foreground-muted">
-            Rename this Field, change whether it is required, and manage Select
-            options without changing stable IDs.
+          <DialogDescription className="sr-only">
+            Edit this Field and manage its options.
           </DialogDescription>
-          <div className="mt-5 space-y-5">
-            <div className="space-y-2">
-              <label
-                className="text-label block"
-                htmlFor={`field-name-${field.id}`}
-              >
-                Field name
-              </label>
-              <Input
-                id={`field-name-${field.id}`}
-                maxLength={DATABASE_LIMITS.fieldName}
-                onChange={(event) => setName(event.target.value)}
-                ref={nameRef}
-                value={name}
-              />
-            </div>
-            <dl className="border-border bg-surface-muted rounded-control flex items-center justify-between gap-4 border px-3 py-2">
-              <dt className="text-foreground-muted text-sm">Field type</dt>
-              <dd className="font-semibold">
-                <FieldTypeLabel type={field.type} />
-              </dd>
-            </dl>
-            <RequiredControl required={required} setRequired={setRequired} />
-            {field.type === "select" ? (
-              <OptionEditor
-                actions={actions}
-                collectionId={collectionId}
-                field={field}
-                onPendingChange={setOptionPending}
-              />
-            ) : null}
-            {message ? (
-              <p className="text-error" role="alert">
-                {message}
-              </p>
-            ) : null}
-          </div>
+          <EditFieldForm
+            actions={actions}
+            collectionId={collectionId}
+            field={field}
+            onCancel={() => changeOpen(false)}
+            onSaved={() => {
+              setBusy(false);
+              setOpen(false);
+            }}
+            onPendingChange={setBusy}
+          />
         </DialogBody>
-        <DialogFooter>
-          <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-            <DialogClose asChild>
-              <Button disabled={busy} type="button" variant="outline">
-                Cancel
-              </Button>
-            </DialogClose>
-            <Button
-              aria-busy={pending}
-              disabled={busy || !name.trim()}
-              onClick={handleSave}
-              type="button"
-            >
-              {pending ? "Saving…" : "Save field"}
-            </Button>
-          </div>
-        </DialogFooter>
+        <DialogFooter />
       </DialogContent>
     </Dialog>
   );

@@ -71,9 +71,14 @@ function FieldManager({
   fields: serverFields,
   onAddField,
   addFieldTriggerRef,
+  onEditField,
 }: {
   onAddField?: () => void;
   addFieldTriggerRef?: RefObject<HTMLButtonElement | null>;
+  onEditField?: (
+    field: CollectionRecord["fields"][number],
+    trigger: HTMLButtonElement,
+  ) => void;
   actions: FieldManagerActions;
   collectionId: string;
   fields: CollectionRecord["fields"];
@@ -202,6 +207,7 @@ function FieldManager({
               <ol className="space-y-3">
                 {fields.map((field, index) => (
                   <SortableFieldRow
+                    onEditField={onEditField}
                     reducedMotion={reducedMotion}
                     key={field.id}
                     field={field}

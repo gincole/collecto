@@ -1,7 +1,23 @@
 "use client";
 
-import { useId, useRef, useState, useTransition, type RefObject } from "react";
+import {
+  useRef,
+  useState,
+  useTransition,
+  type RefObject,
+  type ReactNode,
+} from "react";
 import { useRouter } from "next/navigation";
+import {
+  ArrowUpDown,
+  Columns3,
+  Proportions,
+  Scan,
+  Space,
+  Eye,
+  type LucideIcon,
+} from "lucide-react";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Button } from "@/components/ui/button";
 import { FeedbackMessage } from "@/components/shared/feedback-message";
 import { useFeedback } from "@/components/shared/feedback";
@@ -32,33 +48,56 @@ type Props = {
   setOpen?: (open: boolean) => void;
 };
 
+function SettingRow({
+  label,
+  icon: Icon,
+  children,
+}: {
+  label: string;
+  icon: LucideIcon;
+  children: ReactNode;
+}) {
+  return (
+    <div
+      data-gallery-setting={label}
+      className="grid min-w-0 items-center gap-3 sm:grid-cols-[minmax(0,1fr)_auto]"
+    >
+      <span className="text-label inline-flex items-center gap-2">
+        <Icon aria-hidden="true" className="size-4 shrink-0" />
+        {label}
+      </span>
+      <div className="flex min-w-0 justify-end">{children}</div>
+    </div>
+  );
+}
 function Choice({
   label,
+  icon,
   value,
   options,
   onChange,
+  disabled,
 }: {
   label: string;
+  icon: LucideIcon;
   value: string;
   options: readonly string[];
   onChange: (value: string) => void;
+  disabled: boolean;
 }) {
-  const id = useId();
   return (
-    <div className="text-label grid min-w-0 gap-2">
-      <label htmlFor={id}>{label}</label>
-      <Select
-        id={id}
-        onChange={(event) => onChange(event.target.value)}
+    <SettingRow label={label} icon={icon}>
+      <SegmentedControl
+        label={label}
         value={value}
-      >
-        {options.map((option) => (
-          <option key={option} value={option}>
-            {option}
-          </option>
-        ))}
-      </Select>
-    </div>
+        options={options.map((value) => ({
+          value,
+          label: value.charAt(0).toUpperCase() + value.slice(1),
+        }))}
+        onChange={onChange}
+        disabled={disabled}
+      />
+    </SettingRow>
   );
 }
 
@@ -202,55 +241,10 @@ export function GallerySettings({
           <div className="space-y-6">
             <fieldset className="space-y-5" disabled={pending}>
               <legend className="sr-only">Gallery appearance</legend>
-              <div className="grid gap-4">
-                <Choice
-                  label="Columns"
-                  value={String(safeDraft.columns)}
-                  options={["1", "2", "3", "4", "5"]}
-                  onChange={(value) =>
-                    change(
-                      "columns",
-                      galleryConfigSchema.shape.columns.parse(Number(value)),
-                    )
-                  }
-                />
-                <Choice
-                  label="Image ratio"
-                  value={safeDraft.aspectRatio}
-                  options={galleryConfigSchema.shape.aspectRatio.options}
-                  onChange={(value) =>
-                    change(
-                      "aspectRatio",
-                      galleryConfigSchema.shape.aspectRatio.parse(value),
-                    )
-                  }
-                />
-                <Choice
-                  label="Image fit"
-                  value={safeDraft.imageFit}
-                  options={galleryConfigSchema.shape.imageFit.options}
-                  onChange={(value) =>
-                    change(
-                      "imageFit",
-                      galleryConfigSchema.shape.imageFit.parse(value),
-                    )
-                  }
-                />
-                <Choice
-                  label="Spacing"
-                  value={safeDraft.spacing}
-                  options={galleryConfigSchema.shape.spacing.options}
-                  onChange={(value) =>
-                    change(
-                      "spacing",
-                      galleryConfigSchema.shape.spacing.parse(value),
-                    )
-                  }
-                />
-              </div>
-              <label className="grid gap-2 font-semibold">
-                Sort order
+              <SettingRow label="Sort order" icon={ArrowUpDown}>
                 <Select
+                  aria-label="Sort order"
+                  className="w-full sm:w-48"
                   value={`${safeDraft.sortBy}:${safeDraft.sortDirection}`}
                   onChange={(event) => {
                     const [sortBy, sortDirection] =
@@ -270,18 +264,71 @@ export function GallerySettings({
                   <option value="title:asc">Title A–Z</option>
                   <option value="title:desc">Title Z–A</option>
                 </Select>
-              </label>
-              <label className="flex min-h-11 items-center gap-3 font-semibold">
-                <input
-                  type="checkbox"
-                  className="accent-selection-border size-5"
-                  checked={safeDraft.showDetails}
-                  onChange={(event) =>
-                    change("showDetails", event.target.checked)
-                  }
+              </SettingRow>
+              <Choice
+                label="Columns"
+                icon={Columns3}
+                value={String(safeDraft.columns)}
+                options={["1", "2", "3", "4", "5"]}
+                disabled={pending}
+                onChange={(value) =>
+                  change(
+                    "columns",
+                    galleryConfigSchema.shape.columns.parse(Number(value)),
+                  )
+                }
+              />
+              <Choice
+                label="Image ratio"
+                icon={Proportions}
+                value={safeDraft.aspectRatio}
+                options={galleryConfigSchema.shape.aspectRatio.options}
+                disabled={pending}
+                onChange={(value) =>
+                  change(
+                    "aspectRatio",
+                    galleryConfigSchema.shape.aspectRatio.parse(value),
+                  )
+                }
+              />
+              <Choice
+                label="Image fit"
+                icon={Scan}
+                value={safeDraft.imageFit}
+                options={galleryConfigSchema.shape.imageFit.options}
+                disabled={pending}
+                onChange={(value) =>
+                  change(
+                    "imageFit",
+                    galleryConfigSchema.shape.imageFit.parse(value),
+                  )
+                }
+              />
+              <Choice
+                label="Spacing"
+                icon={Space}
+                value={safeDraft.spacing}
+                options={galleryConfigSchema.shape.spacing.options}
+                disabled={pending}
+                onChange={(value) =>
+                  change(
+                    "spacing",
+                    galleryConfigSchema.shape.spacing.parse(value),
+                  )
+                }
+              />
+              <SettingRow label="Show details" icon={Eye}>
+                <SegmentedControl
+                  label="Show details"
+                  value={String(safeDraft.showDetails)}
+                  options={[
+                    { value: "true", label: "Show" },
+                    { value: "false", label: "Not show" },
+                  ]}
+                  disabled={pending}
+                  onChange={(value) => change("showDetails", value === "true")}
                 />
-                Show details
-              </label>
+              </SettingRow>
               <section
                 data-modal-section
                 className="space-y-3"

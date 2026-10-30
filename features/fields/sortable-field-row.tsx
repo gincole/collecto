@@ -5,11 +5,9 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
-import { DeleteButton } from "@/components/shared/delete-button";
 import { cn } from "@/lib/utils/cn";
 import { type Field, type FieldManagerActions } from "./field-manager-contract";
 import { EditFieldDialog } from "./field-editors";
-import { DeleteFieldDialog } from "./field-delete-dialogs";
 import { FieldTypeLabel } from "./field-type";
 import { ReorderButtons } from "./reorder-buttons";
 
@@ -68,6 +66,7 @@ export function SortableFieldRow({
   onUp,
   onDown,
   reducedMotion,
+  onEditField,
 }: {
   field: Field;
   collectionId: string;
@@ -75,6 +74,7 @@ export function SortableFieldRow({
   onUp?: () => void;
   onDown?: () => void;
   reducedMotion: boolean;
+  onEditField?: (field: Field, trigger: HTMLButtonElement) => void;
 }) {
   const {
     attributes,
@@ -114,16 +114,22 @@ export function SortableFieldRow({
         }
       >
         <ReorderButtons label={field.name} onDown={onDown} onUp={onUp} />
-        <EditFieldDialog
-          actions={actions}
-          collectionId={collectionId}
-          field={field}
-        />
-        <DeleteFieldDialog
-          actions={actions}
-          collectionId={collectionId}
-          field={field}
-        />
+        {onEditField ? (
+          <Button
+            aria-label={`Edit ${field.name}`}
+            onClick={(event) => onEditField(field, event.currentTarget)}
+            type="button"
+            variant="outline"
+          >
+            Edit
+          </Button>
+        ) : (
+          <EditFieldDialog
+            actions={actions}
+            collectionId={collectionId}
+            field={field}
+          />
+        )}
       </FieldRowBody>
     </li>
   );
@@ -149,7 +155,6 @@ export function FieldDragPreview({ field }: { field: Field }) {
         <Button disabled aria-label={`Edit ${field.name}`} variant="outline">
           Edit
         </Button>
-        <DeleteButton disabled />
       </FieldRowBody>
     </div>
   );

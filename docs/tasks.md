@@ -239,3 +239,17 @@ Reported by the user on 30 October 2026. The M7-T01 state audit and implementati
   restored desktop panel padding and matching body/chrome safe-area gutters.
   Independent review and staged diff/secret checks passed. No browser testing.
 - Commit: SELF (this commit).
+
+## M7-T02U: Consistent modal actions and inline Field editing
+
+- Status: Complete; dependency M7-T02T is complete.
+- Scope/acceptance: see M7-T02U in `docs/implementation-plan.md`.
+- Changes: Add Item actions/alignment, shared 44 px modal actions, same-surface
+  Field editor with internal deletion, and six icon-labelled Gallery setting rows.
+- Verification: `corepack pnpm verify:deployment` passed formatting, lint,
+  strict TypeScript, all 364 tests across 54 files and the production build.
+  Same-modal edit/back/pending/failure/save/delete, Add Item actions and Gallery
+  radios/keyboard/preview/persistence/axe checks pass. Button audit confirms
+  shared 44 px action/icon heights. Independent review and staged diff/secret
+  checks passed. No browser testing.
+- Commit: SELF (this commit).

@@ -316,7 +316,7 @@ describe("Field manager", () => {
     const preview = document.querySelector("[data-field-drag-preview]");
     expect(preview).toHaveTextContent("Genre");
     expect(preview).toHaveTextContent("Edit");
-    expect(preview).toHaveTextContent("Delete");
+    expect(preview).not.toHaveTextContent("Delete");
     expect(preview).toHaveAttribute("aria-hidden", "true");
     expect(screen.getByRole("status")).toHaveTextContent("Genre");
     expect(screen.getByRole("status")).not.toHaveTextContent(genreId);
@@ -611,6 +611,7 @@ describe("Field manager", () => {
         fields={fields}
       />,
     );
+    await user.click(screen.getByRole("button", { name: "Edit Genre" }));
     await user.click(screen.getByRole("button", { name: "Delete Genre" }));
     await user.click(await screen.findByRole("button", { name: "Try again" }));
     expect(await screen.findByText(/2 items have a value/)).toBeVisible();
@@ -988,6 +989,7 @@ describe("Field manager", () => {
       />,
     );
 
+    await user.click(screen.getByRole("button", { name: "Edit Rating" }));
     const trigger = screen.getByRole("button", { name: "Delete Rating" });
     await user.click(trigger);
     expect(actions.getFieldImpact).toHaveBeenCalledWith({
