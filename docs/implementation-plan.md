@@ -652,6 +652,8 @@ Use shared deletion triggers/menu links and permanent-confirmation styling while
 
 **Verification:** execute every documented setup/check command from a clean checkout or equivalent isolated environment.
 
+**Execution boundary:** prepare the README and release evidence independently while M7-T02 remains open; keep M8-T02 In progress rather than waiving its dependency. `docs/release-verification.md` records isolated-source install/toolchain/test/build checks, reused-local-stack integration results, Windows LF checkout correction, and all unexecuted browser, clean-database and hosted/operator checks. No deployment or screenshots are produced under the current authorization.
+
 ### M8-T03 Configure Vercel and perform production smoke test
 
 - **Critical path:** Deployment endpoint
