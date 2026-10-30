@@ -26,7 +26,6 @@ import {
 import { Button } from "@/components/ui/button";
 
 type Controls = {
-  header: HTMLDivElement | null;
   footer: HTMLDivElement | null;
   registerGuard: (handler: (() => void) | null) => void;
   dismiss: () => void;
@@ -81,24 +80,17 @@ export function ModalActions({
     : actions;
 }
 
-export function ModalHeader({ children }: { children: ReactNode }) {
-  const flow = useContext(FlowContext);
-  return flow
-    ? flow.header
-      ? createPortal(children, flow.header)
-      : null
-    : children;
-}
-
 export function FlowModal({
   title,
   showTitle = true,
+  headerContent,
   onClose,
   returnFocus,
   children,
 }: {
   title: string;
   showTitle?: boolean;
+  headerContent?: ReactNode;
   onClose: () => void;
   returnFocus?: RefObject<HTMLElement | null>;
   children: ReactNode;
@@ -107,7 +99,6 @@ export function FlowModal({
     typeof document === "undefined" ? null : document.activeElement,
   );
   const [footer, setFooter] = useState<HTMLDivElement | null>(null);
-  const [header, setHeader] = useState<HTMLDivElement | null>(null);
   const [busySources, setBusySources] = useState<Set<symbol>>(() => new Set());
   const busy = busySources.size > 0;
   const registerBusy = useCallback((token: symbol, pending: boolean) => {
@@ -131,8 +122,8 @@ export function FlowModal({
     guard.current = handler;
   }, []);
   const context = useMemo(
-    () => ({ header, footer, registerGuard, dismiss, registerBusy }),
-    [header, footer, dismiss, registerGuard, registerBusy],
+    () => ({ footer, registerGuard, dismiss, registerBusy }),
+    [footer, dismiss, registerGuard, registerBusy],
   );
   return (
     <Dialog
@@ -156,7 +147,7 @@ export function FlowModal({
             target.focus();
           }
         }}
-        className="flow-modal grid h-[min(90dvh,56rem)] max-h-[90dvh] w-[calc(100%-1rem)] max-w-2xl grid-rows-[auto_minmax(0,1fr)_auto] gap-0 overflow-hidden p-0 sm:p-0"
+        className="flow-modal grid h-[min(90dvh,56rem)] max-h-[90dvh] w-[calc(100%-1rem)] max-w-2xl grid-rows-[auto_minmax(0,1fr)_auto] gap-0 overflow-hidden"
         onEscapeKeyDown={(event) => {
           event.preventDefault();
           close();
@@ -182,7 +173,7 @@ export function FlowModal({
           >
             {title}
           </DialogTitle>
-          {!showTitle ? <div ref={setHeader} /> : null}
+          {headerContent}
           <DialogDescription className="sr-only">
             Close with the close button, Escape or the backdrop. Actions stay
             below the scrolling form.

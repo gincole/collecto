@@ -150,6 +150,9 @@ describe("ready local dialogs", () => {
     expect(
       within(dialog).getByText("Step 2 of 2").closest("header"),
     ).not.toBeNull();
+    expect(dialog.querySelector("[data-modal-body]")).not.toHaveTextContent(
+      "Step 2 of 2",
+    );
     expect(
       within(dialog).getByRole("heading", { name: "Set up your collection" }),
     ).toHaveAttribute("data-form-heading", "primary");
@@ -169,6 +172,13 @@ describe("ready local dialogs", () => {
         .getByRole("button", { name: "Create collection" })
         .closest("[data-modal-footer]"),
     ).not.toBeNull();
+    await user.click(within(dialog).getByRole("button", { name: "Back" }));
+    expect(
+      within(dialog).getByText("Step 1 of 2").closest("[data-modal-header]"),
+    ).not.toBeNull();
+    expect(dialog.querySelector("[data-modal-body]")).not.toHaveTextContent(
+      "Step 1 of 2",
+    );
   });
 
   it("keeps Home free of Back and opens New Collection synchronously with unchanged URL", async () => {

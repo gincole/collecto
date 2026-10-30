@@ -46,3 +46,12 @@ the small step label, while body heading sizes remain unchanged. Disabled button
 keep their layout geometry with transparent borders and no shadow. The visible
 Blank choice becomes a dark Custom card with Sparkles artwork; the `blank` data key
 and empty schema remain unchanged. See implementation-plan M7-T02S for verification.
+
+## Modal spacing and direct wizard header — M7-T02T
+
+Restore a 16 px mobile / 28 px desktop outer panel inset in all dialogs, preserving
+the inner body gutter and extra bottom scroll space. Header/footer margins match
+the body padding so their dividers align with section dividers rather than the
+outer modal edge; both include horizontal safe areas. Wizard steps are rendered
+directly in the title slot with their existing small text size, with no portal or
+duplicate body label. This refines M7-T02S without changing field/page behavior.

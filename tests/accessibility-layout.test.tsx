@@ -22,6 +22,24 @@ import {
 } from "@/components/ui/dialog";
 
 describe("accessible shared layout", () => {
+  it("renders custom header content directly in the title slot", () => {
+    render(
+      <FlowModal
+        title="New collection"
+        showTitle={false}
+        headerContent={<p className="text-sm">Step 1 of 2</p>}
+        onClose={vi.fn()}
+      >
+        <p>Wizard body</p>
+      </FlowModal>,
+    );
+    const step = screen.getByText("Step 1 of 2");
+    expect(step.closest("[data-modal-header]")).not.toBeNull();
+    expect(step.closest("[data-modal-body]")).toBeNull();
+    expect(step).toHaveClass("text-sm");
+    expect(screen.getByRole("dialog")).toHaveClass("p-4", "sm:p-panel");
+    expect(step.closest("[data-modal-header]")).toHaveClass("mx-5");
+  });
   it("keeps nested dialog actions in their nearest fixed footer", () => {
     render(
       <FlowModal title="Outer flow" onClose={vi.fn()}>

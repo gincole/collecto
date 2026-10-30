@@ -224,3 +224,18 @@ Reported by the user on 30 October 2026. The M7-T01 state audit and implementati
   borders, section dividers, 40 px bottom spacing and horizontal safe areas.
   Independent review and staged diff/secret checks passed. No browser testing.
 - Commit: SELF (this commit).
+
+## M7-T02T: Refine modal padding and wizard header
+
+- Status: Complete; dependency M7-T02S is complete.
+- Scope/acceptance: see M7-T02T in `docs/implementation-plan.md`.
+- Changes: render the small step directly in the shared header; synchronize forward
+  and back navigation and remove the wizard's body/portal step placement.
+  Restore generous shared outer padding and align inset chrome dividers with
+  section dividers, preserving safe areas and scroll space.
+- Verification: `corepack pnpm verify:deployment` passed formatting, lint,
+  strict TypeScript, all 361 tests across 54 files and the production build.
+  Header forward/back and body-duplicate checks pass. Compiled CSS confirms
+  restored desktop panel padding and matching body/chrome safe-area gutters.
+  Independent review and staged diff/secret checks passed. No browser testing.
+- Commit: SELF (this commit).

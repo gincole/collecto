@@ -14,6 +14,7 @@ export function LibraryContent({
 }: {
   collections: CollectionRecord[] | null;
 }) {
+  const [createStep, setCreateStep] = useState<1 | 2>(1);
   const [dialog, setDialog] = useState<
     | { kind: "create" }
     | { kind: "settings"; id: string; section?: "delete" }
@@ -24,6 +25,7 @@ export function LibraryContent({
     setDialog(null);
   }
   function create() {
+    setCreateStep(1);
     opener.current =
       document.activeElement instanceof HTMLElement
         ? document.activeElement
@@ -75,10 +77,19 @@ export function LibraryContent({
         <FlowModal
           title="New collection"
           showTitle={false}
+          headerContent={
+            <p className="text-foreground-muted text-sm font-medium">
+              Step {createStep} of 2
+            </p>
+          }
           onClose={close}
           returnFocus={opener}
         >
-          <CollectionWizard createAction={createCollectionFromWizardAction} />
+          <CollectionWizard
+            modal
+            onStepChange={setCreateStep}
+            createAction={createCollectionFromWizardAction}
+          />
         </FlowModal>
       ) : null}
       {collection ? (

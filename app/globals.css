@@ -278,11 +278,15 @@ button:disabled,
   padding-top: max(1rem, env(safe-area-inset-top));
 }
 
-.dialog-content [data-modal-header],
-.dialog-content [data-modal-body],
-.dialog-content [data-modal-footer] {
+.dialog-content [data-modal-body] {
   padding-left: max(1.25rem, env(safe-area-inset-left));
   padding-right: max(1.25rem, env(safe-area-inset-right));
+}
+
+.dialog-content [data-modal-header],
+.dialog-content [data-modal-footer] {
+  margin-left: max(1.25rem, env(safe-area-inset-left));
+  margin-right: max(1.25rem, env(safe-area-inset-right));
 }
 
 .dialog-content [data-form-heading="primary"] {

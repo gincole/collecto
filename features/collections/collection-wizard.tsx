@@ -16,11 +16,7 @@ import { Button } from "@/components/ui/button";
 import { FeedbackMessage } from "@/components/shared/feedback-message";
 import { useFeedback } from "@/components/shared/feedback";
 import { Input, Textarea } from "@/components/ui/form-control";
-import {
-  ModalActions,
-  ModalHeader,
-  useFlowExit,
-} from "@/components/shared/flow-modal";
+import { ModalActions, useFlowExit } from "@/components/shared/flow-modal";
 import { cn } from "@/lib/utils/cn";
 
 import {
@@ -40,9 +36,17 @@ import type {
 
 const initialState: CollectionWizardState = { status: "idle" };
 
-type CollectionWizardProps = { createAction: CollectionWizardAction };
+type CollectionWizardProps = {
+  createAction: CollectionWizardAction;
+  modal?: boolean;
+  onStepChange?: (step: 1 | 2) => void;
+};
 
-export function CollectionWizard({ createAction }: CollectionWizardProps) {
+export function CollectionWizard({
+  createAction,
+  modal = false,
+  onStepChange,
+}: CollectionWizardProps) {
   const formId = useId();
   const notify = useFeedback();
   const router = useRouter();
@@ -121,7 +125,10 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
     else leave();
   }
 
-  const modal = Boolean(dismissFlow);
+  function changeStep(next: 1 | 2) {
+    setStep(next);
+    onStepChange?.(next);
+  }
   const titleClassName = modal
     ? "text-section-title-mobile"
     : "text-page-title-mobile sm:text-page-title";
@@ -136,35 +143,37 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
   return (
     <>
       <div className={modal ? "space-y-6" : "space-y-8"}>
-        <ModalHeader>
-          <div className="flex items-center justify-between gap-4">
-            <p className="text-foreground-muted text-sm font-medium">
-              Step {step} of 2
-            </p>
-            <div className="flex items-center gap-1">
-              {step === 1 && !dismissFlow ? (
-                <button
-                  disabled={pending}
-                  className="touch-target focus-ring rounded-control text-foreground-muted hover:bg-surface-muted px-3 text-sm font-semibold"
-                  onClick={cancel}
-                  type="button"
-                >
-                  Back
-                </button>
-              ) : null}
-              {!modal ? (
-                <button
-                  disabled={pending}
-                  className="touch-target focus-ring rounded-control text-foreground-muted hover:bg-surface-muted px-3 text-sm font-semibold"
-                  onClick={cancel}
-                  type="button"
-                >
-                  Cancel
-                </button>
-              ) : null}
+        {!modal ? (
+          <>
+            <div className="flex items-center justify-between gap-4">
+              <p className="text-foreground-muted text-sm font-medium">
+                Step {step} of 2
+              </p>
+              <div className="flex items-center gap-1">
+                {step === 1 && !dismissFlow ? (
+                  <button
+                    disabled={pending}
+                    className="touch-target focus-ring rounded-control text-foreground-muted hover:bg-surface-muted px-3 text-sm font-semibold"
+                    onClick={cancel}
+                    type="button"
+                  >
+                    Back
+                  </button>
+                ) : null}
+                {!modal ? (
+                  <button
+                    disabled={pending}
+                    className="touch-target focus-ring rounded-control text-foreground-muted hover:bg-surface-muted px-3 text-sm font-semibold"
+                    onClick={cancel}
+                    type="button"
+                  >
+                    Cancel
+                  </button>
+                ) : null}
+              </div>
             </div>
-          </div>
-        </ModalHeader>
+          </>
+        ) : null}
         {leaving ? (
           <p className="text-foreground-muted text-sm" role="status">
             Returning to My Library…
@@ -246,7 +255,7 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
               <Button
                 className="ml-auto w-full sm:w-auto"
                 disabled={pending || !presetKey}
-                onClick={() => setStep(2)}
+                onClick={() => changeStep(2)}
                 size={modal ? "default" : "lg"}
                 type="button"
               >
@@ -317,7 +326,7 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
                 <button
                   disabled={pending}
                   className="touch-target focus-ring rounded-control px-3 text-sm font-semibold underline underline-offset-4"
-                  onClick={() => setStep(1)}
+                  onClick={() => changeStep(1)}
                   type="button"
                 >
                   Change preset
@@ -421,7 +430,7 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
             <ModalActions className="flex flex-wrap items-center justify-between gap-3">
               <Button
                 disabled={pending}
-                onClick={() => setStep(1)}
+                onClick={() => changeStep(1)}
                 type="button"
                 variant="ghost"
               >

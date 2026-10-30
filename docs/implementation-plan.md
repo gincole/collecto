@@ -999,3 +999,25 @@ accessibility regressions; full deployment gate, compiled CSS inspection,
 independent review and staged diff/secret checks. No browser checks at user
 request. Update dormant E2E locator text only; do not run browser tests. One
 `fix(ui)` commit, no push.
+
+## M7-T02T: Refine modal padding and wizard header
+
+User requests the small Step 1/2 of 2 directly in the header's normal title
+position, generous padding in every modal, and header/footer dividers aligned
+with section dividers. Depends on M7-T02S. Replace the header portal with direct
+headerContent owned by LibraryContent and one wizard step-change callback. Select
+modal presentation explicitly, reset the header on new openings, and omit the
+step label from the scroll body. Keep the accessible New collection name, small
+step typography, body headings, Back/Change preset, dirty/pending and focus guards.
+
+Restore 16 px outer padding on small screens and the existing 28 px panel token
+on desktop, retaining the inner body gutter. Header/footer margins match body
+padding, including horizontal safe areas; remove zero-padding overrides from
+FlowModal and full-screen Field editors. Keep balanced vertical padding, fixed
+actions and the extra scroll-end gap. Preserve standalone wizard/page behavior.
+
+Verification: direct header-slot regression, forward/back step synchronization,
+no body duplicate, outer padding and divider gutter contracts, existing form and
+modal tests, deployment gate, emitted CSS inspection, independent review and
+staged diff/secret checks. No browser checks, dependencies or schema changes.
+One focused fix(ui) commit; no push.
