@@ -27,6 +27,81 @@ const createdId = "00000000-0000-4000-8000-000000000002";
 describe("Collection Server Actions", () => {
   beforeEach(() => vi.clearAllMocks());
 
+  it("submits the customized schema in one atomic authenticated RPC", async () => {
+    const rpc = vi.fn(async () => ({ data: createdId, error: null }));
+    createClientMock.mockResolvedValue({
+      auth: {
+        getUser: vi.fn(async () => ({
+          data: { user: { id: requestId } },
+          error: null,
+        })),
+      },
+      rpc,
+    });
+    const formData = new FormData();
+    formData.set("name", "Custom books");
+    formData.set("presetKey", "book");
+    formData.set("requestId", requestId);
+    formData.set(
+      "fields",
+      JSON.stringify([
+        {
+          name: " Read state ",
+          type: "select",
+          required: true,
+          options: [" Later ", "Done"],
+        },
+      ]),
+    );
+    await expect(
+      createCollectionFromWizardAction({ status: "idle" }, formData),
+    ).rejects.toThrow("NEXT_REDIRECT");
+    expect(rpc).toHaveBeenCalledOnce();
+    expect(rpc).toHaveBeenCalledWith(
+      "create_collection_with_schema",
+      expect.objectContaining({
+        p_request_id: requestId,
+        p_preset_key: "book",
+        p_fields: [
+          expect.objectContaining({
+            name: "Read state",
+            type: "select",
+            required: true,
+            position: 0,
+            options: [
+              expect.objectContaining({ label: "Later", position: 0 }),
+              expect.objectContaining({ label: "Done", position: 1 }),
+            ],
+          }),
+        ],
+      }),
+    );
+  });
+
+  it.each([
+    "{invalid",
+    "null",
+    "{}",
+    JSON.stringify([
+      { name: "Bad", type: "text", required: false, options: ["not allowed"] },
+    ]),
+  ])("rejects malformed wizard schema %s without a write", async (fields) => {
+    const rpc = vi.fn();
+    createClientMock.mockResolvedValue({ rpc });
+    const formData = new FormData();
+    formData.set("name", "Safe name");
+    formData.set("presetKey", "blank");
+    formData.set("requestId", requestId);
+    formData.set("fields", fields);
+    expect(
+      await createCollectionFromWizardAction({ status: "idle" }, formData),
+    ).toMatchObject({
+      status: "error",
+      fieldErrors: { fields: expect.any(String) },
+    });
+    expect(rpc).not.toHaveBeenCalled();
+  });
+
   it("validates, authenticates, and sends one owner-free atomic RPC", async () => {
     const rpc = vi.fn(async (...args: [string, Record<string, unknown>]) => ({
       data: createdId,

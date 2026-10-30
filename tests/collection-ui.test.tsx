@@ -97,15 +97,11 @@ describe("Collection wizard", () => {
     expect(
       screen.getByRole("heading", { name: "Set up your collection" }),
     ).toBeInTheDocument();
+    expect(screen.getByDisplayValue("Author")).toBeInTheDocument();
+    expect(screen.getByDisplayValue("Fiction")).toBeInTheDocument();
     expect(
-      screen.getByText("Author", { selector: "li span" }),
+      screen.getByRole("region", { name: "Custom fields" }),
     ).toBeInTheDocument();
-    expect(
-      screen.getByText(/Fiction · Nonfiction · Fantasy/),
-    ).toBeInTheDocument();
-    expect(screen.getByTestId("collection-details-layout")).toHaveClass(
-      "lg:grid-cols-[minmax(0,1.2fr)_minmax(18rem,0.8fr)]",
-    );
     await user.type(screen.getByLabelText("Collection name"), "My favorites");
     await user.type(
       screen.getByLabelText("Description (optional)"),

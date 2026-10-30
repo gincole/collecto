@@ -26,11 +26,27 @@ begin
     'Reading list',
     'book',
     '{"columns":3,"aspectRatio":"2:3","imageFit":"cover","showDetails":true,"visibleFieldIds":["title","42000000-0000-0000-0000-000000000001"],"spacing":"normal","sortBy":"createdAt","sortDirection":"desc"}',
-    '[{"id":"42000000-0000-0000-0000-000000000001","name":"Author","type":"text","required":false,"position":0,"options":[]},{"id":"42000000-0000-0000-0000-000000000002","name":"Genre","type":"select","required":false,"position":1,"options":[{"id":"43000000-0000-0000-0000-000000000001","label":"Fiction","position":0}]}]'
+    '[{"id":"42000000-0000-0000-0000-000000000001","name":"Creator","type":"url","required":true,"position":0,"options":[]},{"id":"42000000-0000-0000-0000-000000000002","name":"Read state","type":"select","required":false,"position":1,"options":[{"id":"43000000-0000-0000-0000-000000000001","label":"Later","position":0}]}]'
   );
 
   if result_id is null then
     raise exception 'Atomic creation did not return a Collection';
+  end if;
+
+  if not exists (
+    select 1 from public.field_definitions
+    where collection_id = result_id and name = 'Creator'
+      and type = 'url' and required = true and position = 0
+  ) or not exists (
+    select 1 from public.field_definitions
+    where collection_id = result_id and name = 'Read state'
+      and type = 'select' and required = false and position = 1
+  ) or not exists (
+    select 1 from public.field_options
+    where field_id = '42000000-0000-0000-0000-000000000002'
+      and label = 'Later' and position = 0
+  ) then
+    raise exception 'Customized preset schema was not persisted exactly';
   end if;
 
   perform public.create_collection_with_schema(

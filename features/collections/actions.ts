@@ -25,8 +25,18 @@ export async function createCollectionFromWizardAction(
   formData: FormData,
 ): Promise<CollectionWizardState> {
   const client = await createClient();
+  let fields: unknown;
+  if (formData.has("fields")) {
+    const raw = formData.get("fields");
+    try {
+      fields = typeof raw === "string" ? JSON.parse(raw) : null;
+    } catch {
+      fields = null;
+    }
+  }
   const result = await createCollection(
     {
+      fields,
       description: formData.get("description"),
       name: formData.get("name"),
       presetKey: formData.get("presetKey"),
@@ -46,6 +56,7 @@ export async function createCollectionFromWizardAction(
     return {
       fieldErrors: {
         description: result.fieldErrors?.description?.[0],
+        fields: result.fieldErrors?.fields?.[0],
         name: result.fieldErrors?.name?.[0],
         presetKey: result.fieldErrors?.presetKey?.[0],
       },

@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Check, ListChecks } from "lucide-react";
+import { ArrowLeft, Check } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   useActionState,
@@ -16,6 +16,14 @@ import { FeedbackMessage } from "@/components/shared/feedback-message";
 import { useFeedback } from "@/components/shared/feedback";
 import { Input, Textarea } from "@/components/ui/form-control";
 import { cn } from "@/lib/utils/cn";
+
+import {
+  CollectionSchemaEditor,
+  createSchemaDraft,
+  serializeSchemaDraft,
+  type DraftField,
+} from "./collection-schema-editor";
+import { collectionFieldsDraftSchema } from "./schema-draft";
 
 import { getCollectionPreset, listCollectionPresets } from "./presets";
 import type { CollectionPresetKey } from "./schemas";
@@ -43,6 +51,12 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [cancelOpen, setCancelOpen] = useState(false);
+  const [drafts, setDrafts] = useState<
+    Partial<Record<CollectionPresetKey, DraftField[]>>
+  >({});
+  const [draftErrors, setDraftErrors] = useState<Record<string, string>>({});
+  const formRef = useRef<HTMLFormElement>(null);
+  const draft = presetKey ? (drafts[presetKey] ?? []) : [];
   const nameInputRef = useRef<HTMLInputElement>(null);
   const presets = listCollectionPresets();
   const preset = presetKey ? getCollectionPreset(presetKey) : null;
@@ -51,6 +65,10 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
 
   useEffect(() => {
     if (state.fieldErrors?.name) nameInputRef.current?.focus();
+    else if (state.fieldErrors?.fields)
+      formRef.current
+        ?.querySelector<HTMLElement>("[data-schema-editor]")
+        ?.focus();
     if (state.status === "error")
       notify(
         state.message ?? "Review the highlighted fields and try again.",
@@ -58,8 +76,26 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
       );
   }, [state, notify]);
 
+  useEffect(() => {
+    if (Object.keys(draftErrors).length)
+      formRef.current
+        ?.querySelector<HTMLElement>(
+          '[data-schema-editor] [aria-invalid="true"]',
+        )
+        ?.focus();
+  }, [draftErrors]);
+
   function selectPreset(key: CollectionPresetKey) {
     setPresetKey(key);
+    setDrafts((current) =>
+      current[key]
+        ? current
+        : {
+            ...current,
+            [key]: createSchemaDraft(getCollectionPreset(key).fields),
+          },
+    );
+    setDraftErrors({});
     setRequestId((current) => current ?? crypto.randomUUID());
   }
 
@@ -172,9 +208,40 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
             </div>
           </section>
         ) : preset ? (
-          <form action={formAction} className="space-y-7" noValidate>
+          <form
+            action={formAction}
+            className="space-y-7"
+            noValidate
+            ref={formRef}
+            onSubmit={(event) => {
+              if (pending) {
+                event.preventDefault();
+                return;
+              }
+              const result = collectionFieldsDraftSchema.safeParse(
+                serializeSchemaDraft(draft),
+              );
+              if (!result.success) {
+                event.preventDefault();
+                setDraftErrors(
+                  Object.fromEntries(
+                    result.error.issues.map((issue) => [
+                      issue.path.join("."),
+                      issue.message,
+                    ]),
+                  ),
+                );
+                notify("Review the highlighted fields and try again.", "error");
+              }
+            }}
+          >
             <input name="presetKey" type="hidden" value={preset.key} />
             <input name="requestId" type="hidden" value={requestId ?? ""} />
+            <input
+              name="fields"
+              type="hidden"
+              value={JSON.stringify(serializeSchemaDraft(draft))}
+            />
 
             <section aria-labelledby="details-title" className="space-y-6">
               <div className="space-y-2">
@@ -185,8 +252,8 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
                   Set up your collection
                 </h1>
                 <p className="text-foreground-muted">
-                  Name this Collection and review its starting Fields. Customize
-                  Fields in Collection settings after creating it.
+                  Name this Collection and customize its fields before creating
+                  it.
                 </p>
               </div>
 
@@ -203,7 +270,7 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
               </div>
 
               <div
-                className="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(18rem,0.8fr)] lg:items-start"
+                className="grid gap-6"
                 data-testid="collection-details-layout"
               >
                 <div className="space-y-5">
@@ -274,39 +341,20 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
                   </div>
                 </div>
 
-                <div className="border-border bg-surface rounded-card sm:p-panel border p-4">
-                  <div className="mb-4 flex items-center gap-2">
-                    <ListChecks aria-hidden="true" className="size-5" />
-                    <h2 className="text-card-title">Default fields</h2>
-                  </div>
-                  {preset.fields.length ? (
-                    <ul className="space-y-2">
-                      {preset.fields.map((field) => (
-                        <li
-                          className="bg-surface-muted rounded-control space-y-2 px-3 py-2"
-                          key={`${field.name}-${field.type}`}
-                        >
-                          <div className="flex items-center justify-between gap-3">
-                            <span className="font-medium">{field.name}</span>
-                            <span className="text-foreground-muted text-sm capitalize">
-                              {field.type}
-                            </span>
-                          </div>
-                          {field.options?.length ? (
-                            <p className="text-foreground-muted text-xs leading-5">
-                              {field.options.join(" · ")}
-                            </p>
-                          ) : null}
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-foreground-muted text-sm">
-                      Blank starts with Title and Description only. Add custom
-                      fields later.
-                    </p>
-                  )}
-                </div>
+                <CollectionSchemaEditor
+                  fields={draft}
+                  disabled={pending}
+                  errors={draftErrors}
+                  serverError={state.fieldErrors?.fields}
+                  onChange={(fields) => {
+                    if (presetKey)
+                      setDrafts((current) => ({
+                        ...current,
+                        [presetKey]: fields,
+                      }));
+                    setDraftErrors({});
+                  }}
+                />
               </div>
             </section>
 

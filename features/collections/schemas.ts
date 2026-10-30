@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { DATABASE_LIMITS } from "@/lib/validation/limits";
+import { collectionFieldsDraftSchema } from "./schema-draft";
 
 export const COLLECTION_PRESET_KEYS = [
   "book",
@@ -32,6 +33,7 @@ const descriptionSchema = z
 export const collectionIdSchema = z.uuid();
 
 export const collectionCreateSchema = z.object({
+  fields: collectionFieldsDraftSchema.optional(),
   description: descriptionSchema,
   name: trimmedRequired(
     DATABASE_LIMITS.collectionName,

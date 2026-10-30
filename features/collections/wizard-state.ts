@@ -1,5 +1,10 @@
 export type CollectionWizardState = {
-  fieldErrors?: { description?: string; name?: string; presetKey?: string };
+  fieldErrors?: {
+    description?: string;
+    name?: string;
+    presetKey?: string;
+    fields?: string;
+  };
   message?: string;
   status: "error" | "idle";
 };

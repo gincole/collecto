@@ -214,8 +214,15 @@ export function buildCollectionCreatePayload(
 ): CollectionCreatePayload {
   const data = collectionCreateSchema.parse(input);
   const preset = getCollectionPreset(data.presetKey);
-  const fieldIds = preset.fields.map(() => createId());
-  const fields = preset.fields.map((field, position) => {
+  const draft =
+    data.fields ??
+    preset.fields.map((field) => ({
+      ...field,
+      required: false,
+      options: field.options ?? [],
+    }));
+  const fieldIds = draft.map(() => createId());
+  const fields = draft.map((field, position) => {
     const id = fieldIds.at(position);
     if (!id) throw new Error("Preset field ID generation failed.");
 
@@ -228,7 +235,7 @@ export function buildCollectionCreatePayload(
         position: optionPosition,
       })),
       position,
-      required: false,
+      required: field.required,
       type: field.type,
     };
   });
