@@ -493,7 +493,7 @@ These values implement the approved non-blocking assumptions and may be changed 
 
 1. Render All plus one tab per single-Select field and no tabs for other types.
 2. Render every option including zero-count options and an Uncategorized folder for missing values.
-3. Store validated field and option IDs in URL query parameters.
+3. Store validated field and option IDs in URL query parameters. The reserved `selectedOptionId=uncategorized` value selects missing values; an absent option parameter shows the folder overview.
 4. Clear the old option when changing fields and clear all filters on All.
 5. Recover safely from stale/deleted/foreign IDs without leaking resource existence.
 6. Reuse the saved Gallery configuration in every folder.

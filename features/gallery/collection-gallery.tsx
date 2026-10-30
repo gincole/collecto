@@ -7,8 +7,6 @@ import { Button } from "@/components/ui/button";
 import type { CollectionRecord } from "@/features/collections/models";
 import type { ItemRecord } from "@/features/items/types";
 import { GalleryGrid } from "./gallery-grid";
-import { GallerySettings } from "./gallery-settings";
-import { saveGalleryConfigAction } from "./actions";
 
 export function CollectionHeader({
   collection,
@@ -69,30 +67,29 @@ export function CollectionHeader({
 export function CollectionGallery({
   collection,
   items,
+  folderName,
 }: {
   collection: CollectionRecord;
   items: ItemRecord[];
+  folderName?: string;
 }) {
   return (
     <div className="space-y-6">
-      <div className="flex justify-end">
-        <GallerySettings
-          collection={collection}
-          items={items}
-          saveAction={saveGalleryConfigAction}
-        />
-      </div>
       {items.length === 0 ? (
         <EmptyState
           action={
             <Button asChild>
               <Link href={`/collections/${collection.id}/items/new` as Route}>
-                Add your first item
+                {folderName ? "Add item" : "Add your first item"}
               </Link>
             </Button>
           }
-          description="This Collection is ready for the things you want to remember."
-          title="No items yet"
+          description={
+            folderName
+              ? "Add an Item, then choose its Select value to place it in this folder."
+              : "This Collection is ready for the things you want to remember."
+          }
+          title={folderName ? "No items in this folder" : "No items yet"}
         />
       ) : (
         <GalleryGrid
