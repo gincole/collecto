@@ -213,6 +213,10 @@ export type Database = {
     };
     Views: Record<string, never>;
     Functions: {
+      update_gallery_config: {
+        Args: { p_collection_id: string; p_config: Json };
+        Returns: string;
+      };
       claim_storage_cleanup_jobs: {
         Args: { p_limit: number; p_stale_before: string };
         Returns: {

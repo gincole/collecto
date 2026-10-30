@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import type { CollectionRecord } from "@/features/collections/models";
 import type { ItemRecord } from "@/features/items/types";
 import { GalleryGrid } from "./gallery-grid";
+import { GallerySettings } from "./gallery-settings";
+import { saveGalleryConfigAction } from "./actions";
 
 export function CollectionHeader({
   collection,
@@ -71,26 +73,35 @@ export function CollectionGallery({
   collection: CollectionRecord;
   items: ItemRecord[];
 }) {
-  if (items.length === 0)
-    return (
-      <EmptyState
-        action={
-          <Button asChild>
-            <Link href={`/collections/${collection.id}/items/new` as Route}>
-              Add your first item
-            </Link>
-          </Button>
-        }
-        description="This Collection is ready for the things you want to remember."
-        title="No items yet"
-      />
-    );
   return (
-    <GalleryGrid
-      collectionId={collection.id}
-      config={collection.viewConfig}
-      fields={collection.fields}
-      items={items}
-    />
+    <div className="space-y-6">
+      <div className="flex justify-end">
+        <GallerySettings
+          collection={collection}
+          items={items}
+          saveAction={saveGalleryConfigAction}
+        />
+      </div>
+      {items.length === 0 ? (
+        <EmptyState
+          action={
+            <Button asChild>
+              <Link href={`/collections/${collection.id}/items/new` as Route}>
+                Add your first item
+              </Link>
+            </Button>
+          }
+          description="This Collection is ready for the things you want to remember."
+          title="No items yet"
+        />
+      ) : (
+        <GalleryGrid
+          collectionId={collection.id}
+          config={collection.viewConfig}
+          fields={collection.fields}
+          items={items}
+        />
+      )}
+    </div>
   );
 }

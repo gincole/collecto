@@ -13,10 +13,10 @@ import { getGalleryDisplayValues, sortGalleryItems } from "./model";
 
 const columnClasses: Record<GalleryConfig["columns"], string> = {
   1: "grid-cols-1",
-  2: "grid-cols-1 min-[360px]:grid-cols-2",
-  3: "grid-cols-1 min-[360px]:grid-cols-2 md:grid-cols-3",
-  4: "grid-cols-1 min-[360px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4",
-  5: "grid-cols-1 min-[360px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5",
+  2: "grid-cols-1 @[20.5rem]:grid-cols-2",
+  3: "grid-cols-1 @[20.5rem]:grid-cols-2 @[42rem]:grid-cols-3",
+  4: "grid-cols-1 @[20.5rem]:grid-cols-2 @[42rem]:grid-cols-3 @[56rem]:grid-cols-4",
+  5: "grid-cols-1 @[20.5rem]:grid-cols-2 @[42rem]:grid-cols-3 @[56rem]:grid-cols-4 @[72rem]:grid-cols-5",
 };
 
 // The server snapshot keeps hydration stable; subsequent rendering uses browser locale.
@@ -45,7 +45,7 @@ function GalleryCard({
         "border-border bg-surface rounded-card duration-gallery ease-standard h-full border p-2 transition-[transform,border-color] motion-safe:hover:-translate-y-0.5",
         horizontal
           ? "grid grid-cols-[minmax(6rem,35%)_minmax(0,1fr)] items-center gap-4"
-          : "max-[360px]:grid max-[360px]:grid-cols-[minmax(6rem,35%)_minmax(0,1fr)] max-[360px]:items-center max-[360px]:gap-4",
+          : "@max-[20.5rem]:grid @max-[20.5rem]:grid-cols-[minmax(6rem,35%)_minmax(0,1fr)] @max-[20.5rem]:items-center @max-[20.5rem]:gap-4",
       )}
       data-layout={horizontal ? "horizontal" : "vertical"}
     >
@@ -83,11 +83,13 @@ export function GalleryGrid({
   config,
   fields,
   items,
+  preview = false,
 }: {
   collectionId: string;
   config: GalleryConfig;
   fields: ItemFieldDefinition[];
   items: ItemRecord[];
+  preview?: boolean;
 }) {
   const locale = useSyncExternalStore(subscribe, browserLocale, serverLocale);
   const sortedItems = sortGalleryItems(
@@ -98,25 +100,31 @@ export function GalleryGrid({
   );
 
   return (
-    <ul
-      className={cn(
-        "grid min-w-0",
-        columnClasses[config.columns],
-        config.spacing === "tight" ? "gap-2" : "gap-4 sm:gap-5",
-      )}
-    >
-      {sortedItems.map((item) => (
-        <li className="min-w-0" key={item.id}>
-          <Link
-            aria-label={`Open ${item.title}`}
-            className="focus-ring rounded-card block h-full"
-            href={`/collections/${collectionId}/items/${item.id}` as Route}
-          >
-            <GalleryCard config={config} fields={fields} item={item} />
-          </Link>
-        </li>
-      ))}
-    </ul>
+    <div className="@container min-w-0">
+      <ul
+        className={cn(
+          "grid min-w-0",
+          columnClasses[config.columns],
+          config.spacing === "tight" ? "gap-2" : "gap-4 sm:gap-5",
+        )}
+      >
+        {(preview ? sortedItems.slice(0, 5) : sortedItems).map((item) => (
+          <li className="min-w-0" key={item.id}>
+            {preview ? (
+              <GalleryCard config={config} fields={fields} item={item} />
+            ) : (
+              <Link
+                aria-label={`Open ${item.title}`}
+                className="focus-ring rounded-card block h-full"
+                href={`/collections/${collectionId}/items/${item.id}` as Route}
+              >
+                <GalleryCard config={config} fields={fields} item={item} />
+              </Link>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 

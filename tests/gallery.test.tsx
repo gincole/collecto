@@ -8,6 +8,9 @@ const { refreshMock } = vi.hoisted(() => ({ refreshMock: vi.fn() }));
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ refresh: refreshMock }),
 }));
+vi.mock("@/features/gallery/actions", () => ({
+  saveGalleryConfigAction: vi.fn(),
+}));
 
 import CollectionLoading from "@/app/(app)/collections/[id]/loading";
 import type { CollectionRecord } from "@/features/collections/models";
@@ -198,10 +201,10 @@ describe("responsive gallery", () => {
   it("maps every saved column preference to a capped responsive grid", () => {
     const expectedClasses = {
       1: "grid-cols-1",
-      2: "min-[360px]:grid-cols-2",
-      3: "md:grid-cols-3",
-      4: "lg:grid-cols-4",
-      5: "xl:grid-cols-5",
+      2: "@[20.5rem]:grid-cols-2",
+      3: "@[42rem]:grid-cols-3",
+      4: "@[56rem]:grid-cols-4",
+      5: "@[72rem]:grid-cols-5",
     } as const;
 
     for (const columns of [1, 2, 3, 4, 5] as const) {
@@ -280,8 +283,8 @@ describe("responsive gallery", () => {
       />,
     );
     expect(screen.getByRole("article")).toHaveClass(
-      "max-[360px]:grid",
-      "max-[360px]:grid-cols-[minmax(6rem,35%)_minmax(0,1fr)]",
+      "@max-[20.5rem]:grid",
+      "@max-[20.5rem]:grid-cols-[minmax(6rem,35%)_minmax(0,1fr)]",
     );
   });
 
