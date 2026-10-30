@@ -232,6 +232,15 @@ export type Database = {
         };
         Returns: string;
       };
+      create_item_with_values: {
+        Args: {
+          p_collection_id: string;
+          p_description: string | null;
+          p_title: string;
+          p_values: Json;
+        };
+        Returns: string;
+      };
       delete_collection_with_cleanup: {
         Args: {
           p_collection_id: string;
@@ -253,6 +262,16 @@ export type Database = {
       set_updated_at: {
         Args: Record<PropertyKey, never>;
         Returns: unknown;
+      };
+      update_item_with_values: {
+        Args: {
+          p_collection_id: string;
+          p_description: string | null;
+          p_item_id: string;
+          p_title: string;
+          p_values: Json;
+        };
+        Returns: string;
       };
     };
     Enums: {
