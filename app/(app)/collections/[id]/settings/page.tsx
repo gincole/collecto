@@ -7,6 +7,35 @@ import {
 } from "@/features/collections/actions";
 import { CollectionSettings } from "@/features/collections/collection-settings";
 import { getCollectionQuery } from "@/features/collections/queries";
+import {
+  createFieldAction,
+  createOptionAction,
+  deleteFieldAction,
+  deleteOptionAction,
+  getFieldDeleteImpactAction,
+  getOptionDeleteImpactAction,
+  reorderFieldsAction,
+  reorderOptionsAction,
+  updateFieldAction,
+  updateOptionAction,
+} from "@/features/fields/actions";
+import {
+  FieldManager,
+  type FieldManagerActions,
+} from "@/features/fields/field-manager";
+
+const fieldActions = {
+  createField: createFieldAction,
+  createOption: createOptionAction,
+  deleteField: deleteFieldAction,
+  deleteOption: deleteOptionAction,
+  getFieldImpact: getFieldDeleteImpactAction,
+  getOptionImpact: getOptionDeleteImpactAction,
+  reorderFields: reorderFieldsAction,
+  reorderOptions: reorderOptionsAction,
+  updateField: updateFieldAction,
+  updateOption: updateOptionAction,
+} satisfies FieldManagerActions;
 
 export default async function CollectionSettingsPage({
   params,
@@ -46,7 +75,13 @@ export default async function CollectionSettingsPage({
         collection={result.data}
         deleteAction={deleteAction}
         updateAction={updateAction}
-      />
+      >
+        <FieldManager
+          actions={fieldActions}
+          collectionId={id}
+          fields={result.data.fields}
+        />
+      </CollectionSettings>
     </PageContainer>
   );
 }

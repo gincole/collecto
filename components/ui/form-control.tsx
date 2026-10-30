@@ -18,4 +18,8 @@ function Textarea({ className, ...props }: ComponentProps<"textarea">) {
   );
 }
 
-export { Input, Textarea };
+function Select({ className, ...props }: ComponentProps<"select">) {
+  return <select className={cn(controlClassName, className)} {...props} />;
+}
+
+export { Input, Select, Textarea };

@@ -19,12 +19,12 @@ import {
   updateOption,
 } from "./service";
 
-async function run(
+async function run<TResult extends { status: string }>(
   input: unknown,
   operation: (
     gateway: ReturnType<typeof createFieldGateway>,
-  ) => Promise<{ status: string }>,
-) {
+  ) => Promise<TResult>,
+): Promise<TResult> {
   const client = await createClient();
   const result = await operation(createFieldGateway(client));
   const collectionId = collectionIdFrom(input);
@@ -43,27 +43,27 @@ function collectionIdFrom(input: unknown) {
   return parsed.success ? parsed.data.collectionId : null;
 }
 
-export const createFieldAction = (input: unknown) =>
+export const createFieldAction = async (input: unknown) =>
   run(input, (gateway) => createField(input, gateway));
-export const updateFieldAction = (input: unknown) =>
+export const updateFieldAction = async (input: unknown) =>
   run(input, (gateway) => updateField(input, gateway));
-export const reorderFieldsAction = (input: unknown) =>
+export const reorderFieldsAction = async (input: unknown) =>
   run(input, (gateway) => reorderFields(input, gateway));
 export const getFieldDeleteImpactAction = async (input: unknown) => {
   const client = await createClient();
   return getFieldDeleteImpact(input, createFieldGateway(client));
 };
-export const deleteFieldAction = (input: unknown) =>
+export const deleteFieldAction = async (input: unknown) =>
   run(input, (gateway) => deleteField(input, gateway));
-export const createOptionAction = (input: unknown) =>
+export const createOptionAction = async (input: unknown) =>
   run(input, (gateway) => createOption(input, gateway));
-export const updateOptionAction = (input: unknown) =>
+export const updateOptionAction = async (input: unknown) =>
   run(input, (gateway) => updateOption(input, gateway));
-export const reorderOptionsAction = (input: unknown) =>
+export const reorderOptionsAction = async (input: unknown) =>
   run(input, (gateway) => reorderOptions(input, gateway));
 export const getOptionDeleteImpactAction = async (input: unknown) => {
   const client = await createClient();
   return getOptionDeleteImpact(input, createFieldGateway(client));
 };
-export const deleteOptionAction = (input: unknown) =>
+export const deleteOptionAction = async (input: unknown) =>
   run(input, (gateway) => deleteOption(input, gateway));

@@ -1,7 +1,13 @@
 "use client";
 
 import { Trash2 } from "lucide-react";
-import { useActionState, useEffect, useRef, useState } from "react";
+import {
+  useActionState,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -26,12 +32,14 @@ type SettingsAction = (
 ) => Promise<CollectionSettingsState>;
 
 type CollectionSettingsProps = {
+  children?: ReactNode;
   collection: CollectionRecord;
   deleteAction: SettingsAction;
   updateAction: SettingsAction;
 };
 
 export function CollectionSettings({
+  children,
   collection,
   deleteAction,
   updateAction,
@@ -159,6 +167,8 @@ export function CollectionSettings({
           </div>
         </form>
       </section>
+
+      {children}
 
       <section
         aria-labelledby="delete-collection-heading"
