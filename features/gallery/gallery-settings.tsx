@@ -283,7 +283,9 @@ export function GallerySettings({
                 Show details
               </label>
               <section className="space-y-3" aria-label="Visible fields">
-                <h3 className="font-semibold">Visible fields</h3>
+                <h3 data-form-heading="section" className="font-semibold">
+                  Visible fields
+                </h3>
                 <p className="text-foreground-muted text-sm">
                   Choose up to three fields. The first is the primary label.
                   Selections are kept when details are off.
@@ -346,7 +348,9 @@ export function GallerySettings({
               </section>
             </fieldset>
             <section aria-label="Gallery preview" className="space-y-3">
-              <h3 className="font-semibold">Preview</h3>
+              <h3 data-form-heading="section" className="font-semibold">
+                Preview
+              </h3>
               {items.length === 0 ? (
                 <p className="text-foreground-muted text-sm">
                   A sample is shown until you add an Item.

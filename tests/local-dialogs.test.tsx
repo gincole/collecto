@@ -84,6 +84,61 @@ function expectNoNavigation(url: string) {
 }
 
 describe("ready local dialogs", () => {
+  it("uses the shared dialog hierarchy for every Settings section without removing field controls", async () => {
+    const user = userEvent.setup();
+    render(<CollectionHeader collection={collection} />);
+    await user.click(
+      screen.getByRole("button", { name: "Collection actions for Books" }),
+    );
+    await user.click(
+      screen.getByRole("menuitem", { name: "Collection settings" }),
+    );
+    const dialog = screen.getByRole("dialog", { name: "Collection settings" });
+    for (const name of [
+      "General",
+      "Built-in fields",
+      "Custom fields",
+      "Delete collection",
+    ]) {
+      const heading = within(dialog).getByRole("heading", { name });
+      expect(heading).toHaveAttribute("data-form-heading", "section");
+      expect(heading.closest("section")).toHaveAttribute("data-form-panel");
+    }
+    expect(within(dialog).getByLabelText("Collection name")).toBeVisible();
+    expect(
+      within(dialog).getByRole("button", { name: "Edit Author" }),
+    ).toBeVisible();
+  });
+
+  it("shows one visible wizard heading with centered preset contents and an accessible modal name", async () => {
+    const user = userEvent.setup();
+    render(<LibraryContent collections={[]} />);
+    await user.click(screen.getByRole("button", { name: "New collection" }));
+    const dialog = screen.getByRole("dialog", { name: "New collection" });
+    expect(
+      within(dialog).getByRole("heading", { name: "New collection" }),
+    ).toHaveClass("sr-only");
+    expect(
+      within(dialog).getByRole("heading", { name: "What are you collecting?" }),
+    ).toHaveAttribute("data-form-heading", "primary");
+    expect(dialog.querySelector("header")).not.toHaveClass("border-b");
+    const preset = within(dialog).getByRole("button", { name: "Books preset" });
+    expect(preset).toHaveClass("items-center", "justify-center", "text-center");
+    await user.click(preset);
+    await user.click(within(dialog).getByRole("button", { name: "Continue" }));
+    expect(
+      within(dialog).getByRole("heading", { name: "Set up your collection" }),
+    ).toHaveAttribute("data-form-heading", "primary");
+    expect(dialog.querySelector("[data-schema-editor]")).toHaveAttribute(
+      "data-form-panel",
+    );
+    expect(
+      within(dialog)
+        .getByRole("button", { name: "Create collection" })
+        .closest("[data-modal-footer]"),
+    ).not.toBeNull();
+  });
+
   it("keeps Home free of Back and opens New Collection synchronously with unchanged URL", async () => {
     const user = userEvent.setup(),
       url = window.location.href;

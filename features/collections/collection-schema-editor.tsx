@@ -84,6 +84,7 @@ export function CollectionSchemaEditor({
   }
   return (
     <section
+      data-form-panel
       data-schema-editor
       tabIndex={-1}
       aria-describedby={serverError ? "draft-server-error" : undefined}
@@ -91,6 +92,7 @@ export function CollectionSchemaEditor({
       className="focus-ring border-border bg-surface rounded-card sm:p-panel border p-4"
     >
       <h2
+        data-form-heading="section"
         className="text-section-title-mobile sm:text-section-title mb-2"
         id="draft-fields-title"
       >
@@ -124,6 +126,7 @@ export function CollectionSchemaEditor({
         <ol className="space-y-4">
           {fields.map((field, index) => (
             <li
+              data-form-panel
               className="border-border rounded-control space-y-4 border p-4"
               key={field.key}
             >

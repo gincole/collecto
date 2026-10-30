@@ -72,7 +72,12 @@ export function LibraryContent({
         )}
       </section>
       {dialog?.kind === "create" ? (
-        <FlowModal title="New collection" onClose={close} returnFocus={opener}>
+        <FlowModal
+          title="New collection"
+          showTitle={false}
+          onClose={close}
+          returnFocus={opener}
+        >
           <CollectionWizard createAction={createCollectionFromWizardAction} />
         </FlowModal>
       ) : null}

@@ -31,11 +31,15 @@ import { ReorderButtons } from "./reorder-buttons";
 function BuiltInFields() {
   return (
     <section
+      data-form-panel
       aria-label="Built-in fields"
       className="border-border bg-surface rounded-card sm:p-panel border p-4"
     >
       <div className="mb-4 space-y-1">
-        <h2 className="text-section-title-mobile sm:text-section-title">
+        <h2
+          data-form-heading="section"
+          className="text-section-title-mobile sm:text-section-title"
+        >
           Built-in fields
         </h2>
         <p className="text-foreground-muted">
@@ -134,13 +138,17 @@ function FieldManager({
     <div className="space-y-8">
       <BuiltInFields />
       <section
+        data-form-panel
         aria-label="Custom fields"
         aria-busy={pending}
         className="border-border bg-surface rounded-card sm:p-panel border p-4"
       >
         <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-1">
-            <h2 className="text-section-title-mobile sm:text-section-title">
+            <h2
+              data-form-heading="section"
+              className="text-section-title-mobile sm:text-section-title"
+            >
               Custom fields
             </h2>
             <p className="text-foreground-muted">

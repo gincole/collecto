@@ -165,7 +165,11 @@ export function AddFieldForm({
             className="space-y-3"
           >
             <div className="space-y-1">
-              <h3 className="font-semibold" id="initial-options-heading">
+              <h3
+                data-form-heading="section"
+                className="font-semibold"
+                id="initial-options-heading"
+              >
                 {createdFieldId ? "Remaining options" : "Initial options"}
               </h3>
               <p className="text-foreground-muted text-sm">

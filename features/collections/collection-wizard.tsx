@@ -162,6 +162,7 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
           <section aria-labelledby="preset-title" className="space-y-6">
             <div className="space-y-2">
               <h1
+                data-form-heading="primary"
                 className="text-page-title-mobile sm:text-page-title"
                 id="preset-title"
               >
@@ -181,7 +182,7 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
                     aria-label={`${option.label} preset`}
                     aria-pressed={selected}
                     className={cn(
-                      "focus-ring rounded-card bg-surface sm:p-panel relative flex min-h-36 flex-col items-start justify-between gap-4 border-2 p-5 text-left transition-[border-color,transform] motion-safe:hover:-translate-y-0.5 sm:min-h-40",
+                      "focus-ring rounded-card bg-surface sm:p-panel relative flex min-h-36 flex-col items-center justify-center gap-4 border-2 p-5 text-center transition-[border-color,transform] motion-safe:hover:-translate-y-0.5 sm:min-h-40",
                       selected
                         ? "border-selection-border"
                         : "border-border hover:border-control-border",
@@ -260,6 +261,7 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
             <section aria-labelledby="details-title" className="space-y-6">
               <div className="space-y-2">
                 <h1
+                  data-form-heading="primary"
                   className="text-page-title-mobile sm:text-page-title"
                   id="details-title"
                 >
@@ -271,7 +273,10 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
                 </p>
               </div>
 
-              <div className="bg-art-lavender rounded-card flex items-center justify-between gap-3 px-4 py-3">
+              <div
+                data-form-panel
+                className="bg-art-lavender rounded-card flex items-center justify-between gap-3 px-4 py-3"
+              >
                 <span className="font-semibold">{preset.label}</span>
                 <button
                   disabled={pending}

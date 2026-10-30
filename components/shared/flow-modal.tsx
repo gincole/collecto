@@ -76,11 +76,13 @@ export function ModalActions({
 
 export function FlowModal({
   title,
+  showTitle = true,
   onClose,
   returnFocus,
   children,
 }: {
   title: string;
+  showTitle?: boolean;
   onClose: () => void;
   returnFocus?: RefObject<HTMLElement | null>;
   children: ReactNode;
@@ -143,11 +145,15 @@ export function FlowModal({
           close();
         }}
       >
-        <header className="border-border flex items-center justify-between gap-4 border-b px-5 py-4">
-          <DialogTitle className="text-section-title-mobile sm:text-section-title pr-0">
+        <header className="flex items-center justify-between gap-4 px-5 pt-4">
+          <DialogTitle
+            data-form-heading="primary"
+            className={showTitle ? "text-section-title-mobile pr-0" : "sr-only"}
+          >
             {title}
           </DialogTitle>
           <Button
+            className="ml-auto"
             type="button"
             variant="ghost"
             size="icon"

@@ -7,7 +7,7 @@ The user explicitly requested applying the newly added root `DESIGN.md` across t
 - Use the reference's zinc canvas `#f4f4f5`, white surfaces, `#fafafa` recessed surfaces, obsidian actions `#09090b`, and steel supporting text `#52525b`.
 - Use DM Sans, the reference's explicitly permitted Cosmica substitute. No Cosmica assets were provided. Retain Noto Sans Thai as a script fallback, rather than losing Unicode content support.
 - Map display/page/section/card/body/caption roles to the reference hierarchy. Use 64 px Library display headings on desktop, 40 px page headings, 32 px section headings, and 20 px card headings. Scale down on narrow screens; form inputs remain at least 16 px.
-- Compact destructive/discard confirmation titles use the reference's 20 px subheading role consistently; larger Field and Gallery editors use responsive 24/32 px section headings.
+- Compact destructive/discard confirmation titles use the reference's 20 px subheading role consistently. The M7-T02L modal refinement uses 24 px primary editor titles and 20 px section headings; page heading roles remain unchanged.
 - Use 36 px content cards, 14 px buttons/inputs, 12 px badges, 40 px artwork tiles, and pill navigation. Keep full-screen sheets edge-to-edge and preserve native control semantics.
 - Use a centered 1200 px outer page container, 28 px desktop panel padding, and 80 px major Library section rhythm. Compact forms and dense galleries retain task-appropriate spacing; mobile panels use 16–20 px padding.
 - Remove content-card drop shadows. Keep restrained elevation for floating menus, sheets, and dialogs. Primary buttons use a subtle inset highlight and dark border.
@@ -19,3 +19,19 @@ The user explicitly requested applying the newly added root `DESIGN.md` across t
 ## Verification boundary
 
 M7-T02C applies this mapping across shared primitives, Auth, Library, Collection setup/settings, Browse, gallery/live preview, Field/Option editors, Item forms/details, dialogs, feedback, and loading/error/empty states. Token/contrast and component tests verify contracts; formatter, lint, TypeScript, dependency audit, and production build verify integration. Browser/viewport testing remains excluded by the user's instruction, so this task does not close the full M7-T02 visual/accessibility acceptance audit.
+
+## Modal composition refinement — M7-T02L
+
+The user's 30 October 2026 review replaces boxed form sections inside dialogs
+with open, spaced groups, removes the shared modal header divider, and permits
+an accessible but visually hidden shell title when the content already introduces
+the screen (New Collection). Keep X dismissal and fixed footer actions.
+
+Use the same existing typography tokens: 24 px primary modal/editor titles,
+20 px modal section headings, and 20 px compact confirmation titles. Body text,
+labels, input sizes and page typography retain their existing roles. Shared
+`data-form-heading` and `data-form-panel` markers apply these rules within
+`.dialog-content` only; page panels retain their layout. Field rows, inputs,
+buttons, image controls and actual gallery-preview cards retain their boundaries.
+Preset buttons center both their artwork and label. No interaction or persistence
+contract changes.

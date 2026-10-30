@@ -81,7 +81,11 @@ function OptionEditor({
       className="space-y-4"
     >
       <div className="space-y-1">
-        <h3 className="font-semibold" id="select-options-heading">
+        <h3
+          data-form-heading="section"
+          className="font-semibold"
+          id="select-options-heading"
+        >
           Select options
         </h3>
         <p className="text-foreground-muted text-sm">
@@ -293,7 +297,10 @@ export function EditFieldDialog({
         closeDisabled={busy}
       >
         <div className="space-y-1 pr-10">
-          <DialogTitle className="text-section-title-mobile sm:text-section-title">
+          <DialogTitle
+            data-form-heading="primary"
+            className="text-section-title-mobile"
+          >
             Edit {field.name}
           </DialogTitle>
           <DialogDescription className="text-foreground-muted">
@@ -388,7 +395,10 @@ export function AddFieldDialog({
           if (pending) event.preventDefault();
         }}
       >
-        <DialogTitle className="text-section-title-mobile sm:text-section-title">
+        <DialogTitle
+          data-form-heading="primary"
+          className="text-section-title-mobile"
+        >
           Add custom field
         </DialogTitle>
         <DialogDescription className="sr-only">

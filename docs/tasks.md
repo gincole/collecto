@@ -118,3 +118,15 @@ Reported by the user on 30 October 2026. The M7-T01 state audit and implementati
   Independent review found no actionable defects. Staged diff and secret checks
   passed. No browser testing or hosted database writes.
 - Commit: SELF (this commit).
+
+## M7-T02L: Refine modal composition and preset alignment
+
+- Status: Complete; dependencies M7-T02J and M7-T02K are complete.
+- Scope/acceptance: see M7-T02L in `docs/implementation-plan.md` and the approved
+  modal refinement in `docs/visual-direction.md`.
+- Verification: `corepack pnpm verify:deployment` passed formatting, lint,
+  strict TypeScript, all 347 tests across 53 files and the production build.
+  Compiled CSS confirms scoped panel/heading rules; independent review passed
+  after aligning option/gallery section headings. Staged diff and secret checks
+  passed. Browser/device visual acceptance remains excluded at user request.
+- Commit: SELF (this commit).

@@ -121,11 +121,13 @@ export function CollectionSettings({
   return (
     <div className="space-y-6 pt-6">
       <section
+        data-form-panel
         aria-labelledby="collection-general-heading"
         className="border-border bg-surface rounded-card sm:p-panel border p-4"
       >
         <div className="mb-6 space-y-1">
           <h2
+            data-form-heading="section"
             className="text-section-title-mobile sm:text-section-title"
             id="collection-general-heading"
           >
@@ -225,6 +227,7 @@ export function CollectionSettings({
       {children}
 
       <section
+        data-form-panel
         aria-labelledby="delete-collection-heading"
         className="border-destructive/40 bg-surface rounded-card sm:p-panel border p-4"
         id="delete-collection"
@@ -233,6 +236,7 @@ export function CollectionSettings({
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0 space-y-1">
             <h2
+              data-form-heading="section"
               className="text-section-title-mobile sm:text-section-title"
               id="delete-collection-heading"
             >

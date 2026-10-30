@@ -253,6 +253,26 @@ body {
   }
 }
 
+/* Form panels retain their page presentation; dialog content uses open groups. */
+.dialog-content [data-form-panel] {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+}
+
+.dialog-content [data-form-heading="primary"] {
+  font-size: var(--text-section-title-mobile);
+  line-height: var(--text-section-title-mobile--line-height);
+  font-weight: var(--text-section-title-mobile--font-weight);
+}
+
+.dialog-content [data-form-heading="section"] {
+  font-size: var(--text-card-title);
+  line-height: var(--text-card-title--line-height);
+  font-weight: var(--text-card-title--font-weight);
+}
+
 .dialog-overlay[data-state="open"] {
   animation: dialog-overlay-show var(--duration-dialog) var(--ease-standard);
 }

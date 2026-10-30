@@ -799,3 +799,24 @@ Acceptance and verification: component regressions for immediate order, sequenti
 moves, failed saves, refreshed props and real drag handlers; existing field UI
 and Settings tests; `corepack pnpm verify:deployment`; independent review and
 staged secret/diff checks. No browser testing, as requested by the user.
+
+## M7-T02L: Refine modal composition and preset alignment
+
+User-approved scope (30 October 2026): center preset artwork/text; remove the
+shared modal's header divider and unnecessary visible shell titles; remove
+framed sections inside dialogs; use a consistent, restrained modal type hierarchy.
+Depends on completed M7-T02J and M7-T02K. See `docs/visual-direction.md` for the
+superseding modal presentation rules. Do not change pages, form controls, action
+footers, data loading, validation, focus guards or persistence.
+
+Acceptance: preset icons and labels center together; New Collection has an
+accessible shell name but only its step prompt is visually prominent; other
+editors have one primary title; dialog primary titles use 24 px and section
+headings 20 px; Collection Settings/schema sections have no nested panel frame;
+actual fields/buttons/preview cards retain their presentation. Page styles remain
+scoped separately. Close, Back, pending states and fixed actions continue to work.
+
+Verification: component regressions for wizard heading/selection/footer and
+Settings section hierarchy; existing field/settings/forms tests; full
+`corepack pnpm verify:deployment`; emitted CSS inspection and independent review.
+No browser checks at the user's request. One focused `fix(ui)` commit.
