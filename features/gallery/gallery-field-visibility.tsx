@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   DndContext,
   DragOverlay,
@@ -33,14 +33,14 @@ function FieldRow({
   field,
   visible,
   disabled,
-  onToggle,
+  onTransfer,
   onUp,
   onDown,
 }: {
   field: Field;
   visible: boolean;
   disabled: boolean;
-  onToggle: () => void;
+  onTransfer: (visible: boolean) => void;
   onUp?: () => void;
   onDown?: () => void;
 }) {
@@ -79,6 +79,14 @@ function FieldRow({
         size="icon"
         className="cursor-grab touch-none active:cursor-grabbing"
         aria-label={`Drag ${field.name} to change visibility or order`}
+        data-field-drag={field.id}
+        aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown"
+        onKeyDown={(event) => {
+          if (event.altKey && ["ArrowUp", "ArrowDown"].includes(event.key)) {
+            event.preventDefault();
+            if (!disabled) onTransfer(event.key === "ArrowUp");
+          } else listeners?.onKeyDown?.(event);
+        }}
       >
         <GripVertical aria-hidden="true" />
       </Button>
@@ -92,16 +100,6 @@ function FieldRow({
             onDown={onDown}
           />
         ) : null}
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          disabled={disabled}
-          onClick={onToggle}
-          aria-label={`${visible ? "Hide" : "Show"} ${field.name}`}
-        >
-          {visible ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}
-        </Button>
       </div>
     </li>
   );
@@ -124,7 +122,14 @@ function FieldList({
   });
   return (
     <div className="space-y-2">
-      <h4 className="text-sm font-medium">{name}</h4>
+      <h4 className="flex items-center gap-2 text-sm font-medium">
+        {name === "Visible" ? (
+          <Eye aria-hidden="true" className="size-4" />
+        ) : (
+          <EyeOff aria-hidden="true" className="size-4" />
+        )}
+        {name}
+      </h4>
       <SortableContext items={ids} strategy={verticalListSortingStrategy}>
         <ol
           ref={setNodeRef}
@@ -159,6 +164,19 @@ export function GalleryFieldVisibility({
 }) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [message, setMessage] = useState("");
+  const restoreFocus = useRef<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const focusId = restoreFocus.current;
+    if (!focusId) return;
+    const handle = Array.from(
+      containerRef.current?.querySelectorAll<HTMLButtonElement>(
+        "[data-field-drag]",
+      ) ?? [],
+    ).find((button) => button.dataset.fieldDrag === focusId);
+    handle?.focus();
+    restoreFocus.current = null;
+  }, [value]);
   const reduced = useReducedMotion();
   const hidden = fields
     .filter((field) => !value.includes(field.id))
@@ -170,6 +188,11 @@ export function GalleryFieldVisibility({
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   );
+  function transfer(id: string, targetVisible: boolean) {
+    if (disabled || value.includes(id) === targetVisible) return;
+    restoreFocus.current = !targetVisible || value.length < 3 ? id : null;
+    update(id, targetVisible);
+  }
   function update(id: string, targetVisible: boolean, targetId?: string) {
     if (disabled) return;
     setMessage("");
@@ -188,78 +211,85 @@ export function GalleryFieldVisibility({
     } else setMessage("Choose up to three visible fields. Hide a field first.");
   }
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragStart={({ active }) => setActiveId(String(active.id))}
-      onDragCancel={() => setActiveId(null)}
-      onDragEnd={({ active, over }) => {
-        setActiveId(null);
-        if (!over || active.id === over.id) return;
-        const target = String(over.id);
-        update(
-          String(active.id),
-          target === "gallery-Visible" || value.includes(target),
-          target === "gallery-Visible" ? undefined : target,
-        );
-      }}
-    >
-      <FieldList name="Visible" ids={value} disabled={disabled}>
-        {value.map((id, index) => {
-          const field = fields.find((field) => field.id === id);
-          return field ? (
-            <FieldRow
-              key={id}
-              field={field}
-              visible
-              disabled={disabled}
-              onToggle={() => update(id, false)}
-              onUp={
-                index > 0
-                  ? () => onChange(arrayMove(value, index, index - 1))
-                  : undefined
-              }
-              onDown={
-                index < value.length - 1
-                  ? () => onChange(arrayMove(value, index, index + 1))
-                  : undefined
-              }
-            />
-          ) : null;
-        })}
-      </FieldList>
-      <hr className="border-border mx-auto my-5 w-3/4 border-t border-dashed" />
-      <FieldList name="Hidden" ids={hidden} disabled={disabled}>
-        {fields
-          .filter((field) => hidden.includes(field.id))
-          .map((field) => (
-            <FieldRow
-              key={field.id}
-              field={field}
-              visible={false}
-              disabled={disabled}
-              onToggle={() => update(field.id, true)}
-            />
-          ))}
-      </FieldList>
-      <p
-        aria-label="Field visibility"
-        role="status"
-        className="text-foreground-muted text-sm"
+    <div ref={containerRef} className="space-y-4">
+      <DndContext
+        accessibility={{
+          screenReaderInstructions: {
+            draggable:
+              "Press Space or Enter to pick up a field, arrow keys to move, and Space or Enter to drop. Escape cancels. Without picking up, Alt+Up moves to Visible and Alt+Down moves to Hidden.",
+          },
+        }}
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={({ active }) => setActiveId(String(active.id))}
+        onDragCancel={() => setActiveId(null)}
+        onDragEnd={({ active, over }) => {
+          setActiveId(null);
+          if (!over || active.id === over.id) return;
+          const target = String(over.id);
+          update(
+            String(active.id),
+            target === "gallery-Visible" || value.includes(target),
+            target === "gallery-Visible" ? undefined : target,
+          );
+        }}
       >
-        {message}
-      </p>
-      <DragOverlay dropAnimation={reduced ? null : undefined}>
-        {active ? (
-          <div
-            aria-hidden="true"
-            className={cn(rowClass, "bg-surface shadow-dialog")}
-          >
-            <GripVertical className="size-4" />
-            <span className="truncate">{active.name}</span>
-          </div>
-        ) : null}
-      </DragOverlay>
-    </DndContext>
+        <FieldList name="Visible" ids={value} disabled={disabled}>
+          {value.map((id, index) => {
+            const field = fields.find((field) => field.id === id);
+            return field ? (
+              <FieldRow
+                key={id}
+                field={field}
+                visible
+                disabled={disabled}
+                onTransfer={(visible) => transfer(id, visible)}
+                onUp={
+                  index > 0
+                    ? () => onChange(arrayMove(value, index, index - 1))
+                    : undefined
+                }
+                onDown={
+                  index < value.length - 1
+                    ? () => onChange(arrayMove(value, index, index + 1))
+                    : undefined
+                }
+              />
+            ) : null;
+          })}
+        </FieldList>
+        <FieldList name="Hidden" ids={hidden} disabled={disabled}>
+          {fields
+            .filter((field) => hidden.includes(field.id))
+            .map((field) => (
+              <FieldRow
+                key={field.id}
+                field={field}
+                visible={false}
+                disabled={disabled}
+                onTransfer={(visible) => transfer(field.id, visible)}
+              />
+            ))}
+        </FieldList>
+        <p
+          aria-label="Field visibility"
+          role="status"
+          className="text-foreground-muted text-sm"
+        >
+          {message}
+        </p>
+        <DragOverlay dropAnimation={reduced ? null : undefined}>
+          {active ? (
+            <div
+              aria-hidden="true"
+              className={cn(rowClass, "bg-surface shadow-dialog")}
+            >
+              <GripVertical className="size-4" />
+              <span className="truncate">{active.name}</span>
+            </div>
+          ) : null}
+        </DragOverlay>
+      </DndContext>
+    </div>
   );
 }

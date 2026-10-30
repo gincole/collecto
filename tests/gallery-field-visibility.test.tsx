@@ -1,5 +1,6 @@
 import { useState, type ComponentProps } from "react";
 import { act, render, screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import type { DragEndEvent } from "@dnd-kit/core";
 import { GalleryFieldVisibility } from "@/features/gallery/gallery-field-visibility";
@@ -76,6 +77,36 @@ function visible() {
 }
 
 describe("Gallery field drag targets", () => {
+  it("uses icons on list headings and has no eye buttons or separator", () => {
+    render(<Harness />);
+    expect(
+      screen.getByRole("heading", { name: "Visible" }).querySelector("svg"),
+    ).not.toBeNull();
+    expect(
+      screen.getByRole("heading", { name: "Hidden" }).querySelector("svg"),
+    ).not.toBeNull();
+    expect(screen.queryByRole("separator")).toBeNull();
+    expect(screen.queryByRole("button", { name: /^(Show|Hide) / })).toBeNull();
+  });
+  it("moves with keyboard shortcuts without eye buttons", async () => {
+    const user = userEvent.setup();
+    render(<Harness />);
+    screen
+      .getByRole("button", { name: "Drag Title to change visibility or order" })
+      .focus();
+    await user.keyboard("{Alt>}{ArrowDown}{/Alt}");
+    expect(visible()).toEqual(["Description"]);
+    expect(
+      screen.getByRole("button", {
+        name: "Drag Title to change visibility or order",
+      }),
+    ).toHaveFocus();
+    screen
+      .getByRole("button", { name: "Drag Title to change visibility or order" })
+      .focus();
+    await user.keyboard("{Alt>}{ArrowUp}{/Alt}");
+    expect(visible()).toEqual(["Description", "Title"]);
+  });
   it("reorders over rows and the Visible container", () => {
     render(<Harness />);
     drop("description", "title");

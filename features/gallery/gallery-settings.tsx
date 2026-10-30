@@ -235,7 +235,11 @@ export function GallerySettings({
           </p>
           <div className="space-y-6">
             <fieldset className="space-y-5" disabled={pending}>
-              <legend className="sr-only">Gallery appearance</legend>
+              <legend className="mb-5">
+                <h3 data-form-heading="section" className="font-semibold">
+                  Display settings
+                </h3>
+              </legend>
               <SettingRow label="Sort order" icon={ArrowUpDown}>
                 <Select
                   aria-label="Sort order"
@@ -324,26 +328,28 @@ export function GallerySettings({
                   onChange={(value) => change("showDetails", value === "true")}
                 />
               </SettingRow>
-              <section
-                data-modal-section
-                className="space-y-3"
-                aria-label="Visible fields"
-              >
-                <h3 data-form-heading="section" className="font-semibold">
-                  Visible fields
-                </h3>
-                <p className="text-foreground-muted text-sm">
-                  Choose up to three fields. The first is the primary label.
-                  Selections are kept when details are off.
-                </p>
-                <GalleryFieldVisibility
-                  fields={choices}
-                  value={safeDraft.visibleFieldIds}
-                  disabled={pending}
-                  onChange={(ids) => change("visibleFieldIds", ids)}
-                />
-              </section>
             </fieldset>
+            <section
+              data-modal-section
+              className="space-y-3"
+              aria-label="Visible fields"
+            >
+              <h3 data-form-heading="section" className="font-semibold">
+                Visible fields
+              </h3>
+              <p className="text-foreground-muted text-sm">
+                Drag fields between the lists to choose up to three visible
+                fields. The first is the primary label. Selections are kept when
+                details are off. On a focused drag handle, Alt+Up shows a field
+                and Alt+Down hides it.
+              </p>
+              <GalleryFieldVisibility
+                fields={choices}
+                value={safeDraft.visibleFieldIds}
+                disabled={pending}
+                onChange={(ids) => change("visibleFieldIds", ids)}
+              />
+            </section>
             <section
               data-modal-section
               aria-label="Gallery preview"

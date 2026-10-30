@@ -135,6 +135,16 @@ describe("Gallery Settings validation and persistence", () => {
   });
 });
 
+async function showField(
+  user: ReturnType<typeof userEvent.setup>,
+  name: string,
+) {
+  screen
+    .getByRole("button", { name: `Drag ${name} to change visibility or order` })
+    .focus();
+  await user.keyboard("{Alt>}{ArrowUp}{/Alt}");
+}
+
 describe("Gallery Settings draft", () => {
   it("puts icon-labelled Sort first and uses standard-size choice buttons for the other settings", async () => {
     const user = userEvent.setup();
@@ -178,6 +188,9 @@ describe("Gallery Settings draft", () => {
     }
     expect(screen.getByRole("combobox", { name: "Sort order" })).toBeVisible();
     expect(screen.queryByRole("combobox", { name: "Columns" })).toBeNull();
+    expect(
+      screen.getByRole("heading", { name: "Display settings" }),
+    ).toBeVisible();
     const columns = screen.getByRole("radiogroup", { name: "Columns" });
     for (const choice of within(columns).getAllByRole("radio"))
       expect(choice).toHaveClass("h-11");
@@ -279,12 +292,17 @@ describe("Gallery Settings draft", () => {
       <GallerySettings collection={expanded} items={[]} saveAction={save} />,
     );
     await user.click(screen.getByRole("button", { name: "Gallery settings" }));
-    await user.click(screen.getByRole("button", { name: "Show Description" }));
-    await user.click(screen.getByRole("button", { name: "Show Notes" }));
-    await user.click(screen.getByRole("button", { name: "Show Other" }));
+    await showField(user, "Description");
+    await showField(user, "Notes");
+    await showField(user, "Other");
     expect(
       screen.getByRole("status", { name: "Field visibility" }),
     ).toHaveTextContent("Choose up to three");
+    const spacing = within(
+      screen.getByRole("radiogroup", { name: "Spacing" }),
+    ).getByRole("radio", { name: "Tight" });
+    await user.click(spacing);
+    expect(spacing).toHaveFocus();
     expect(
       within(screen.getByRole("list", { name: "Hidden" })).getByText("Other"),
     ).toBeVisible();
@@ -296,11 +314,19 @@ describe("Gallery Settings draft", () => {
       />,
     );
     expect(screen.queryByLabelText("Notes")).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Show Other" })).toBeEnabled();
+    expect(
+      screen.getByRole("button", {
+        name: "Drag Other to change visibility or order",
+      }),
+    ).toBeEnabled();
     await user.click(screen.getByRole("button", { name: "Save changes" }));
     expect(save).toHaveBeenCalledWith({
       collectionId: id,
-      config: { ...config, visibleFieldIds: ["title", "description"] },
+      config: {
+        ...config,
+        spacing: "tight",
+        visibleFieldIds: ["title", "description"],
+      },
     });
   });
   it("confirms Escape and keeps editing without saving", async () => {
@@ -329,7 +355,7 @@ describe("Gallery Settings draft", () => {
     const dialog = screen.getByRole("dialog", { name: "Gallery settings" });
     expect(within(dialog).getByText("Sample item")).toBeInTheDocument();
     await chooseOption(user, screen.getByLabelText("Columns"), "5");
-    await user.click(screen.getByRole("button", { name: "Show Description" }));
+    await showField(user, "Description");
     await chooseOption(
       user,
       screen.getByRole("radiogroup", { name: "Show details" }),
@@ -384,8 +410,8 @@ describe("Gallery Settings draft", () => {
       />,
     );
     await user.click(screen.getByRole("button", { name: "Gallery settings" }));
-    await user.click(screen.getByRole("button", { name: "Show Description" }));
-    await user.click(screen.getByRole("button", { name: "Show Notes" }));
+    await showField(user, "Description");
+    await showField(user, "Notes");
     expect(screen.queryByRole("checkbox")).toBeNull();
     expect(screen.queryByRole("button", { name: "Cancel" })).toBeNull();
     expect(screen.getByRole("list", { name: "Hidden" })).toBeVisible();

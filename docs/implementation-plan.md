@@ -1102,3 +1102,19 @@ Verification: modal absence and Close assertions, page Cancel preservation,
 confirmation focus trapping/dismissal and pending/destructive regressions; full
 deployment gate, independent review, staged diff/secret scan. No browser tests.
 One Conventional Commit, update task tracker, no push.
+
+## M7-T02Y: Simplify Gallery visibility and label display settings
+
+User-approved refinement after M7-T02X (complete). Remove the dashed separator
+and per-field eye toggle buttons. Keep cross-list row dragging and the existing
+reorder controls, and place Eye/EyeOff icons beside Visible/Hidden headings.
+Provide Alt+Up/Alt+Down shortcuts on drag handles for equivalent keyboard
+transfers, with instructions and focus restoration after cross-list movement.
+Retain the three-field limit, reduced motion, pending guards and draft behavior.
+Give the six appearance controls the section heading Display settings, separate
+from field visibility. Preserve standard modal component styles and persistence.
+
+Verification: icon/absence/section-heading tests, keyboard transfer/focus and
+existing drag-target/cap/persistence/Close tests; full deployment gate, independent
+review and staged diff/secret scan. No browser tests or dependency/schema changes.
+One Conventional Commit, update task tracker, no push.

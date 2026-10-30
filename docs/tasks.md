@@ -292,3 +292,17 @@ verify:deployment` passed formatting, lint, strict TypeScript, all 364 tests
   guards pass. Independent review and staged diff/secret checks passed.
   No browser testing.
 - Commit: SELF (this commit).
+
+## M7-T02Y: Simplify Gallery visibility and label display settings
+
+- Status: Complete; dependency M7-T02X is complete.
+- Scope/acceptance: see M7-T02Y in `docs/implementation-plan.md`.
+- Changes: removed dashed divider and row eye buttons; added icons beside list
+  headings, keyboard transfers and Display settings heading for the six controls.
+- Verification: formatting, lint, strict TypeScript, all 373 tests across 55
+  files and production build passed. Gallery tests cover drag targets, keyboard
+  transfers/focus, capacity rejection and section labels. Independent review and
+  staged diff/secret checks passed. No browser testing. An unrelated Field-delete
+  confirmation test failed once in the gate; its isolated recheck and full suite
+  rerun passed.
+- Commit: SELF (this commit).
