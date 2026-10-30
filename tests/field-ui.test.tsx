@@ -750,7 +750,7 @@ describe("Field manager", () => {
     expect(within(editor).getByRole("button", { name: "Close" })).toBeVisible();
     expect(editor.querySelector("[data-modal-header]")).toHaveClass(
       "border-b",
-      "py-panel",
+      "py-5",
     );
     expect(within(editor).getByRole("button", { name: "Close" })).toHaveClass(
       "border",
@@ -762,7 +762,7 @@ describe("Field manager", () => {
     ).not.toBeNull();
     expect(
       within(editor).getByLabelText("Field name").closest("[data-modal-body]"),
-    ).toHaveClass("pb-10");
+    ).toHaveClass("pb-6");
     expect(within(editor).getByText("Rating").closest("dd")).toBeVisible();
     expect(within(editor).queryByLabelText("Field type")).toBeNull();
     await user.clear(within(editor).getByLabelText("Field name"));

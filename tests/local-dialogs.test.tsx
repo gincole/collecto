@@ -129,7 +129,7 @@ describe("ready local dialogs", () => {
     expect(
       within(dialog).getByRole("heading", { name: "What are you collecting?" }),
     ).toHaveAttribute("data-form-heading", "primary");
-    expect(dialog.querySelector("header")).toHaveClass("border-b", "py-panel");
+    expect(dialog.querySelector("header")).toHaveClass("border-b", "py-5");
     expect(within(dialog).queryByText(/Step [12] of 2/)).toBeNull();
     expect(
       within(dialog)
@@ -139,11 +139,17 @@ describe("ready local dialogs", () => {
     expect(within(dialog).getByRole("button", { name: "Close" })).toHaveClass(
       "border",
     );
-    expect(dialog.querySelector("[data-modal-body]")).toHaveClass("pb-10");
+    expect(dialog.querySelector("[data-modal-body]")).toHaveClass("pb-6");
     const custom = within(dialog).getByRole("button", {
       name: "Custom preset",
     });
-    expect(custom).toHaveClass("bg-foreground", "text-surface");
+    expect(custom).toHaveClass(
+      "bg-foreground",
+      "text-surface",
+      "duration-base",
+      "ease-standard",
+      "transition-[border-color,background-color,color,box-shadow,transform]",
+    );
     expect(custom.querySelector(".lucide-sparkles")).not.toBeNull();
     await user.click(custom);
     expect(custom).toHaveAttribute("aria-pressed", "true");
@@ -170,8 +176,11 @@ describe("ready local dialogs", () => {
       "rounded-card",
     );
     expect(
-      within(dialog).getByText("Books preset", { selector: "span" }),
+      within(dialog).getByRole("group", { name: "Selected preset" }),
     ).toHaveClass("bg-foreground", "text-surface");
+    expect(
+      within(dialog).getByRole("button", { name: "Change preset" }),
+    ).toHaveClass("[--focus:var(--surface)]", "h-11", "rounded-control");
     const fieldHeading = within(dialog).getByRole("heading", {
       name: "Custom fields",
     });

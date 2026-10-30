@@ -3,31 +3,31 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   DndContext,
-  DragOverlay,
-  PointerSensor,
-  KeyboardSensor,
+  MeasuringStrategy,
   closestCenter,
   useDroppable,
-  useSensor,
-  useSensors,
 } from "@dnd-kit/core";
 import {
   SortableContext,
-  sortableKeyboardCoordinates,
   verticalListSortingStrategy,
   useSortable,
   arrayMove,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, Eye, EyeOff } from "lucide-react";
+import {
+  sortableRowClassName,
+  SortableDragOverlay,
+  useSortableSensors,
+} from "@/components/ui/sortable-feedback";
+import { useFlowBusy } from "@/components/shared/flow-modal";
 import { Button } from "@/components/ui/button";
 import { ReorderButtons } from "@/features/fields/reorder-buttons";
 import { useReducedMotion } from "@/lib/design/use-reduced-motion";
 import { cn } from "@/lib/utils/cn";
 
 type Field = { id: string; name: string };
-const rowClass =
-  "border-border rounded-control flex min-w-0 items-center gap-2 border p-2";
+const rowClass = sortableRowClassName;
 
 function FieldRow({
   field,
@@ -62,45 +62,47 @@ function FieldRow({
   return (
     <li
       ref={setNodeRef}
+      data-field-id={field.id}
       style={{ transform: CSS.Transform.toString(transform), transition }}
-      className={cn(
-        rowClass,
-        "grid grid-cols-[2.75rem_minmax(0,1fr)] sm:flex",
-        isDragging && "opacity-30",
-      )}
+      className={cn(rowClass, isDragging && "opacity-30")}
     >
-      <Button
-        {...attributes}
-        {...listeners}
-        ref={setActivatorNodeRef}
-        disabled={disabled}
-        type="button"
-        variant="ghost"
-        size="icon"
-        className="cursor-grab touch-none active:cursor-grabbing"
-        aria-label={`Drag ${field.name} to change visibility or order`}
-        data-field-drag={field.id}
-        aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown"
-        onKeyDown={(event) => {
-          if (event.altKey && ["ArrowUp", "ArrowDown"].includes(event.key)) {
-            event.preventDefault();
-            if (!disabled) onTransfer(event.key === "ArrowUp");
-          } else listeners?.onKeyDown?.(event);
-        }}
-      >
-        <GripVertical aria-hidden="true" />
-      </Button>
-      <span className="min-w-0 flex-1 truncate">{field.name}</span>
-      <div className="col-span-2 flex shrink-0 items-center justify-end gap-1">
-        {visible ? (
+      <div className="flex min-w-0 items-center gap-2">
+        <Button
+          {...attributes}
+          {...listeners}
+          ref={setActivatorNodeRef}
+          disabled={disabled}
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="cursor-grab touch-none active:cursor-grabbing"
+          aria-label={`Drag ${field.name} to change visibility or order`}
+          data-field-drag={field.id}
+          aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown"
+          onKeyDown={(event) => {
+            if (event.altKey && ["ArrowUp", "ArrowDown"].includes(event.key)) {
+              event.preventDefault();
+              if (!disabled) onTransfer(event.key === "ArrowUp");
+            } else listeners?.onKeyDown?.(event);
+          }}
+        >
+          <GripVertical aria-hidden="true" />
+        </Button>
+        <span className="min-w-0 flex-1 truncate">{field.name}</span>
+      </div>
+      {visible ? (
+        <div
+          data-field-actions
+          className="flex min-w-0 shrink-0 items-center justify-end gap-1"
+        >
           <ReorderButtons
             label={field.name}
             disabled={disabled}
             onUp={onUp}
             onDown={onDown}
           />
-        ) : null}
-      </div>
+        </div>
+      ) : null}
     </li>
   );
 }
@@ -163,6 +165,7 @@ export function GalleryFieldVisibility({
   disabled: boolean;
 }) {
   const [activeId, setActiveId] = useState<string | null>(null);
+  useFlowBusy(activeId !== null);
   const [message, setMessage] = useState("");
   const restoreFocus = useRef<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -182,12 +185,7 @@ export function GalleryFieldVisibility({
     .filter((field) => !value.includes(field.id))
     .map((field) => field.id);
   const active = fields.find((field) => field.id === activeId);
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  );
+  const sensors = useSortableSensors();
   function transfer(id: string, targetVisible: boolean) {
     if (disabled || value.includes(id) === targetVisible) return;
     restoreFocus.current = !targetVisible || value.length < 3 ? id : null;
@@ -213,6 +211,7 @@ export function GalleryFieldVisibility({
   return (
     <div ref={containerRef} className="space-y-4">
       <DndContext
+        measuring={{ droppable: { strategy: MeasuringStrategy.Always } }}
         accessibility={{
           screenReaderInstructions: {
             draggable:
@@ -278,17 +277,28 @@ export function GalleryFieldVisibility({
         >
           {message}
         </p>
-        <DragOverlay dropAnimation={reduced ? null : undefined}>
+        <SortableDragOverlay reducedMotion={reduced}>
           {active ? (
             <div
               aria-hidden="true"
-              className={cn(rowClass, "bg-surface shadow-dialog")}
+              inert
+              data-gallery-field-drag-preview
+              className={cn(rowClass, "shadow-dialog cursor-grabbing")}
             >
-              <GripVertical className="size-4" />
-              <span className="truncate">{active.name}</span>
+              <div className="flex min-w-0 items-center gap-2">
+                <Button disabled size="icon" variant="ghost">
+                  <GripVertical aria-hidden="true" />
+                </Button>
+                <span className="min-w-0 truncate">{active.name}</span>
+              </div>
+              {value.includes(active.id) ? (
+                <div data-field-actions className="flex justify-end">
+                  <ReorderButtons disabled label={active.name} />
+                </div>
+              ) : null}
             </div>
           ) : null}
-        </DragOverlay>
+        </SortableDragOverlay>
       </DndContext>
     </div>
   );

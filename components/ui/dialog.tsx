@@ -94,7 +94,7 @@ function DialogHeader({
       {...props}
       data-modal-header
       className={cn(
-        "border-border py-panel mx-5 flex items-center justify-between gap-4 border-b",
+        "border-border mx-5 flex items-center justify-between gap-4 border-b py-5",
         className,
       )}
     >
@@ -122,7 +122,7 @@ function DialogBody({ className, ...props }: ComponentProps<"div">) {
       {...props}
       data-modal-body
       className={cn(
-        "min-h-0 overflow-y-auto overscroll-contain px-5 pt-5 pb-10",
+        "min-h-0 overflow-y-auto overscroll-contain px-5 pt-4 pb-6",
         className,
       )}
     />
@@ -144,7 +144,7 @@ function DialogFooter({ className, ref, ...props }: ComponentProps<"div">) {
       ref={footerRef}
       data-modal-footer
       className={cn(
-        "border-border bg-surface py-panel mx-5 border-t empty:hidden",
+        "border-border bg-surface mx-5 border-t py-5 empty:hidden",
         className,
       )}
     />

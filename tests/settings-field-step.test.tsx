@@ -127,7 +127,7 @@ describe("Collection Settings Add Field step", () => {
     await user.click(screen.getByRole("button", { name: "Delete Author" }));
     expect(await screen.findByText(/2 items have a value/)).toBeVisible();
     await user.click(
-      screen.getByRole("button", { name: "Delete permanently" }),
+      await screen.findByRole("button", { name: "Delete permanently" }),
     );
     expect(
       await screen.findByRole("dialog", { name: "Collection settings" }),

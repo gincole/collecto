@@ -76,7 +76,7 @@ describe("accessible shared layout", () => {
     for (const chrome of document.querySelectorAll(
       "[data-modal-header], [data-modal-footer]",
     )) {
-      expect(chrome).toHaveClass("py-panel");
+      expect(chrome).toHaveClass("py-5");
       expect(chrome).not.toHaveClass("py-4");
     }
   });

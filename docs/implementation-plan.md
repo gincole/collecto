@@ -1137,3 +1137,29 @@ actions. No browser tests, dependencies or schema changes. Verify both wizard
 screens, selection/drafts, pending/caps, shared chrome/focus/accessibility and full
 deployment gate; independent review and staged diff/secret scan. One Conventional
 Commit, tracker update, no push.
+
+## M7-T02AA: Clarify schema editing and unify drag feedback
+
+User-approved refinement after M7-T02Z (complete), including the follow-up Custom
+transition, entire black preset strip and reduced modal vertical padding requests.
+Use named, accessible field groups with type metadata, thin dividers and stacked
+inputs. Make options compact labelled input/action rows with shared 44 px controls;
+retain open modal sections without nested card frames. Preserve drafts, field/type
+editing, option identity/order, validation and limits. Grounding: NN/g form grouping
+(https://www.nngroup.com/articles/form-design-white-space/) and W3C labelled groups
+(https://www.w3.org/WAI/tutorials/forms/grouping/).
+
+Gallery and Collection Settings share sortable row geometry, pointer/keyboard
+sensors, portal overlay and reduced-motion feedback; Gallery uses full-row previews
+and continuous drop measurement. Keep visibility transfers, caps, keyboard focus,
+ordering/persistence and pending guards. Reference: dnd-kit presentational overlay
+pattern (https://dndkit.com/legacy/api-documentation/draggable/drag-overlay/).
+
+Animate Custom ring/shadow with the same preset transition timing. Make the entire
+selected-preset strip black with the standard control radius and shared Change
+preset Button. Reduce all modal chrome vertical padding from 28 to 20 px, body top
+from 20 to 16 px and bottom from 40 to 24 px; preserve safe areas and horizontal
+gutters. Verification: grouped-editor/option/axe tests, shared pointer-overlay and
+existing transfer/sort/focus checks, Custom selection/strip regressions; full
+deployment gate, independent review, staged diff/secret scan. No browser tests,
+dependencies or database changes. One Conventional Commit, tracker update, no push.

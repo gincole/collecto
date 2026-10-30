@@ -9,6 +9,23 @@ import type { CollectionWizardAction } from "@/features/collections/wizard-state
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
 
 describe("Collection schema draft wizard", () => {
+  it("groups fields by name and type with compact labelled options", async () => {
+    const user = userEvent.setup();
+    render(<CollectionWizard modal createAction={vi.fn()} />);
+    await user.click(screen.getByRole("button", { name: "Books preset" }));
+    await user.click(screen.getByRole("button", { name: "Continue" }));
+    const author = screen.getByRole("group", { name: "Author" });
+    expect(within(author).getAllByText("Text")[0]).toBeVisible();
+    expect(author.closest("li")).toHaveClass("border-t");
+    const genre = screen.getByRole("group", { name: "Genre" });
+    const option = within(genre).getByLabelText("Option 1 for field 2");
+    expect(option.closest("li")).toHaveClass(
+      "sm:grid-cols-[minmax(0,1fr)_auto]",
+    );
+    expect(
+      within(genre).getByRole("button", { name: "Remove option Fiction" }),
+    ).toHaveClass("size-11");
+  });
   it("has no detectable WCAG A/AA violations in the populated draft editor", async () => {
     const user = userEvent.setup();
     const { container } = render(

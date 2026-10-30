@@ -203,7 +203,7 @@ export function CollectionWizard({
                     aria-label={`${option.label} preset`}
                     aria-pressed={selected}
                     className={cn(
-                      "focus-ring rounded-card relative flex min-h-36 flex-col items-center justify-center gap-4 border-2 text-center transition-[border-color,transform] motion-safe:hover:-translate-y-0.5",
+                      "focus-ring rounded-card duration-base ease-standard relative flex min-h-36 flex-col items-center justify-center gap-4 border-2 text-center transition-[border-color,background-color,color,box-shadow,transform] motion-safe:hover:-translate-y-0.5 motion-reduce:transition-none",
                       modal ? "p-4" : "sm:p-panel p-5 sm:min-h-40",
                       selected &&
                         option.key === "blank" &&
@@ -300,23 +300,23 @@ export function CollectionWizard({
               </div>
 
               <div
-                data-form-panel
-                className={cn(
-                  "flex items-center justify-between gap-3",
-                  !modal && "bg-art-lavender rounded-card px-4 py-3",
-                )}
+                data-preset-summary
+                role="group"
+                aria-label="Selected preset"
+                className="rounded-control bg-foreground text-surface flex min-h-11 items-center justify-between gap-3 px-4 py-3"
               >
-                <span className="rounded-control bg-foreground text-surface px-3 py-2 text-sm font-semibold">
+                <span className="min-w-0 font-semibold">
                   {preset.key === "blank" ? "Custom" : `${preset.label} preset`}
                 </span>
-                <button
+                <Button
                   disabled={pending}
-                  className="touch-target focus-ring rounded-control px-3 text-sm font-semibold underline underline-offset-4"
+                  className="text-surface hover:bg-surface/10 hover:text-surface [--focus:var(--surface)]"
+                  variant="ghost"
                   onClick={() => changeStep(1)}
                   type="button"
                 >
                   Change preset
-                </button>
+                </Button>
               </div>
 
               <div

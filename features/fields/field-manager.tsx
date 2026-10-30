@@ -2,21 +2,14 @@
 
 import { Plus } from "lucide-react";
 import { useMemo, useState, type RefObject } from "react";
-import { createPortal } from "react-dom";
 import {
   DndContext,
-  DragOverlay,
   MeasuringStrategy,
-  PointerSensor,
-  KeyboardSensor,
   closestCenter,
-  useSensor,
-  useSensors,
   type UniqueIdentifier,
 } from "@dnd-kit/core";
 import {
   SortableContext,
-  sortableKeyboardCoordinates,
   verticalListSortingStrategy,
   arrayMove,
 } from "@dnd-kit/sortable";
@@ -27,6 +20,10 @@ import {
 } from "./sortable-field-row";
 import { useFieldOrder } from "./use-field-order";
 import { useReducedMotion } from "@/lib/design/use-reduced-motion";
+import {
+  SortableDragOverlay,
+  useSortableSensors,
+} from "@/components/ui/sortable-feedback";
 import { Button } from "@/components/ui/button";
 import { useFlowBusy } from "@/components/shared/flow-modal";
 import { useFeedback } from "@/components/shared/feedback";
@@ -103,12 +100,7 @@ function FieldManager({
     fields.find((field) => field.id === id)?.name ?? "Field";
   const position = (id: UniqueIdentifier) =>
     fields.findIndex((field) => field.id === id) + 1;
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  );
+  const sensors = useSortableSensors();
   return (
     <div className="space-y-8">
       <BuiltInFields />
@@ -227,19 +219,9 @@ function FieldManager({
                 ))}
               </ol>
             </SortableContext>
-            {typeof document !== "undefined"
-              ? createPortal(
-                  <DragOverlay
-                    dropAnimation={reducedMotion ? null : undefined}
-                    transition={reducedMotion ? "none" : undefined}
-                  >
-                    {activeField ? (
-                      <FieldDragPreview field={activeField} />
-                    ) : null}
-                  </DragOverlay>,
-                  document.body,
-                )
-              : null}
+            <SortableDragOverlay reducedMotion={reducedMotion}>
+              {activeField ? <FieldDragPreview field={activeField} /> : null}
+            </SortableDragOverlay>
           </DndContext>
         )}
         {message ? (

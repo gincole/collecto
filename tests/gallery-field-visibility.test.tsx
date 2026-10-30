@@ -1,5 +1,5 @@
 import { useState, type ComponentProps } from "react";
-import { act, render, screen, within } from "@testing-library/react";
+import { act, render, screen, within, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import type { DragEndEvent } from "@dnd-kit/core";
@@ -77,6 +77,50 @@ function visible() {
 }
 
 describe("Gallery field drag targets", () => {
+  it("lifts the full row outside the scroller using the shared overlay", async () => {
+    const rects = vi
+      .spyOn(HTMLElement.prototype, "getBoundingClientRect")
+      .mockImplementation(function (this: HTMLElement) {
+        const index = this.parentElement
+          ? Array.from(this.parentElement.children).indexOf(this)
+          : 0;
+        return new DOMRect(
+          0,
+          this.hasAttribute("data-field-id") ? index * 100 : 0,
+          600,
+          80,
+        );
+      });
+    try {
+      const user = userEvent.setup();
+      const { container } = render(<Harness />);
+      const handle = screen.getByRole("button", {
+        name: "Drag Title to change visibility or order",
+      });
+      await user.pointer([
+        { target: handle, keys: "[MouseLeft>]", coords: { x: 20, y: 20 } },
+        { coords: { x: 20, y: 35 } },
+        { coords: { x: 20, y: 100 } },
+      ]);
+      const preview = document.querySelector<HTMLElement>(
+        "[data-gallery-field-drag-preview]",
+      );
+      expect(preview).toHaveTextContent("Title");
+      expect(preview).toHaveClass("rounded-control", "border", "p-3");
+      expect(preview?.querySelectorAll("button")).toHaveLength(3);
+      expect(container).not.toContainElement(preview);
+      await user.keyboard("{Escape}");
+      await user.pointer({ keys: "[/MouseLeft]" });
+      await waitFor(() =>
+        expect(
+          document.querySelector("[data-gallery-field-drag-preview]"),
+        ).toBeNull(),
+      );
+      expect(visible()).toEqual(["Title", "Description"]);
+    } finally {
+      rects.mockRestore();
+    }
+  });
   it("uses icons on list headings and has no eye buttons or separator", () => {
     render(<Harness />);
     expect(

@@ -275,11 +275,11 @@ button:disabled,
 }
 
 .dialog-content [data-modal-header] {
-  padding-block: max(var(--spacing-panel), env(safe-area-inset-top));
+  padding-block: max(calc(var(--spacing) * 5), env(safe-area-inset-top));
 }
 
 .dialog-content [data-modal-footer] {
-  padding-block: max(var(--spacing-panel), env(safe-area-inset-bottom));
+  padding-block: max(calc(var(--spacing) * 5), env(safe-area-inset-bottom));
 }
 
 .dialog-content [data-modal-body] {

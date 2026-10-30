@@ -319,3 +319,17 @@ verify:deployment` passed formatting, lint, strict TypeScript, all 364 tests
   review and staged diff/secret checks passed. No browser testing. An unrelated
   Item validation focus test failed once, then passed isolated and full reruns.
 - Commit: SELF (this commit).
+
+## M7-T02AA: Clarify schema editing and unify drag feedback
+
+- Status: Complete; dependency M7-T02Z is complete.
+- Scope/acceptance: see M7-T02AA in `docs/implementation-plan.md`.
+- Changes: clearer field/option groups, shared sortable feedback, animated Custom
+  selection, entire black preset strip and reduced modal vertical spacing.
+- Verification: `corepack pnpm verify:deployment` passed formatting, lint,
+  strict TypeScript, all 375 tests across 55 files and production build.
+  Editor grouping/options/axe, real component pointer overlays, transfers/focus,
+  preset strip/transition and shared spacing checks pass. Confirmation test now
+  waits for its asynchronous action label. Independent review and staged
+  diff/secret checks passed. No browser testing.
+- Commit: SELF (this commit).

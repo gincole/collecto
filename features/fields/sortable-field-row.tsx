@@ -4,6 +4,7 @@ import { GripVertical, LockKeyhole } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { ReactNode } from "react";
+import { sortableRowClassName } from "@/components/ui/sortable-feedback";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
 import { type Field, type FieldManagerActions } from "./field-manager-contract";
@@ -11,8 +12,7 @@ import { EditFieldDialog } from "./field-editors";
 import { FieldTypeLabel } from "./field-type";
 import { ReorderButtons } from "./reorder-buttons";
 
-const rowClass =
-  "border-border bg-surface rounded-control grid min-w-0 gap-3 border p-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center";
+const rowClass = sortableRowClassName;
 
 function FieldRowBody({
   field,
