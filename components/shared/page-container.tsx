@@ -20,7 +20,7 @@ function PageContainer<T extends ElementType = "div">({
       id={as === "main" ? "main-content" : undefined}
       tabIndex={as === "main" ? -1 : undefined}
       className={cn(
-        "page-insets mx-auto w-full min-w-0 py-8 sm:py-12",
+        "page-insets page-block-space mx-auto w-full min-w-0",
         width === "wide"
           ? "max-w-page"
           : width === "form"

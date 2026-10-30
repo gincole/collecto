@@ -1,6 +1,18 @@
 "use client";
-import { Children, isValidElement, useState, type ComponentProps } from "react";
-import * as SelectPrimitive from "@radix-ui/react-select";
+import {
+  Children,
+  isValidElement,
+  useState,
+  useRef,
+  useId,
+  type ComponentProps,
+} from "react";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "./dropdown-menu";
 import { Check, ChevronDown } from "lucide-react";
 
 import { cn } from "@/lib/utils/cn";
@@ -43,75 +55,142 @@ function Select({
     isValidElement<ComponentProps<"option">>,
   );
   const [localValue, setLocalValue] = useState(String(defaultValue ?? ""));
-  const emptyValue = "__collecto_empty__";
   const selected = String(value ?? localValue);
+  const [open, setOpen] = useState(false);
+  const generatedId = useId();
+  const triggerId = id ?? generatedId;
+  const search = useRef({ text: "", time: 0 });
+  function choose(next: string) {
+    setLocalValue(next);
+    onChange?.({ target: { value: next } });
+  }
+  const selectedOption = options.find(
+    (option) =>
+      String(option.props.value ?? option.props.children) === selected,
+  );
   return (
     <>
       {name ? (
         <input type="hidden" name={name} value={selected} disabled={disabled} />
       ) : null}
-      <SelectPrimitive.Root
-        value={selected || emptyValue}
-        onValueChange={(next) => {
-          const normalized = next === emptyValue ? "" : next;
-          setLocalValue(normalized);
-          onChange?.({ target: { value: normalized } });
+      <DropdownMenu
+        open={open}
+        onOpenChange={(next) => {
+          setOpen(next);
+          if (next) search.current = { text: "", time: 0 };
         }}
-        disabled={disabled}
-        required={required}
       >
-        <SelectPrimitive.Trigger
-          // Submission uses our controlled hidden input; action resets must preserve drafts.
-          form=""
+        <DropdownMenuTrigger
+          role="combobox"
+          aria-haspopup="listbox"
+          aria-required={required}
           data-field-name={name}
-          id={id}
+          id={triggerId}
           aria-label={label}
           aria-describedby={describedBy}
           aria-invalid={invalid}
+          disabled={disabled}
+          onKeyDown={(event) => {
+            if (open) return;
+            if (event.key === "ArrowUp") {
+              event.preventDefault();
+              setOpen(true);
+              return;
+            }
+            if (
+              event.ctrlKey ||
+              event.altKey ||
+              event.metaKey ||
+              event.key.length !== 1
+            )
+              return;
+            const now = Date.now();
+            const previous =
+              now - search.current.time > 1000 ? "" : search.current.text;
+            if (event.key === " " && !previous) return;
+            event.preventDefault();
+            const text = (previous + event.key).toLocaleLowerCase();
+            search.current = { text, time: now };
+            const query = [...text].every((char) => char === text[0])
+              ? text[0]
+              : text;
+            const enabled = options.filter((option) => !option.props.disabled);
+            const index = enabled.findIndex(
+              (option) =>
+                String(option.props.value ?? option.props.children) ===
+                selected,
+            );
+            const start = Math.max(0, index + (query.length === 1 ? 1 : 0));
+            const ordered = [
+              ...enabled.slice(start),
+              ...enabled.slice(0, start),
+            ];
+            const match = ordered.find((option) =>
+              String(option.props.children)
+                .trim()
+                .toLocaleLowerCase()
+                .startsWith(query),
+            );
+            if (match) {
+              const next = String(match.props.value ?? match.props.children);
+              if (next !== selected) choose(next);
+            }
+          }}
           className={cn(
             controlClassName,
             "flex items-center justify-between gap-2 text-left [&>span:first-child]:truncate",
             className,
           )}
         >
-          <SelectPrimitive.Value />
-          <SelectPrimitive.Icon>
-            <ChevronDown aria-hidden="true" className="size-4 shrink-0" />
-          </SelectPrimitive.Icon>
-        </SelectPrimitive.Trigger>
-        <SelectPrimitive.Portal>
-          <SelectPrimitive.Content
-            position="popper"
-            sideOffset={6}
-            collisionPadding={12}
-            className="border-border bg-surface shadow-sheet rounded-control z-[90] max-h-[min(var(--radix-select-content-available-height),20rem)] max-w-[calc(100vw-1.5rem)] min-w-[var(--radix-select-trigger-width)] overflow-hidden border p-1"
-          >
-            <SelectPrimitive.Viewport>
-              {options.map((option, index) => (
-                <SelectPrimitive.Item
-                  data-value={String(
-                    option.props.value ?? option.props.children,
-                  )}
-                  key={`${option.props.value}-${index}`}
-                  value={
-                    String(option.props.value ?? option.props.children) ||
-                    emptyValue
-                  }
-                  disabled={option.props.disabled}
-                  className="touch-target rounded-control data-[highlighted]:bg-surface-muted relative flex cursor-default items-center gap-2 py-2 pr-8 pl-3 text-base outline-none data-[disabled]:opacity-50"
-                >
-                  <SelectPrimitive.ItemText>
-                    {option.props.children}
-                  </SelectPrimitive.ItemText>
-                  <SelectPrimitive.ItemIndicator className="absolute right-2">
-                    <Check aria-hidden="true" className="size-4" />
-                  </SelectPrimitive.ItemIndicator>
-                </SelectPrimitive.Item>
-              ))}
-            </SelectPrimitive.Viewport>
-          </SelectPrimitive.Content>
-        </SelectPrimitive.Portal>
-      </SelectPrimitive.Root>
+          <span>{selectedOption?.props.children ?? "Choose an option"}</span>
+          <ChevronDown aria-hidden="true" className="size-4 shrink-0" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          role="listbox"
+          aria-labelledby={triggerId}
+          align="start"
+          className="z-[90] max-h-[min(var(--radix-dropdown-menu-content-available-height),20rem)] min-w-[var(--radix-dropdown-menu-trigger-width)] overflow-y-auto"
+          onFocus={(event) => {
+            if (event.target !== event.currentTarget) return;
+            event.preventDefault();
+            const target =
+              event.currentTarget.querySelector<HTMLElement>(
+                '[role="option"][aria-selected="true"]:not([data-disabled])',
+              ) ??
+              event.currentTarget.querySelector<HTMLElement>(
+                '[role="option"]:not([data-disabled])',
+              );
+            target?.focus();
+          }}
+        >
+          {options.map((option, index) => {
+            const optionValue = String(
+              option.props.value ?? option.props.children,
+            );
+            return (
+              <DropdownMenuItem
+                key={`${optionValue}-${index}`}
+                role="option"
+                aria-selected={selected === optionValue}
+                data-value={optionValue}
+                disabled={option.props.disabled}
+                className="relative py-2 pr-8 text-base"
+                onSelect={() => {
+                  choose(optionValue);
+                }}
+              >
+                {option.props.children}
+                {selected === optionValue ? (
+                  <Check
+                    aria-hidden="true"
+                    className="absolute right-2 size-4"
+                  />
+                ) : null}
+              </DropdownMenuItem>
+            );
+          })}
+        </DropdownMenuContent>
+      </DropdownMenu>
     </>
   );
 }

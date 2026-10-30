@@ -8,7 +8,7 @@ export function AuthShell({ children }: AuthShellProps) {
     <main
       id="main-content"
       tabIndex={-1}
-      className="page-insets flex min-h-dvh items-center justify-center py-8 sm:py-12"
+      className="page-insets page-block-space flex min-h-dvh items-center justify-center"
     >
       <div className="w-full max-w-[27.5rem]">
         <HistoryBack />

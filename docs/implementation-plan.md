@@ -739,3 +739,11 @@ dialogs, preloaded parent data, X/Escape/backdrop dismissal and structured creat
 success that refreshes in place. Preserve dirty/pending guards, server validation,
 fixed footers and owner authorization. See docs/modal-consistency.md for scope,
 research references, acceptance and verification. One focused `fix(ui)` commit.
+
+## M7-T02H: Page bottom spacing and dropdown switching
+
+Implement the user-requested double bottom gap on all pages through shared page
+spacing and make adjacent dropdown controls switch with a single click, with
+consistent open/close animation. Preserve top spacing, fixed modal footers, focus,
+keyboard interaction, field validation and reduced-motion behavior. No browser
+checks. See docs/dropdown-spacing.md for scope, acceptance and verification.

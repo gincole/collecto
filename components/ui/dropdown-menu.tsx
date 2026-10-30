@@ -1,11 +1,36 @@
 "use client";
 import * as Menu from "@radix-ui/react-dropdown-menu";
-import type { ComponentProps } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  type ComponentProps,
+} from "react";
+import { useDialogContainer } from "./dialog";
 import { cn } from "@/lib/utils/cn";
 
-export function DropdownMenu(props: ComponentProps<typeof Menu.Root>) {
-  // Menus can open modal editors without competing body pointer locks.
-  return <Menu.Root modal={false} {...props} />;
+const OpenContext = createContext(false);
+export function DropdownMenu({
+  open: controlledOpen,
+  defaultOpen = false,
+  onOpenChange,
+  ...props
+}: ComponentProps<typeof Menu.Root>) {
+  const [localOpen, setLocalOpen] = useState(defaultOpen);
+  const open = controlledOpen ?? localOpen;
+  return (
+    <OpenContext.Provider value={open}>
+      <Menu.Root
+        modal={false}
+        {...props}
+        open={open}
+        onOpenChange={(next) => {
+          setLocalOpen(next);
+          onOpenChange?.(next);
+        }}
+      />
+    </OpenContext.Provider>
+  );
 }
 export const DropdownMenuTrigger = Menu.Trigger;
 export const DropdownMenuLabel = Menu.Label;
@@ -13,14 +38,19 @@ export function DropdownMenuContent({
   className,
   ...props
 }: ComponentProps<typeof Menu.Content>) {
+  const open = useContext(OpenContext);
+  const container = useDialogContainer();
   return (
-    <Menu.Portal>
+    <Menu.Portal container={container ?? undefined}>
       <Menu.Content
+        aria-hidden={!open || undefined}
+        inert={!open}
         sideOffset={6}
         align="end"
         collisionPadding={12}
+        collisionBoundary={container ?? undefined}
         className={cn(
-          "border-border bg-surface shadow-sheet rounded-control z-[80] max-w-[calc(100vw-1.5rem)] min-w-52 border p-1",
+          "dropdown-content border-border bg-surface shadow-sheet rounded-control z-[80] max-w-[calc(100vw-1.5rem)] min-w-52 border p-1",
           className,
         )}
         {...props}
