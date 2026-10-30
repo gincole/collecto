@@ -730,3 +730,12 @@ catch-all to Collection URLs and explicitly clear it on Library navigation. Reta
 strict route matching, canonical authentication routes and modal dismissal. Verify
 with the installed Next.js development route validator, component regressions,
 formatting, lint, TypeScript and production build; no browser checks.
+
+## M7-T02G: Correct immediate local modal behavior
+
+The user clarified that these dialogs are local overlays, without route/history
+changes or a Home Back control. Supersede M7-T02E/F routing with eager controlled
+dialogs, preloaded parent data, X/Escape/backdrop dismissal and structured create
+success that refreshes in place. Preserve dirty/pending guards, server validation,
+fixed footers and owner authorization. See docs/modal-consistency.md for scope,
+research references, acceptance and verification. One focused `fix(ui)` commit.

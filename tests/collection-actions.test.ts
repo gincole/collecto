@@ -55,7 +55,7 @@ describe("Collection Server Actions", () => {
     );
     await expect(
       createCollectionFromWizardAction({ status: "idle" }, formData),
-    ).rejects.toThrow("NEXT_REDIRECT");
+    ).resolves.toEqual({ status: "success" });
     expect(rpc).toHaveBeenCalledOnce();
     expect(rpc).toHaveBeenCalledWith(
       "create_collection_with_schema",
@@ -166,7 +166,7 @@ describe("Collection Server Actions", () => {
     expect(rpc).not.toHaveBeenCalled();
   });
 
-  it("revalidates the Library and opens the created Collection", async () => {
+  it("revalidates Library without navigating after creation", async () => {
     const rpc = vi.fn(async () => ({ data: createdId, error: null }));
     createClientMock.mockResolvedValue({
       auth: {
@@ -184,11 +184,9 @@ describe("Collection Server Actions", () => {
 
     await expect(
       createCollectionFromWizardAction({ status: "idle" }, formData),
-    ).rejects.toThrow("NEXT_REDIRECT");
+    ).resolves.toEqual({ status: "success" });
     expect(revalidatePathMock).toHaveBeenCalledWith("/library");
-    expect(redirectMock).toHaveBeenCalledWith(
-      `/collections/${createdId}?feedback=collection-created`,
-    );
+    expect(redirectMock).not.toHaveBeenCalled();
   });
 
   it("updates Collection identity and revalidates its routes", async () => {
@@ -267,7 +265,9 @@ describe("Collection Server Actions", () => {
       },
       from: vi.fn(() => ({
         select: vi.fn(() => ({
-          eq: vi.fn(() => ({ eq: vi.fn(() => ({ maybeSingle })) })),
+          eq: vi.fn(() => ({
+            eq: vi.fn(() => ({ not: vi.fn(() => ({ maybeSingle })) })),
+          })),
         })),
       })),
       rpc,

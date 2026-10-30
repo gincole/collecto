@@ -3,6 +3,7 @@
 import { GripVertical, LockKeyhole } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
+import { useFlowBusy } from "@/components/shared/flow-modal";
 import { useFeedback } from "@/components/shared/feedback";
 import { fieldActionsWithFeedback } from "./feedback-actions";
 
@@ -73,6 +74,7 @@ function FieldManager({
   );
   const [message, setMessage] = useState<string>();
   const [pending, startTransition] = useTransition();
+  useFlowBusy(pending);
   const atLimit = fields.length >= DATABASE_LIMITS.collectionFields;
 
   function reorder(index: number, direction: -1 | 1) {

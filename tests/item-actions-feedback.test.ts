@@ -40,12 +40,16 @@ beforeEach(() => {
 });
 
 describe("Item success feedback", () => {
+  it("returns create success without changing the parent URL", async () => {
+    const form = new FormData();
+    form.set("collectionId", collectionId);
+    form.set("title", "Memory");
+    expect(await createItemFromFormAction({ status: "idle" }, form)).toEqual({
+      status: "success",
+    });
+    expect(redirectMock).not.toHaveBeenCalled();
+  });
   it.each([
-    [
-      "create",
-      createItemFromFormAction,
-      `/collections/${collectionId}?feedback=item-created`,
-    ],
     [
       "update",
       updateItemFromFormAction,

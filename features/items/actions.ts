@@ -112,7 +112,7 @@ export async function createItemFromFormAction(
     }
   }
   revalidatePath(`/collections/${collectionId}`);
-  redirect(feedbackHref(`/collections/${collectionId}`, "item-created"));
+  return { status: "success" };
 }
 
 export async function deleteItemFromDetailsAction(

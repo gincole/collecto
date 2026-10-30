@@ -67,11 +67,15 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
     presetKey !== null || name.trim() !== "" || description.trim() !== "";
 
   const dismissFlow = useFlowExit(() => {
-    if (step === 2) setStep(1);
-    else cancel();
+    cancel();
   }, pending);
 
   useEffect(() => {
+    if (state.status === "success") {
+      notify("Collection created.");
+      dismissFlow?.();
+      router.refresh();
+    }
     if (state.fieldErrors?.name) nameInputRef.current?.focus();
     else if (state.fieldErrors?.fields)
       formRef.current
@@ -82,7 +86,7 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
         state.message ?? "Review the highlighted fields and try again.",
         "error",
       );
-  }, [state, notify]);
+  }, [state, notify, dismissFlow, router]);
 
   useEffect(() => {
     if (Object.keys(draftErrors).length)
@@ -128,7 +132,7 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
             Step {step} of 2
           </p>
           <div className="flex items-center gap-1">
-            {step === 1 ? (
+            {step === 1 && !dismissFlow ? (
               <button
                 disabled={pending}
                 className="touch-target focus-ring rounded-control text-foreground-muted hover:bg-surface-muted px-3 text-sm font-semibold"

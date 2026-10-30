@@ -28,6 +28,9 @@ const collectionRowSchema = z.object({
       z.object({ id: z.uuid(), image_path: z.string().nullable() }),
     ]),
   ),
+  image_items: z
+    .array(z.object({ count: z.number().int().nonnegative() }))
+    .optional(),
   name: z.string(),
   preset_key: collectionPresetKeySchema.nullable(),
   updated_at: z.string(),
@@ -61,7 +64,9 @@ export function mapCollectionRecord(input: unknown) {
       }))
       .sort((left, right) => left.position - right.position),
     id: row.id,
-    imageCount: itemRows.filter((item) => item.image_path !== null).length,
+    imageCount:
+      row.image_items?.[0]?.count ??
+      itemRows.filter((item) => item.image_path !== null).length,
     itemCount: aggregate?.count ?? itemRows.length,
     name: row.name,
     presetKey: row.preset_key,

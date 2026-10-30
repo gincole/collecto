@@ -2,6 +2,7 @@
 
 import {
   useActionState,
+  useCallback,
   useEffect,
   useRef,
   useState,
@@ -37,6 +38,7 @@ type SettingsAction = (
 
 type CollectionSettingsProps = {
   children?: ReactNode;
+  initialSection?: "delete";
   collection: CollectionRecord;
   deleteAction: SettingsAction;
   updateAction: SettingsAction;
@@ -44,11 +46,18 @@ type CollectionSettingsProps = {
 
 export function CollectionSettings({
   children,
+  initialSection,
   collection,
   deleteAction,
   updateAction,
 }: CollectionSettingsProps) {
   const formId = useId();
+  const deleteSectionRef = useCallback(
+    (node: HTMLElement | null) => {
+      if (initialSection === "delete") node?.scrollIntoView({ block: "start" });
+    },
+    [initialSection],
+  );
   const notify = useFeedback();
   const [name, setName] = useState(collection.name);
   const [description, setDescription] = useState(collection.description ?? "");
@@ -63,7 +72,7 @@ export function CollectionSettings({
     initialState,
   );
   const nameRef = useRef<HTMLInputElement>(null);
-  useFlowExit(undefined, updatePending || deletePending);
+  const dismissFlow = useFlowExit(undefined, updatePending || deletePending);
 
   const savedIdentity = updateState.savedIdentity ?? {
     description: collection.description ?? "",
@@ -82,13 +91,16 @@ export function CollectionSettings({
     if (updateState.fieldErrors?.name) nameRef.current?.focus();
     else if (updateState.fieldErrors?.description)
       document.getElementById("collection-description")?.focus();
-    if (updateState.status === "success") notify("Collection settings saved.");
+    if (updateState.status === "success") {
+      notify("Collection settings saved.");
+      dismissFlow?.();
+    }
     if (updateState.status === "error")
       notify(
         updateState.message ?? "Review the highlighted fields and try again.",
         "error",
       );
-  }, [updateState, notify]);
+  }, [updateState, notify, dismissFlow]);
   useEffect(() => {
     if (deleteState.status === "error")
       notify(
@@ -212,6 +224,7 @@ export function CollectionSettings({
         aria-labelledby="delete-collection-heading"
         className="border-destructive/40 bg-surface rounded-card sm:p-panel border p-4"
         id="delete-collection"
+        ref={deleteSectionRef}
       >
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0 space-y-1">
@@ -232,7 +245,7 @@ export function CollectionSettings({
             </DialogTrigger>
             <DialogContent
               role="alertdialog"
-              showCloseButton={false}
+              closeDisabled={deletePending}
               onEscapeKeyDown={(event) => {
                 if (deletePending) event.preventDefault();
               }}

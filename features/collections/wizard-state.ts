@@ -6,7 +6,7 @@ export type CollectionWizardState = {
     fields?: string;
   };
   message?: string;
-  status: "error" | "idle";
+  status: "error" | "idle" | "success";
 };
 
 export type CollectionWizardAction = (

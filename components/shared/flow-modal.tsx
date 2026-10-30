@@ -12,9 +12,7 @@ import {
   type RefObject,
 } from "react";
 import { createPortal } from "react-dom";
-import { useRouter } from "next/navigation";
-import type { Route } from "next";
-import { ArrowLeft } from "lucide-react";
+import { X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -22,44 +20,41 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { getNavigationOpener } from "./navigation-focus";
 
-const InterceptedContext = createContext(false);
-export function InterceptedFlows({ children }: { children: ReactNode }) {
-  return (
-    <InterceptedContext.Provider value>{children}</InterceptedContext.Provider>
-  );
-}
 type Controls = {
   footer: HTMLDivElement | null;
   registerGuard: (handler: (() => void) | null) => void;
   dismiss: () => void;
-  setBusy: (busy: boolean) => void;
+  registerBusy: (token: symbol, busy: boolean) => void;
 };
 const FlowContext = createContext<Controls | null>(null);
 
 export function useFlowExit(handler: (() => void) | undefined, busy = false) {
   const flow = useContext(FlowContext);
   const registerGuard = flow?.registerGuard;
-  const setBusy = flow?.setBusy;
+  useFlowBusy(busy);
   useEffect(() => {
     registerGuard?.(handler ?? null);
     return () => registerGuard?.(null);
   }, [registerGuard, handler]);
-  useEffect(() => {
-    setBusy?.(busy);
-    return () => setBusy?.(false);
-  }, [setBusy, busy]);
   return flow?.dismiss;
 }
+export function useFlowBusy(busy: boolean) {
+  const registerBusy = useContext(FlowContext)?.registerBusy;
+  const [token] = useState(() => Symbol());
+  useEffect(() => {
+    registerBusy?.(token, busy);
+    return () => registerBusy?.(token, false);
+  }, [registerBusy, token, busy]);
+}
 export function FlowGuard({
-  onBack,
+  onClose,
   busy,
 }: {
-  onBack: () => void;
+  onClose: () => void;
   busy: boolean;
 }) {
-  useFlowExit(onBack, busy);
+  useFlowExit(onClose, busy);
   return null;
 }
 
@@ -79,36 +74,35 @@ export function ModalActions({
     : actions;
 }
 
-export function FlowModal<T extends string>({
+export function FlowModal({
   title,
-  returnTo,
+  onClose,
   returnFocus,
-  page = false,
   children,
 }: {
   title: string;
-  returnTo: Route<T>;
-  returnFocus?: RefObject<HTMLButtonElement | null>;
-  page?: boolean;
+  onClose: () => void;
+  returnFocus?: RefObject<HTMLElement | null>;
   children: ReactNode;
 }) {
-  const router = useRouter();
-  const intercepted = useContext(InterceptedContext);
   const [opener] = useState(() =>
-    typeof document === "undefined"
-      ? null
-      : ((intercepted ? getNavigationOpener() : null) ??
-        document.activeElement),
+    typeof document === "undefined" ? null : document.activeElement,
   );
-  const Body = page && !intercepted ? "main" : "div";
   const [footer, setFooter] = useState<HTMLDivElement | null>(null);
-  const [busy, setBusy] = useState(false);
+  const [busySources, setBusySources] = useState<Set<symbol>>(() => new Set());
+  const busy = busySources.size > 0;
+  const registerBusy = useCallback((token: symbol, pending: boolean) => {
+    setBusySources((current) => {
+      if (current.has(token) === pending) return current;
+      const next = new Set(current);
+      if (pending) next.add(token);
+      else next.delete(token);
+      return next;
+    });
+  }, []);
   const guard = useRef<(() => void) | null>(null);
-  const dismiss = useCallback(() => {
-    if (intercepted) router.back();
-    else router.replace(returnTo);
-  }, [intercepted, router, returnTo]);
-  const back = () => {
+  const dismiss = onClose;
+  const close = () => {
     if (!busy) {
       if (guard.current) guard.current();
       else dismiss();
@@ -118,14 +112,14 @@ export function FlowModal<T extends string>({
     guard.current = handler;
   }, []);
   const context = useMemo(
-    () => ({ footer, registerGuard, dismiss, setBusy }),
-    [footer, dismiss, registerGuard],
+    () => ({ footer, registerGuard, dismiss, registerBusy }),
+    [footer, dismiss, registerGuard, registerBusy],
   );
   return (
     <Dialog
       open
       onOpenChange={(open) => {
-        if (!open) back();
+        if (!open) close();
       }}
     >
       <DialogContent
@@ -137,9 +131,7 @@ export function FlowModal<T extends string>({
             opener !== document.body &&
             opener.isConnected
               ? opener
-              : document.querySelector<HTMLElement>(
-                  "[data-collection-menu-trigger]",
-                ));
+              : null);
           if (target instanceof HTMLElement) {
             event.preventDefault();
             target.focus();
@@ -148,30 +140,32 @@ export function FlowModal<T extends string>({
         className="flow-modal grid h-[min(90dvh,56rem)] max-h-[90dvh] w-[calc(100%-1rem)] max-w-2xl grid-rows-[auto_minmax(0,1fr)_auto] gap-0 overflow-hidden p-0 sm:p-0"
         onEscapeKeyDown={(event) => {
           event.preventDefault();
-          back();
+          close();
         }}
-        onInteractOutside={(event) => event.preventDefault()}
       >
-        <header className="border-border space-y-2 border-b px-5 py-4">
-          <Button type="button" variant="ghost" onClick={back} disabled={busy}>
-            <ArrowLeft aria-hidden="true" />
-            Back
-          </Button>
-          <DialogTitle className="text-section-title-mobile sm:text-section-title">
+        <header className="border-border flex items-center justify-between gap-4 border-b px-5 py-4">
+          <DialogTitle className="text-section-title-mobile sm:text-section-title pr-0">
             {title}
           </DialogTitle>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            aria-label="Close"
+            onClick={close}
+            disabled={busy}
+          >
+            <X aria-hidden="true" />
+          </Button>
           <DialogDescription className="sr-only">
-            Use Back to return. Actions stay below the scrolling form.
+            Close with the close button, Escape or the backdrop. Actions stay
+            below the scrolling form.
           </DialogDescription>
         </header>
         <FlowContext.Provider value={context}>
-          <Body
-            id={page && !intercepted ? "main-content" : undefined}
-            tabIndex={page && !intercepted ? -1 : undefined}
-            className="flow-modal-body min-h-0 overflow-y-auto overscroll-contain p-5"
-          >
+          <div className="flow-modal-body min-h-0 overflow-y-auto overscroll-contain p-5">
             {children}
-          </Body>
+          </div>
         </FlowContext.Provider>
         <div
           ref={setFooter}

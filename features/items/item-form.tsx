@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import Link from "@/components/shared/navigation-link";
 import {
   useActionState,
@@ -23,7 +24,7 @@ import { ModalActions, useFlowExit } from "@/components/shared/flow-modal";
 export type ItemFormState = {
   fieldErrors?: Record<string, string>;
   message?: string;
-  status: "idle" | "error";
+  status: "idle" | "error" | "success";
 };
 type ItemFormAction = (
   previous: ItemFormState,
@@ -117,6 +118,7 @@ export function ItemForm({
   modal?: boolean;
 }) {
   const formId = useId();
+  const router = useRouter();
   const [serverState, formAction, pending] = useActionState(action, {
     status: "idle",
   });
@@ -126,6 +128,13 @@ export function ItemForm({
   const [transitionPending, startTransition] = useTransition();
   const isPending = pending || transitionPending;
   const dismissFlow = useFlowExit(undefined, isPending);
+  useEffect(() => {
+    if (serverState.status === "success") {
+      notify("Item created.");
+      dismissFlow?.();
+      router.refresh();
+    }
+  }, [serverState, notify, dismissFlow, router]);
   const formRef = useRef<HTMLFormElement>(null);
   const submittedRef = useRef<FormData | undefined>(undefined);
   useEffect(() => {

@@ -3,7 +3,6 @@
 import Link, { useLinkStatus } from "next/link";
 import type { ComponentProps } from "react";
 import { createPortal } from "react-dom";
-import { rememberNavigationOpener } from "./navigation-focus";
 
 function NavigationProgress() {
   const { pending } = useLinkStatus();
@@ -25,17 +24,10 @@ function NavigationProgress() {
 
 export default function NavigationLink<T extends string>({
   children,
-  onClick,
   ...props
 }: ComponentProps<typeof Link<T>>) {
   return (
-    <Link
-      {...props}
-      onClick={(event) => {
-        rememberNavigationOpener(event.currentTarget);
-        onClick?.(event);
-      }}
-    >
+    <Link {...props}>
       {children}
       <NavigationProgress />
     </Link>

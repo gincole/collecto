@@ -69,7 +69,7 @@ function DeleteSchemaDialog({ target }: { target: DeleteTarget }) {
       </DialogTrigger>
       <DialogContent
         role="alertdialog"
-        showCloseButton={false}
+        closeDisabled={pending}
         onEscapeKeyDown={(event) => {
           if (pending) event.preventDefault();
         }}

@@ -70,3 +70,47 @@ for Library and Collection navigation. It reproduces both unmatched auth pages
 before the fix. Afterward, all 320 tests/47 files, formatting, lint, TypeScript and
 production build pass; direct HTTP checks of login/register return 200 from the
 existing development server. No browser testing was used.
+
+## M7-T02G: Correct local modal behavior (supersedes route-backed flows)
+
+The user clarified that Library has no Back action and all four form modals must
+keep the current URL, open immediately using data already loaded by the parent
+page, and dismiss using a top-right X, Escape or a backdrop click. This explicitly
+supersedes M7-T02E route-backed modals and the earlier request for modal Back.
+Wizard step navigation remains inside its footer; closing is distinct from going
+to a previous step. Dirty wizard/gallery drafts still require confirmation and
+saving blocks dismissal. Shared dialog controls follow the same X convention.
+
+Use local controlled Radix dialogs, eager feature imports and the existing
+authenticated Library/Collection payloads. No client cache, extra fetch-on-open,
+route interception, URL query/hash state or modal navigation is needed. Existing
+form URLs redirect to their parent for compatibility. Create actions return
+structured success, close the dialog, notify and refresh the current page without
+resetting Browse URL state. Collection deletion can still return to Library.
+
+References: WAI-ARIA modal dialog pattern (visible dismiss control, Escape, focus
+trap and restoration), Radix Dialog controlled state and outside interaction;
+original specs and decisions retain domain/auth/data/dirty-confirmation authority.
+Sources: https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/ and
+https://www.radix-ui.com/primitives/docs/components/dialog .
+
+Acceptance: no Home Back; no modal opening link or routing; data present at page
+load; X/backdrop/Escape use the same guarded close; fixed footers and vertical
+forms retained; focus returns to correct button, menu or empty-state trigger;
+validation/pending/success recovery preserved. Verify component interactions,
+Server Actions, real route topology, formatter, lint, types and production build.
+No browser tests, hosted writes or unrelated branding changes.
+
+Collection summaries use owner-scoped Item and filtered image aggregates, keeping
+preloaded delete summaries accurate beyond the API row cap without fetching Item
+content. SDK query-contract and mapping regressions cover aliases, ownership and
+large counts. The local Docker/Supabase stack was unavailable, so the optional
+live loopback query check could not run; no hosted query or data writes were made.
+
+Final M7-T02G result: 328 Vitest tests across 49 files pass, including modal
+interaction, Server Action success/error, concurrent busy sources, focus return,
+preloaded schema/counts and real Next.js route topology. Formatter, lint, strict
+TypeScript, configured production build and independent review pass. The review
+count issue was resolved with aggregate queries. Shared X controls stay mounted
+and disabled while saving to preserve focus order. Broader rendered/device
+acceptance remains outside this task under the user no-browser instruction.

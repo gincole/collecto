@@ -47,9 +47,7 @@ export async function createCollectionFromWizardAction(
 
   if (result.status === "success") {
     revalidatePath("/library");
-    redirect(
-      feedbackHref(`/collections/${result.data.id}`, "collection-created"),
-    );
+    return { status: "success" };
   }
 
   if (result.status === "validation_error") {

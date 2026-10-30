@@ -10,10 +10,8 @@ import { DemoNotice } from "@/components/shared/demo-notice";
 
 export default async function ProtectedLayout({
   children,
-  modal,
 }: {
   children: ReactNode;
-  modal?: ReactNode;
 }) {
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getUser();
@@ -31,7 +29,6 @@ export default async function ProtectedLayout({
       ) : null}
       <FeedbackRegion />
       {children}
-      {modal}
     </>
   );
 }

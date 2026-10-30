@@ -14,6 +14,21 @@ const viewConfig = {
 };
 
 describe("Collection database mapping", () => {
+  it("uses aggregate counts beyond the API row cap for preloaded modal summaries", () => {
+    const record = mapCollectionRecord({
+      created_at: "2026-10-30",
+      updated_at: "2026-10-30",
+      description: null,
+      field_definitions: [],
+      id: "00000000-0000-4000-8000-000000000000",
+      name: "Large library",
+      preset_key: "blank",
+      view_config: viewConfig,
+      items: [{ count: 2500 }],
+      image_items: [{ count: 1600 }],
+    });
+    expect(record).toMatchObject({ itemCount: 2500, imageCount: 1600 });
+  });
   it("validates JSONB and returns fields and options in position order", () => {
     const result = mapCollectionRecord({
       created_at: "2026-10-29T00:00:00.000Z",

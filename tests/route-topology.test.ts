@@ -26,12 +26,10 @@ describe("App Router topology", () => {
     expect(result.incompatibleParallelRouteSlots).toEqual([]);
     expect(pages["/login"]).toContain("/(auth)/login/page");
     expect(pages["/register"]).toContain("/(auth)/register/page");
-    expect(pages["/library"]).toContain("/(app)/@modal/library/page");
-    expect(pages["/collections/[id]"]).toContain(
-      "/(app)/@modal/collections/[...catchAll]/page",
-    );
-    expect(pages["/login"]).not.toContain(
-      "/(app)/@modal/collections/[...catchAll]/page",
-    );
+    expect(
+      Object.values(pages)
+        .flat()
+        .some((path) => path.includes("@modal")),
+    ).toBe(false);
   });
 });

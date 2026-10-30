@@ -184,7 +184,7 @@ describe("shared components", () => {
     const cancel = screen.getByRole("button", { name: "Cancel" });
     const confirm = screen.getByRole("button", { name: "Delete permanently" });
 
-    const back = screen.getByRole("button", { name: "Back" });
+    const back = screen.getByRole("button", { name: "Close" });
     expect(back).toHaveFocus();
     await user.tab();
     expect(cancel).toHaveFocus();

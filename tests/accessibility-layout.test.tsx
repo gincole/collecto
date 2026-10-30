@@ -1,6 +1,7 @@
+vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { SkipLink } from "@/components/shared/skip-link";
 import { PageContainer } from "@/components/shared/page-container";
 import { AuthShell } from "@/features/auth/auth-shell";

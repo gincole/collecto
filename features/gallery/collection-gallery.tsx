@@ -1,8 +1,5 @@
-import type { Route } from "next";
-import Link from "@/components/shared/navigation-link";
-
 import { EmptyState, PresetArtwork } from "@/components/shared";
-import { Button } from "@/components/ui/button";
+import { AddItemButton } from "@/features/items/add-item-button";
 import { CollectionMenu } from "./collection-menu";
 import { BackLink } from "@/components/shared/back-link";
 import type { CollectionRecord } from "@/features/collections/models";
@@ -36,11 +33,7 @@ export function CollectionHeader({
         </p>
       </div>
       <div className="ml-auto flex items-center gap-2">
-        <Button asChild>
-          <Link href={`/collections/${collection.id}/items/new` as Route}>
-            Add item
-          </Link>
-        </Button>
+        <AddItemButton collection={collection} />
         <CollectionMenu collection={collection} items={items} />
       </div>
     </header>
@@ -61,11 +54,9 @@ export function CollectionGallery({
       {items.length === 0 ? (
         <EmptyState
           action={
-            <Button asChild>
-              <Link href={`/collections/${collection.id}/items/new` as Route}>
-                {folderName ? "Add item" : "Add your first item"}
-              </Link>
-            </Button>
+            <AddItemButton collection={collection}>
+              {folderName ? "Add item" : "Add your first item"}
+            </AddItemButton>
           }
           description={
             folderName

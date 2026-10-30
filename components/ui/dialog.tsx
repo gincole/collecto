@@ -1,7 +1,7 @@
 "use client";
 
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { ArrowLeft } from "lucide-react";
+import { X } from "lucide-react";
 import type { ComponentProps } from "react";
 
 import { cn } from "@/lib/utils/cn";
@@ -9,16 +9,25 @@ import { cn } from "@/lib/utils/cn";
 const Dialog = DialogPrimitive.Root;
 const DialogClose = DialogPrimitive.Close;
 const DialogDescription = DialogPrimitive.Description;
-const DialogTitle = DialogPrimitive.Title;
+function DialogTitle({
+  className,
+  ...props
+}: ComponentProps<typeof DialogPrimitive.Title>) {
+  return (
+    <DialogPrimitive.Title className={cn("pr-12", className)} {...props} />
+  );
+}
 const DialogTrigger = DialogPrimitive.Trigger;
 
 function DialogContent({
   children,
   className,
   showCloseButton = true,
+  closeDisabled = false,
   ...props
 }: ComponentProps<typeof DialogPrimitive.Content> & {
   showCloseButton?: boolean;
+  closeDisabled?: boolean;
 }) {
   return (
     <DialogPrimitive.Portal>
@@ -32,12 +41,12 @@ function DialogContent({
       >
         {showCloseButton ? (
           <DialogPrimitive.Close
+            disabled={closeDisabled}
             data-dialog-close
-            aria-label="Back"
-            className="touch-target text-foreground-muted hover:bg-surface-muted focus-ring rounded-control inline-flex w-fit items-center justify-center gap-2 px-3 text-sm"
+            aria-label="Close"
+            className="touch-target text-foreground-muted hover:bg-surface-muted focus-ring rounded-control absolute top-3 right-3 inline-flex size-11 items-center justify-center"
           >
-            <ArrowLeft aria-hidden="true" className="size-4" />
-            Back
+            <X aria-hidden="true" className="size-4" />
           </DialogPrimitive.Close>
         ) : null}
         {children}

@@ -1,5 +1,6 @@
+"use client";
+import { useRef } from "react";
 import { Ellipsis, PackageOpen, Pencil, Trash2 } from "lucide-react";
-import type { Route } from "next";
 import Link from "@/components/shared/navigation-link";
 
 import { EmptyState, PresetArtwork } from "@/components/shared";
@@ -15,19 +16,31 @@ import { cn } from "@/lib/utils/cn";
 
 import type { CollectionRecord } from "./models";
 
-type LibraryViewProps = { collections: CollectionRecord[] };
+type LibraryViewProps = {
+  collections: CollectionRecord[];
+  onCreate?: () => void;
+  onSettings?: (
+    collection: CollectionRecord,
+    section: "delete" | undefined,
+    trigger: HTMLElement | null,
+  ) => void;
+};
 
 function itemCountLabel(count: number) {
   return `${count} ${count === 1 ? "item" : "items"}`;
 }
 
-export function LibraryView({ collections }: LibraryViewProps) {
+export function LibraryView({
+  collections,
+  onCreate,
+  onSettings,
+}: LibraryViewProps) {
   if (collections.length === 0) {
     return (
       <EmptyState
         action={
-          <Button asChild>
-            <Link href="/collections/new">Create your first collection</Link>
+          <Button type="button" onClick={onCreate}>
+            Create your first collection
           </Button>
         }
         description="Make a home for the books, meals, places, and small things you want to remember."
@@ -67,46 +80,56 @@ export function LibraryView({ collections }: LibraryViewProps) {
               </div>
             </Link>
             <div className="absolute right-3 bottom-3">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="ghost"
-                    aria-label={`Collection actions for ${collection.name}`}
-                    className="touch-target focus-ring hover:bg-surface-muted rounded-control flex cursor-pointer list-none items-center justify-center [&::-webkit-details-marker]:hidden"
-                  >
-                    <Ellipsis aria-hidden="true" className="size-5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem asChild>
-                    <Link
-                      aria-label={`Rename ${collection.name}`}
-                      className="touch-target hover:bg-surface-muted focus-ring rounded-control flex w-full items-center px-3 text-left text-sm"
-                      href={`/collections/${collection.id}/settings` as Route}
-                    >
-                      <Pencil aria-hidden="true" />
-                      Rename
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="text-destructive">
-                    <Link
-                      aria-label={`Delete ${collection.name}`}
-                      href={
-                        `/collections/${collection.id}/settings#delete-collection` as Route
-                      }
-                    >
-                      <Trash2 aria-hidden="true" />
-                      Delete
-                    </Link>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <LibraryCollectionMenu
+                collection={collection}
+                onSettings={onSettings}
+              />
             </div>
           </article>
         </li>
       ))}
     </ul>
+  );
+}
+
+function LibraryCollectionMenu({
+  collection,
+  onSettings,
+}: {
+  collection: CollectionRecord;
+  onSettings: LibraryViewProps["onSettings"];
+}) {
+  const trigger = useRef<HTMLButtonElement>(null);
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          ref={trigger}
+          type="button"
+          size="icon"
+          variant="ghost"
+          aria-label={`Collection actions for ${collection.name}`}
+        >
+          <Ellipsis aria-hidden="true" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuItem
+          aria-label={`Rename ${collection.name}`}
+          onSelect={() => onSettings?.(collection, undefined, trigger.current)}
+        >
+          <Pencil aria-hidden="true" />
+          Rename
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className="text-destructive"
+          aria-label={`Delete ${collection.name}`}
+          onSelect={() => onSettings?.(collection, "delete", trigger.current)}
+        >
+          <Trash2 aria-hidden="true" />
+          Delete
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

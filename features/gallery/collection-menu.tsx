@@ -1,7 +1,7 @@
 "use client";
 import { useRef, useState } from "react";
 import { Ellipsis, Settings2, LayoutGrid, Trash2 } from "lucide-react";
-import Link from "@/components/shared/navigation-link";
+import { SettingsModal } from "@/features/collections/settings-modal";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -23,6 +23,7 @@ export function CollectionMenu({
 }) {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const [galleryOpen, setGalleryOpen] = useState(false);
+  const [settings, setSettings] = useState<"general" | "delete" | null>(null);
   return (
     <>
       <DropdownMenu>
@@ -39,26 +40,31 @@ export function CollectionMenu({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem asChild>
-            <Link href={`/collections/${collection.id}/settings`}>
-              <Settings2 aria-hidden="true" />
-              Collection settings
-            </Link>
+          <DropdownMenuItem onSelect={() => setSettings("general")}>
+            <Settings2 aria-hidden="true" />
+            Collection settings
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={() => setGalleryOpen(true)}>
             <LayoutGrid aria-hidden="true" />
             Gallery settings
           </DropdownMenuItem>
-          <DropdownMenuItem asChild className="text-destructive">
-            <Link
-              href={`/collections/${collection.id}/settings#delete-collection`}
-            >
-              <Trash2 aria-hidden="true" />
-              Delete
-            </Link>
+          <DropdownMenuItem
+            className="text-destructive"
+            onSelect={() => setSettings("delete")}
+          >
+            <Trash2 aria-hidden="true" />
+            Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      {settings ? (
+        <SettingsModal
+          collection={collection}
+          onClose={() => setSettings(null)}
+          initialSection={settings === "delete" ? "delete" : undefined}
+          returnFocus={triggerRef}
+        />
+      ) : null}
       {galleryOpen ? (
         <GallerySettings
           collection={collection}

@@ -318,7 +318,7 @@ export function EditFieldDialog({
         onInteractOutside={(event) => {
           if (busy) event.preventDefault();
         }}
-        showCloseButton={!busy}
+        closeDisabled={busy}
       >
         <div className="space-y-1 pr-10">
           <DialogTitle className="text-section-title-mobile sm:text-section-title">
@@ -502,7 +502,7 @@ export function AddFieldDialog({
         onInteractOutside={(event) => {
           if (pending) event.preventDefault();
         }}
-        showCloseButton={!pending}
+        closeDisabled={pending}
       >
         <div className="space-y-1 pr-10">
           <DialogTitle className="text-section-title-mobile sm:text-section-title">

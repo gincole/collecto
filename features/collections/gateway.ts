@@ -16,10 +16,11 @@ export function createCollectionGateway(
     const { data, error } = await client
       .from("collections")
       .select(
-        "id, name, description, preset_key, view_config, created_at, updated_at, items(id, image_path), field_definitions(id, name, type, required, position, field_options(id, label, position))",
+        "id, name, description, preset_key, view_config, created_at, updated_at, items(count), image_items:items(count), field_definitions(id, name, type, required, position, field_options(id, label, position))",
       )
       .eq("owner_id", ownerId)
       .eq("id", collectionId)
+      .not("image_items.image_path", "is", null)
       .maybeSingle();
 
     if (error || !data) return { data: null, error };
@@ -94,9 +95,10 @@ export function createCollectionGateway(
       const { data, error } = await client
         .from("collections")
         .select(
-          "id, name, description, preset_key, view_config, created_at, updated_at, items(count), field_definitions(id, name, type, required, position, field_options(id, label, position))",
+          "id, name, description, preset_key, view_config, created_at, updated_at, items(count), image_items:items(count), field_definitions(id, name, type, required, position, field_options(id, label, position))",
         )
         .eq("owner_id", ownerId)
+        .not("image_items.image_path", "is", null)
         .order("created_at", { ascending: false });
 
       if (error || !data) return { data: null, error };

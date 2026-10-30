@@ -1,3 +1,9 @@
+vi.mock("@/features/collections/settings-modal", () => ({
+  SettingsModal: () => null,
+}));
+vi.mock("@/features/items/actions", () => ({
+  createItemFromFormAction: vi.fn(),
+}));
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import axe from "axe-core";
@@ -421,9 +427,8 @@ describe("Browse views", () => {
     expect(
       screen.getByRole("heading", { name: "No items in this folder" }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Add item" })).toHaveAttribute(
-      "href",
-      `/collections/${collectionId}/items/new`,
-    );
+    expect(
+      screen.getByRole("button", { name: "Add item" }),
+    ).not.toHaveAttribute("href");
   });
 });

@@ -1,3 +1,9 @@
+vi.mock("@/features/collections/settings-modal", () => ({
+  SettingsModal: () => null,
+}));
+vi.mock("@/features/items/actions", () => ({
+  createItemFromFormAction: vi.fn(),
+}));
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 

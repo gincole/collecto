@@ -192,9 +192,9 @@ export function GallerySettings({
         <FlowModal
           title="Gallery settings"
           returnFocus={returnFocus ?? triggerRef}
-          returnTo={`/collections/${collection.id}`}
+          onClose={() => onOpenChange(false)}
         >
-          <FlowGuard onBack={() => onOpenChange(false)} busy={pending} />
+          <FlowGuard onClose={() => onOpenChange(false)} busy={pending} />
           <p className="text-foreground-muted mb-5">
             Preview changes before saving. These settings apply to every view in
             this Collection.

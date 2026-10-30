@@ -1,3 +1,9 @@
+vi.mock("@/features/collections/settings-modal", () => ({
+  SettingsModal: () => null,
+}));
+vi.mock("@/features/items/actions", () => ({
+  createItemFromFormAction: vi.fn(),
+}));
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { chooseOption } from "./helpers/select-option";
@@ -123,7 +129,7 @@ describe("Collection settings overflow", () => {
       screen.getByRole("menuitem", { name: "Gallery settings" }),
     );
     await chooseOption(user, screen.getByLabelText("Columns"), "1");
-    await user.click(screen.getByRole("button", { name: "Back" }));
+    await user.click(screen.getByRole("button", { name: "Close" }));
     await user.click(screen.getByRole("button", { name: "Discard changes" }));
     expect(opener).toHaveFocus();
     await user.click(opener);
@@ -392,18 +398,16 @@ describe("Collection gallery states", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("Stories worth keeping")).toBeInTheDocument();
     expect(screen.getByText("2 items")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Add item" })).toHaveAttribute(
-      "href",
-      `/collections/${collectionId}/items/new`,
-    );
+    expect(
+      screen.getByRole("button", { name: "Add item" }),
+    ).not.toHaveAttribute("href");
     await user.click(screen.getByLabelText("Collection actions for My Books"));
     expect(
       screen.getByRole("menuitem", { name: "Collection settings" }),
-    ).toHaveAttribute("href", `/collections/${collectionId}/settings`);
-    expect(screen.getByRole("menuitem", { name: "Delete" })).toHaveAttribute(
-      "href",
-      `/collections/${collectionId}/settings#delete-collection`,
-    );
+    ).not.toHaveAttribute("href");
+    expect(
+      screen.getByRole("menuitem", { name: "Delete" }),
+    ).not.toHaveAttribute("href");
   });
 
   it("directs an empty Collection to Add Item", () => {
@@ -418,8 +422,8 @@ describe("Collection gallery states", () => {
       screen.getByRole("heading", { name: "No items yet" }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: "Add your first item" }),
-    ).toHaveAttribute("href", `/collections/${collectionId}/items/new`);
+      screen.getByRole("button", { name: "Add your first item" }),
+    ).not.toHaveAttribute("href");
   });
 
   it("offers a retry for gallery query failures", async () => {

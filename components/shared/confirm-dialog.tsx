@@ -3,7 +3,7 @@
 import type { ReactElement, ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { X } from "lucide-react";
 import { DeleteButton } from "./delete-button";
 import {
   Dialog,
@@ -62,15 +62,18 @@ function ConfirmDialog({
         <Button
           type="button"
           variant="ghost"
-          className="w-fit"
+          className="absolute top-3 right-3"
+          size="icon"
+          aria-label="Close"
           disabled={isPending}
           onClick={() => onOpenChange(false)}
         >
-          <ArrowLeft aria-hidden="true" />
-          Back
+          <X aria-hidden="true" />
         </Button>
-        <div className="space-y-2">
-          <DialogTitle className="text-xl font-semibold">{title}</DialogTitle>
+        <div className="space-y-2 pr-12">
+          <DialogTitle className="pr-0 text-xl font-semibold">
+            {title}
+          </DialogTitle>
           <DialogDescription className="text-foreground-muted text-base leading-6">
             {description}
           </DialogDescription>

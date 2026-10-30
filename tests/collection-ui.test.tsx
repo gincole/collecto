@@ -213,8 +213,8 @@ describe("Library view", () => {
       screen.getByRole("heading", { name: "No collections yet" }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: "Create your first collection" }),
-    ).toHaveAttribute("href", "/collections/new");
+      screen.getByRole("button", { name: "Create your first collection" }),
+    ).not.toHaveAttribute("href");
     expect(screen.queryByRole("searchbox")).not.toBeInTheDocument();
   });
 
@@ -233,13 +233,10 @@ describe("Library view", () => {
     await user.click(screen.getByLabelText("Collection actions for My Books"));
     expect(
       screen.getByRole("menuitem", { name: "Rename My Books" }),
-    ).toHaveAttribute("href", `/collections/${collection.id}/settings`);
+    ).not.toHaveAttribute("href");
     expect(
       screen.getByRole("menuitem", { name: "Delete My Books" }),
-    ).toHaveAttribute(
-      "href",
-      `/collections/${collection.id}/settings#delete-collection`,
-    );
+    ).not.toHaveAttribute("href");
   });
 });
 
