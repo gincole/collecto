@@ -11,6 +11,8 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogHeader,
+  DialogBody,
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
@@ -79,9 +81,13 @@ describe("dropdown switching", () => {
     render(
       <Dialog open>
         <DialogContent>
-          <DialogTitle>Gallery settings</DialogTitle>
-          <DialogDescription>Choose appearance</DialogDescription>
-          <Choices />
+          <DialogHeader>
+            <DialogTitle>Gallery settings</DialogTitle>
+          </DialogHeader>
+          <DialogBody>
+            <DialogDescription>Choose appearance</DialogDescription>
+            <Choices />
+          </DialogBody>
         </DialogContent>
       </Dialog>,
     );

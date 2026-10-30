@@ -129,11 +129,27 @@ describe("ready local dialogs", () => {
     expect(
       within(dialog).getByRole("heading", { name: "What are you collecting?" }),
     ).toHaveAttribute("data-form-heading", "primary");
-    expect(dialog.querySelector("header")).not.toHaveClass("border-b");
+    expect(dialog.querySelector("header")).toHaveClass("border-b", "py-4");
+    expect(
+      within(dialog).getByText("Step 1 of 2").closest("header"),
+    ).not.toBeNull();
+    expect(within(dialog).getByText("Step 1 of 2")).toHaveClass("text-sm");
+    expect(within(dialog).getByRole("button", { name: "Close" })).toHaveClass(
+      "border",
+    );
+    expect(dialog.querySelector("[data-modal-body]")).toHaveClass("pb-10");
+    const custom = within(dialog).getByRole("button", {
+      name: "Custom preset",
+    });
+    expect(custom).toHaveClass("bg-foreground", "text-surface");
+    expect(custom.querySelector(".lucide-sparkles")).not.toBeNull();
     const preset = within(dialog).getByRole("button", { name: "Books preset" });
     expect(preset).toHaveClass("items-center", "justify-center", "text-center");
     await user.click(preset);
     await user.click(within(dialog).getByRole("button", { name: "Continue" }));
+    expect(
+      within(dialog).getByText("Step 2 of 2").closest("header"),
+    ).not.toBeNull();
     expect(
       within(dialog).getByRole("heading", { name: "Set up your collection" }),
     ).toHaveAttribute("data-form-heading", "primary");
@@ -180,7 +196,7 @@ describe("ready local dialogs", () => {
     await user.click(
       screen.getByRole("button", { name: "Create your first collection" }),
     );
-    await user.click(screen.getByRole("button", { name: "Blank preset" }));
+    await user.click(screen.getByRole("button", { name: "Custom preset" }));
     await user.click(screen.getByRole("button", { name: "Continue" }));
     await user.type(screen.getByLabelText("Collection name"), "Memories");
     await user.click(screen.getByRole("button", { name: "Close" }));

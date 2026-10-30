@@ -28,7 +28,7 @@ describe("Collection preset contracts", () => {
       ["meal", "Meals"],
       ["travel", "Travel"],
       ["favorites", "Favorites"],
-      ["blank", "Blank"],
+      ["blank", "Custom"],
     ]);
   });
 

@@ -966,3 +966,36 @@ Verification: update the built-in component/axe regression for disabled cards,
 no buttons/action container and plain lock; run the deployment gate, independent
 review and staged secret/diff checks. No browser checks, dependency/schema changes
 or push. One `fix(fields)` commit.
+
+## M7-T02S: Unify modal chrome and emphasize Custom creation
+
+The user's latest modal review supersedes earlier header-divider removal and the
+zero-height wizard header. Depends on M7-T02R. Scope: all modal header/body/footer
+presentation, section dividers and scroll spacing, disabled button outlines, and
+the Custom starting-point card. Preserve all mutation/security/validation behavior.
+
+Use shared DialogHeader/DialogBody/DialogFooter primitives for FlowModal, Field
+editors, Collection deletion and reusable confirmations. Headers have the same
+border and balanced 16 px vertical padding as footers; Close is the shared outlined
+44 px Button. Bodies scroll independently and have 40 px bottom padding. Retain
+safe-area footer padding and header top inset. Footer portals target the nearest
+DialogContent so nested dialogs keep their own actions; external submit buttons
+must remain associated with their form. Preserve pending/dirty/escape/backdrop and
+focus guards, all current responsive/full-screen editor behavior, and plain field
+controls/cards inside the body. Dividers separate actual form sections, not each
+individual field or card, and stay scoped to dialogs.
+
+Show the wizard's small Step 1/2 of 2 label in the shared header; retain its
+accessible New collection name and existing body heading sizes. The stable blank
+preset becomes visibly Custom with Lucide Sparkles artwork and a dark highlighted
+choice; keep persisted key `blank`, empty starting schema and existing records.
+Disabled native/ARIA buttons have transparent borders and no shadow, preserving
+geometry without visible outlines. No dependencies or database changes.
+
+Acceptance/verification: wizard header step updates, Custom styling/icon and fixed
+footer, all dialog families use shared chrome, Close borders, extra body padding,
+section CSS and disabled-border rules; existing pending/form/focus/dirty and
+accessibility regressions; full deployment gate, compiled CSS inspection,
+independent review and staged diff/secret checks. No browser checks at user
+request. Update dormant E2E locator text only; do not run browser tests. One
+`fix(ui)` commit, no push.

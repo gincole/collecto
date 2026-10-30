@@ -8,11 +8,22 @@ import {
   useContext,
   useState,
   type ComponentProps,
+  type ReactNode,
 } from "react";
+import { Button } from "./button";
 
 import { cn } from "@/lib/utils/cn";
 
 const DialogContainerContext = createContext<HTMLDivElement | null>(null);
+const DialogChromeContext = createContext<{
+  closeDisabled: boolean;
+  showCloseButton: boolean;
+  footer: HTMLDivElement | null;
+  setFooter: (node: HTMLDivElement | null) => void;
+} | null>(null);
+export function useDialogFooter() {
+  return useContext(DialogChromeContext)?.footer;
+}
 export function useDialogContainer() {
   return useContext(DialogContainerContext);
 }
@@ -23,9 +34,7 @@ function DialogTitle({
   className,
   ...props
 }: ComponentProps<typeof DialogPrimitive.Title>) {
-  return (
-    <DialogPrimitive.Title className={cn("pr-12", className)} {...props} />
-  );
+  return <DialogPrimitive.Title className={cn("pr-0", className)} {...props} />;
 }
 const DialogTrigger = DialogPrimitive.Trigger;
 
@@ -41,6 +50,7 @@ function DialogContent({
   closeDisabled?: boolean;
 }) {
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
+  const [footer, setFooter] = useState<HTMLDivElement | null>(null);
   const contentRef = useCallback(
     (node: HTMLDivElement | null) => {
       setContainer(node);
@@ -55,26 +65,89 @@ function DialogContent({
       <DialogPrimitive.Content
         ref={contentRef}
         className={cn(
-          "dialog-content border-border bg-surface text-foreground focus-ring rounded-dialog shadow-dialog sm:p-panel fixed top-1/2 left-1/2 z-50 grid max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 overflow-y-auto overscroll-contain border p-5 break-words sm:w-full",
+          "dialog-content border-border bg-surface text-foreground focus-ring rounded-dialog shadow-dialog fixed top-1/2 left-1/2 z-50 grid max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 grid-rows-[auto_minmax(0,1fr)_auto] gap-0 overflow-hidden overscroll-contain border p-0 break-words sm:w-full",
           className,
         )}
         {...props}
       >
-        {showCloseButton ? (
-          <DialogPrimitive.Close
-            disabled={closeDisabled}
-            data-dialog-close
-            aria-label="Close"
-            className="touch-target text-foreground-muted hover:bg-surface-muted focus-ring rounded-control absolute top-3 right-3 inline-flex size-11 items-center justify-center"
-          >
-            <X aria-hidden="true" className="size-4" />
-          </DialogPrimitive.Close>
-        ) : null}
         <DialogContainerContext.Provider value={container}>
-          {children}
+          <DialogChromeContext.Provider
+            value={{ closeDisabled, showCloseButton, footer, setFooter }}
+          >
+            {children}
+          </DialogChromeContext.Provider>
         </DialogContainerContext.Provider>
       </DialogPrimitive.Content>
     </DialogPrimitive.Portal>
+  );
+}
+
+function DialogHeader({
+  children,
+  closeButton,
+  className,
+  ...props
+}: ComponentProps<"header"> & { closeButton?: ReactNode }) {
+  const chrome = useContext(DialogChromeContext);
+  return (
+    <header
+      {...props}
+      data-modal-header
+      className={cn(
+        "border-border flex items-center justify-between gap-4 border-b px-5 py-4",
+        className,
+      )}
+    >
+      <div className="min-w-0 flex-1">{children}</div>
+      {closeButton ??
+        (chrome?.showCloseButton ? (
+          <DialogPrimitive.Close asChild>
+            <Button
+              disabled={chrome.closeDisabled}
+              data-dialog-close
+              aria-label="Close"
+              size="icon"
+              variant="outline"
+            >
+              <X aria-hidden="true" />
+            </Button>
+          </DialogPrimitive.Close>
+        ) : null)}
+    </header>
+  );
+}
+function DialogBody({ className, ...props }: ComponentProps<"div">) {
+  return (
+    <div
+      {...props}
+      data-modal-body
+      className={cn(
+        "min-h-0 overflow-y-auto overscroll-contain px-5 pt-5 pb-10",
+        className,
+      )}
+    />
+  );
+}
+function DialogFooter({ className, ref, ...props }: ComponentProps<"div">) {
+  const register = useContext(DialogChromeContext)?.setFooter;
+  const footerRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      register?.(node);
+      if (typeof ref === "function") return ref(node);
+      if (ref) ref.current = node;
+    },
+    [register, ref],
+  );
+  return (
+    <div
+      {...props}
+      ref={footerRef}
+      data-modal-footer
+      className={cn(
+        "border-border bg-surface border-t px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] empty:hidden",
+        className,
+      )}
+    />
   );
 }
 
@@ -82,6 +155,9 @@ export {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
   DialogDescription,
   DialogTitle,
   DialogTrigger,

@@ -10,14 +10,48 @@ import { ItemForm } from "@/features/items/item-form";
 import RootNotFound from "@/app/not-found";
 import { CollectionSchemaEditor } from "@/features/collections/collection-schema-editor";
 import { Input, Select } from "@/components/ui/form-control";
+import { FlowModal, ModalActions } from "@/components/shared/flow-modal";
 import {
   Dialog,
   DialogContent,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
 
 describe("accessible shared layout", () => {
+  it("keeps nested dialog actions in their nearest fixed footer", () => {
+    render(
+      <FlowModal title="Outer flow" onClose={vi.fn()}>
+        <ModalActions>
+          <button>Outer save</button>
+        </ModalActions>
+        <Dialog open>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Inner editor</DialogTitle>
+            </DialogHeader>
+            <DialogBody>
+              <DialogDescription>Nested editor</DialogDescription>
+              <ModalActions>
+                <button>Inner save</button>
+              </ModalActions>
+            </DialogBody>
+            <DialogFooter />
+          </DialogContent>
+        </Dialog>
+      </FlowModal>,
+    );
+    const outer = screen.getByText("Outer save").closest("[data-modal-footer]");
+    const inner = screen.getByText("Inner save").closest("[data-modal-footer]");
+    expect(outer).not.toBeNull();
+    expect(inner).not.toBeNull();
+    expect(inner).not.toBe(outer);
+    expect(outer).not.toHaveTextContent("Inner save");
+    expect(inner?.closest('[role="dialog"]')).toHaveTextContent("Inner editor");
+  });
   it("includes the visible checkbox label in its accessible name", () => {
     render(
       <CollectionSchemaEditor
@@ -91,15 +125,21 @@ describe("accessible shared layout", () => {
     render(
       <Dialog open>
         <DialogContent>
-          <DialogTitle>Long confirmation</DialogTitle>
-          <DialogDescription>{"Long name ".repeat(30)}</DialogDescription>
-          <button>Cancel</button>
+          <DialogHeader>
+            <DialogTitle>Long confirmation</DialogTitle>
+          </DialogHeader>
+          <DialogBody>
+            <DialogDescription>{"Long name ".repeat(30)}</DialogDescription>
+          </DialogBody>
+          <DialogFooter>
+            <button>Cancel</button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>,
     );
     expect(screen.getByRole("dialog")).toHaveClass(
       "max-h-[calc(100dvh-2rem)]",
-      "overflow-y-auto",
+      "overflow-hidden",
       "overscroll-contain",
       "break-words",
     );

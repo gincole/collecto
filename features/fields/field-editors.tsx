@@ -9,6 +9,9 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
   DialogDescription,
   DialogTitle,
   DialogTrigger,
@@ -76,6 +79,7 @@ function OptionEditor({
 
   return (
     <section
+      data-modal-section
       aria-busy={pending}
       aria-labelledby="select-options-heading"
       className="space-y-4"
@@ -300,70 +304,74 @@ export function EditFieldDialog({
         }}
         closeDisabled={busy}
       >
-        <div className="space-y-1 pr-10">
+        <DialogHeader>
           <DialogTitle
             data-form-heading="primary"
             className="text-section-title-mobile"
           >
             Edit {field.name}
           </DialogTitle>
+        </DialogHeader>
+        <DialogBody>
           <DialogDescription className="text-foreground-muted">
             Rename this Field, change whether it is required, and manage Select
             options without changing stable IDs.
           </DialogDescription>
-        </div>
-        <div className="space-y-5">
-          <div className="space-y-2">
-            <label
-              className="text-label block"
-              htmlFor={`field-name-${field.id}`}
-            >
-              Field name
-            </label>
-            <Input
-              id={`field-name-${field.id}`}
-              maxLength={DATABASE_LIMITS.fieldName}
-              onChange={(event) => setName(event.target.value)}
-              ref={nameRef}
-              value={name}
-            />
+          <div className="mt-5 space-y-5">
+            <div className="space-y-2">
+              <label
+                className="text-label block"
+                htmlFor={`field-name-${field.id}`}
+              >
+                Field name
+              </label>
+              <Input
+                id={`field-name-${field.id}`}
+                maxLength={DATABASE_LIMITS.fieldName}
+                onChange={(event) => setName(event.target.value)}
+                ref={nameRef}
+                value={name}
+              />
+            </div>
+            <dl className="border-border bg-surface-muted rounded-control flex items-center justify-between gap-4 border px-3 py-2">
+              <dt className="text-foreground-muted text-sm">Field type</dt>
+              <dd className="font-semibold">
+                <FieldTypeLabel type={field.type} />
+              </dd>
+            </dl>
+            <RequiredControl required={required} setRequired={setRequired} />
+            {field.type === "select" ? (
+              <OptionEditor
+                actions={actions}
+                collectionId={collectionId}
+                field={field}
+                onPendingChange={setOptionPending}
+              />
+            ) : null}
+            {message ? (
+              <p className="text-error" role="alert">
+                {message}
+              </p>
+            ) : null}
           </div>
-          <dl className="border-border bg-surface-muted rounded-control flex items-center justify-between gap-4 border px-3 py-2">
-            <dt className="text-foreground-muted text-sm">Field type</dt>
-            <dd className="font-semibold">
-              <FieldTypeLabel type={field.type} />
-            </dd>
-          </dl>
-          <RequiredControl required={required} setRequired={setRequired} />
-          {field.type === "select" ? (
-            <OptionEditor
-              actions={actions}
-              collectionId={collectionId}
-              field={field}
-              onPendingChange={setOptionPending}
-            />
-          ) : null}
-          {message ? (
-            <p className="text-error" role="alert">
-              {message}
-            </p>
-          ) : null}
-        </div>
-        <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-          <DialogClose asChild>
-            <Button disabled={busy} type="button" variant="outline">
-              Cancel
+        </DialogBody>
+        <DialogFooter>
+          <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+            <DialogClose asChild>
+              <Button disabled={busy} type="button" variant="outline">
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button
+              aria-busy={pending}
+              disabled={busy || !name.trim()}
+              onClick={handleSave}
+              type="button"
+            >
+              {pending ? "Saving…" : "Save field"}
             </Button>
-          </DialogClose>
-          <Button
-            aria-busy={pending}
-            disabled={busy || !name.trim()}
-            onClick={handleSave}
-            type="button"
-          >
-            {pending ? "Saving…" : "Save field"}
-          </Button>
-        </div>
+          </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
@@ -401,25 +409,30 @@ export function AddFieldDialog({
           if (pending) event.preventDefault();
         }}
       >
-        <DialogTitle
-          data-form-heading="primary"
-          className="text-section-title-mobile"
-        >
-          Add custom field
-        </DialogTitle>
-        <DialogDescription className="sr-only">
-          Create a custom field for this Collection.
-        </DialogDescription>
-        <AddFieldForm
-          actions={actions}
-          collectionId={collectionId}
-          onCancel={() => changeOpen(false)}
-          onCreated={() => {
-            setPending(false);
-            setOpen(false);
-          }}
-          onPendingChange={setPending}
-        />
+        <DialogHeader>
+          <DialogTitle
+            data-form-heading="primary"
+            className="text-section-title-mobile"
+          >
+            Add custom field
+          </DialogTitle>
+        </DialogHeader>
+        <DialogBody>
+          <DialogDescription className="sr-only">
+            Create a custom field for this Collection.
+          </DialogDescription>
+          <AddFieldForm
+            actions={actions}
+            collectionId={collectionId}
+            onCancel={() => changeOpen(false)}
+            onCreated={() => {
+              setPending(false);
+              setOpen(false);
+            }}
+            onPendingChange={setPending}
+          />
+        </DialogBody>
+        <DialogFooter />
       </DialogContent>
     </Dialog>
   );

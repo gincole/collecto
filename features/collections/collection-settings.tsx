@@ -18,6 +18,9 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
   DialogDescription,
   DialogTitle,
   DialogTrigger,
@@ -54,6 +57,7 @@ export function CollectionSettings({
   updateAction,
 }: CollectionSettingsProps) {
   const formId = useId();
+  const deleteFormId = useId();
   const deleteSectionRef = useCallback(
     (node: HTMLElement | null) => {
       if (initialSection === "delete") node?.scrollIntoView({ block: "start" });
@@ -261,10 +265,12 @@ export function CollectionSettings({
                 if (deletePending) event.preventDefault();
               }}
             >
-              <div className="space-y-2">
+              <DialogHeader>
                 <DialogTitle className="text-xl font-semibold">
                   Permanently delete {collection.name}?
                 </DialogTitle>
+              </DialogHeader>
+              <DialogBody className="space-y-5">
                 <DialogDescription className="text-foreground-muted text-base leading-6">
                   This permanently deletes {collection.itemCount}{" "}
                   {collection.itemCount === 1 ? "item" : "items"}, its field
@@ -274,51 +280,58 @@ export function CollectionSettings({
                     : "private images"}
                   . There is no trash or undo.
                 </DialogDescription>
-              </div>
-              <form noValidate action={deleteFormAction} className="space-y-4">
-                {populated ? (
-                  <div className="space-y-2">
-                    <label
-                      className="font-semibold"
-                      htmlFor="delete-confirmation-name"
-                    >
-                      Type {requiredConfirmationName} to confirm
-                    </label>
-                    <Input
-                      aria-describedby={
-                        deleteState.fieldErrors?.confirmationName
-                          ? "delete-confirmation-error"
-                          : undefined
-                      }
-                      aria-invalid={Boolean(
-                        deleteState.fieldErrors?.confirmationName,
-                      )}
-                      autoComplete="off"
-                      id="delete-confirmation-name"
-                      maxLength={DATABASE_LIMITS.collectionName}
-                      name="confirmationName"
-                      onChange={(event) =>
-                        setConfirmationName(event.target.value)
-                      }
-                      value={confirmationName}
-                    />
-                    {deleteState.fieldErrors?.confirmationName ? (
-                      <p
-                        className="text-error text-sm"
-                        id="delete-confirmation-error"
+                <form
+                  id={deleteFormId}
+                  noValidate
+                  action={deleteFormAction}
+                  className="space-y-4"
+                >
+                  {populated ? (
+                    <div className="space-y-2">
+                      <label
+                        className="font-semibold"
+                        htmlFor="delete-confirmation-name"
                       >
-                        {deleteState.fieldErrors.confirmationName}
-                      </p>
-                    ) : null}
-                  </div>
-                ) : (
-                  <input name="confirmationName" type="hidden" value="" />
-                )}
-                {deleteState.message ? (
-                  <p className="text-error" role="alert">
-                    {deleteState.message}
-                  </p>
-                ) : null}
+                        Type {requiredConfirmationName} to confirm
+                      </label>
+                      <Input
+                        aria-describedby={
+                          deleteState.fieldErrors?.confirmationName
+                            ? "delete-confirmation-error"
+                            : undefined
+                        }
+                        aria-invalid={Boolean(
+                          deleteState.fieldErrors?.confirmationName,
+                        )}
+                        autoComplete="off"
+                        id="delete-confirmation-name"
+                        maxLength={DATABASE_LIMITS.collectionName}
+                        name="confirmationName"
+                        onChange={(event) =>
+                          setConfirmationName(event.target.value)
+                        }
+                        value={confirmationName}
+                      />
+                      {deleteState.fieldErrors?.confirmationName ? (
+                        <p
+                          className="text-error text-sm"
+                          id="delete-confirmation-error"
+                        >
+                          {deleteState.fieldErrors.confirmationName}
+                        </p>
+                      ) : null}
+                    </div>
+                  ) : (
+                    <input name="confirmationName" type="hidden" value="" />
+                  )}
+                  {deleteState.message ? (
+                    <p className="text-error" role="alert">
+                      {deleteState.message}
+                    </p>
+                  ) : null}
+                </form>
+              </DialogBody>
+              <DialogFooter>
                 <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
                   <DialogClose asChild>
                     <Button
@@ -332,11 +345,12 @@ export function CollectionSettings({
                   <DeleteButton
                     confirm
                     pending={deletePending}
+                    form={deleteFormId}
                     disabled={!deletionConfirmed || deletePending}
                     type="submit"
                   />
                 </div>
-              </form>
+              </DialogFooter>
             </DialogContent>
           </Dialog>
         </div>

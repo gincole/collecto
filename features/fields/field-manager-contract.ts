@@ -50,7 +50,7 @@ export const fieldTypeLabels: Record<FieldType, string> = {
 };
 
 export const editorClassName =
-  "safe-area-panel max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-2xl max-sm:top-0 max-sm:left-0 max-sm:h-dvh max-sm:max-h-dvh max-sm:w-screen max-sm:max-w-none max-sm:translate-x-0 max-sm:translate-y-0 max-sm:rounded-none max-sm:border-0 max-sm:p-4";
+  "max-h-[calc(100dvh-2rem)] overflow-hidden sm:max-w-2xl max-sm:top-0 max-sm:left-0 max-sm:h-dvh max-sm:max-h-dvh max-sm:w-screen max-sm:max-w-none max-sm:translate-x-0 max-sm:translate-y-0 max-sm:rounded-none max-sm:border-0 max-sm:p-0";
 
 export function errorMessage(
   result: ActionResult,

@@ -35,3 +35,14 @@ labels, input sizes and page typography retain their existing roles. Shared
 buttons, image controls and actual gallery-preview cards retain their boundaries.
 Preset buttons center both their artwork and label. No interaction or persistence
 contract changes.
+
+## Modal chrome refinement — M7-T02S
+
+The user's latest review restores header dividers, balanced header/footer padding,
+section dividers and a larger scroll-end gap. This supersedes M7-T02L/M presentation
+rules about divider removal and a zero-height wizard header. All modal families use
+the same DialogHeader/Body/Footer with outlined Close controls. Wizard headers show
+the small step label, while body heading sizes remain unchanged. Disabled buttons
+keep their layout geometry with transparent borders and no shadow. The visible
+Blank choice becomes a dark Custom card with Sparkles artwork; the `blank` data key
+and empty schema remain unchanged. See implementation-plan M7-T02S for verification.

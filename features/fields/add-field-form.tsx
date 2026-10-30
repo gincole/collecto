@@ -155,6 +155,7 @@ export function AddFieldForm({
         />
         {type === "select" ? (
           <section
+            data-modal-section
             aria-labelledby="initial-options-heading"
             className="space-y-3"
           >

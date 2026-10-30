@@ -743,6 +743,21 @@ describe("Field manager", () => {
 
     await user.click(screen.getByRole("button", { name: "Edit Rating" }));
     const editor = screen.getByRole("dialog", { name: "Edit Rating" });
+    expect(editor.querySelector("[data-modal-header]")).toHaveClass(
+      "border-b",
+      "py-4",
+    );
+    expect(within(editor).getByRole("button", { name: "Close" })).toHaveClass(
+      "border",
+    );
+    expect(
+      within(editor)
+        .getByRole("button", { name: "Save field" })
+        .closest("[data-modal-footer]"),
+    ).not.toBeNull();
+    expect(
+      within(editor).getByLabelText("Field name").closest("[data-modal-body]"),
+    ).toHaveClass("pb-10");
     expect(within(editor).getByText("Rating").closest("dd")).toBeVisible();
     expect(within(editor).queryByLabelText("Field type")).toBeNull();
     await user.clear(within(editor).getByLabelText("Field name"));

@@ -4,7 +4,7 @@ import {
   Gem,
   Heart,
   Music2,
-  PackageOpen,
+  Sparkles,
   Plane,
   ShoppingBag,
   Utensils,
@@ -14,7 +14,7 @@ import {
 import { cn } from "@/lib/utils/cn";
 
 const presetArtwork = {
-  blank: { color: "bg-art-mint", icon: PackageOpen },
+  blank: { color: "bg-art-mint", icon: Sparkles },
   book: { color: "bg-art-lavender", icon: BookOpen },
   favorites: { color: "bg-art-rose", icon: Heart },
   meal: { color: "bg-art-sage", icon: Utensils },

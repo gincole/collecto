@@ -208,3 +208,19 @@ Reported by the user on 30 October 2026. The M7-T01 state audit and implementati
   accessible disabled group, absence of actions and transparent lock slot.
   Staged diff/secret inspection passed. No browser testing.
 - Commit: SELF (this commit).
+
+## M7-T02S: Unify modal chrome and emphasize Custom creation
+
+- Status: Complete; dependency M7-T02R is complete.
+- Scope/acceptance: see M7-T02S in `docs/implementation-plan.md`; latest header
+  requirements supersede earlier divider/zero-height-header styling.
+- Changes: shared modal header/body/footer across editor and confirmation flows,
+  section separators, balanced padding, scroll-end space, bordered Close buttons,
+  borderless disabled buttons, and highlighted Custom/Sparkles preset choice.
+- Verification: `corepack pnpm verify:deployment` passed formatting, lint,
+  strict TypeScript, all 360 tests across 54 files and the production build.
+  Wizard step/header, Custom card, editor chrome, nested footer ownership and
+  existing form/pending/focus/a11y checks pass. Compiled CSS confirms disabled
+  borders, section dividers, 40 px bottom spacing and horizontal safe areas.
+  Independent review and staged diff/secret checks passed. No browser testing.
+- Commit: SELF (this commit).

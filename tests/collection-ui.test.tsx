@@ -152,7 +152,7 @@ describe("Collection wizard", () => {
     );
     render(<CollectionWizard createAction={createAction} />);
 
-    await user.click(screen.getByRole("button", { name: "Blank preset" }));
+    await user.click(screen.getByRole("button", { name: "Custom preset" }));
     await user.click(screen.getByRole("button", { name: "Continue" }));
     await user.type(screen.getByLabelText("Collection name"), "Small joys");
     await user.click(screen.getByRole("button", { name: "Create collection" }));
@@ -183,7 +183,7 @@ describe("Collection wizard", () => {
     }));
     render(<CollectionWizard createAction={createAction} />);
 
-    await user.click(screen.getByRole("button", { name: "Blank preset" }));
+    await user.click(screen.getByRole("button", { name: "Custom preset" }));
     await user.click(screen.getByRole("button", { name: "Continue" }));
     await user.click(screen.getByRole("button", { name: "Create collection" }));
 

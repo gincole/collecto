@@ -282,7 +282,11 @@ export function GallerySettings({
                 />
                 Show details
               </label>
-              <section className="space-y-3" aria-label="Visible fields">
+              <section
+                data-modal-section
+                className="space-y-3"
+                aria-label="Visible fields"
+              >
                 <h3 data-form-heading="section" className="font-semibold">
                   Visible fields
                 </h3>
@@ -347,7 +351,11 @@ export function GallerySettings({
                 </ol>
               </section>
             </fieldset>
-            <section aria-label="Gallery preview" className="space-y-3">
+            <section
+              data-modal-section
+              aria-label="Gallery preview"
+              className="space-y-3"
+            >
               <h3 data-form-heading="section" className="font-semibold">
                 Preview
               </h3>

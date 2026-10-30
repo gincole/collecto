@@ -9,6 +9,9 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
   DialogDescription,
   DialogTitle,
   DialogTrigger,
@@ -77,10 +80,12 @@ function DeleteSchemaDialog({ target }: { target: DeleteTarget }) {
           if (pending) event.preventDefault();
         }}
       >
-        <div className="space-y-2">
+        <DialogHeader>
           <DialogTitle className="text-xl font-semibold">
             Delete {target.name}?
           </DialogTitle>
+        </DialogHeader>
+        <DialogBody className="space-y-2">
           <DialogDescription className="text-foreground-muted text-base leading-6">
             {impact === undefined
               ? "Checking affected Items…"
@@ -101,22 +106,24 @@ function DeleteSchemaDialog({ target }: { target: DeleteTarget }) {
               Try again
             </Button>
           ) : null}
-        </div>
-        <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-          <DialogClose asChild>
-            <Button disabled={pending} type="button" variant="outline">
-              Cancel
-            </Button>
-          </DialogClose>
-          <DeleteButton
-            confirm
-            checking={pending && impact === undefined}
-            pending={pending && impact !== undefined}
-            disabled={pending || impact === undefined}
-            onClick={handleDelete}
-            type="button"
-          />
-        </div>
+        </DialogBody>
+        <DialogFooter>
+          <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+            <DialogClose asChild>
+              <Button disabled={pending} type="button" variant="outline">
+                Cancel
+              </Button>
+            </DialogClose>
+            <DeleteButton
+              confirm
+              checking={pending && impact === undefined}
+              pending={pending && impact !== undefined}
+              disabled={pending || impact === undefined}
+              onClick={handleDelete}
+              type="button"
+            />
+          </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

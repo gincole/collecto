@@ -16,7 +16,11 @@ import { Button } from "@/components/ui/button";
 import { FeedbackMessage } from "@/components/shared/feedback-message";
 import { useFeedback } from "@/components/shared/feedback";
 import { Input, Textarea } from "@/components/ui/form-control";
-import { ModalActions, useFlowExit } from "@/components/shared/flow-modal";
+import {
+  ModalActions,
+  ModalHeader,
+  useFlowExit,
+} from "@/components/shared/flow-modal";
 import { cn } from "@/lib/utils/cn";
 
 import {
@@ -132,38 +136,35 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
   return (
     <>
       <div className={modal ? "space-y-6" : "space-y-8"}>
-        <div
-          className={cn(
-            "flex items-center justify-between gap-4",
-            modal && "min-h-11 pr-12",
-          )}
-        >
-          <p className="text-foreground-muted text-sm font-medium">
-            Step {step} of 2
-          </p>
-          <div className="flex items-center gap-1">
-            {step === 1 && !dismissFlow ? (
-              <button
-                disabled={pending}
-                className="touch-target focus-ring rounded-control text-foreground-muted hover:bg-surface-muted px-3 text-sm font-semibold"
-                onClick={cancel}
-                type="button"
-              >
-                Back
-              </button>
-            ) : null}
-            {!modal ? (
-              <button
-                disabled={pending}
-                className="touch-target focus-ring rounded-control text-foreground-muted hover:bg-surface-muted px-3 text-sm font-semibold"
-                onClick={cancel}
-                type="button"
-              >
-                Cancel
-              </button>
-            ) : null}
+        <ModalHeader>
+          <div className="flex items-center justify-between gap-4">
+            <p className="text-foreground-muted text-sm font-medium">
+              Step {step} of 2
+            </p>
+            <div className="flex items-center gap-1">
+              {step === 1 && !dismissFlow ? (
+                <button
+                  disabled={pending}
+                  className="touch-target focus-ring rounded-control text-foreground-muted hover:bg-surface-muted px-3 text-sm font-semibold"
+                  onClick={cancel}
+                  type="button"
+                >
+                  Back
+                </button>
+              ) : null}
+              {!modal ? (
+                <button
+                  disabled={pending}
+                  className="touch-target focus-ring rounded-control text-foreground-muted hover:bg-surface-muted px-3 text-sm font-semibold"
+                  onClick={cancel}
+                  type="button"
+                >
+                  Cancel
+                </button>
+              ) : null}
+            </div>
           </div>
-        </div>
+        </ModalHeader>
         {leaving ? (
           <p className="text-foreground-muted text-sm" role="status">
             Returning to My Library…
@@ -199,24 +200,38 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
                     aria-label={`${option.label} preset`}
                     aria-pressed={selected}
                     className={cn(
-                      "focus-ring rounded-card bg-surface relative flex min-h-36 flex-col items-center justify-center gap-4 border-2 text-center transition-[border-color,transform] motion-safe:hover:-translate-y-0.5",
+                      "focus-ring rounded-card relative flex min-h-36 flex-col items-center justify-center gap-4 border-2 text-center transition-[border-color,transform] motion-safe:hover:-translate-y-0.5",
                       modal ? "p-4" : "sm:p-panel p-5 sm:min-h-40",
-                      selected
-                        ? "border-selection-border"
-                        : "border-border hover:border-control-border",
+                      option.key === "blank"
+                        ? "border-foreground bg-foreground text-surface"
+                        : selected
+                          ? "border-selection-border bg-surface"
+                          : "border-border bg-surface hover:border-control-border",
                     )}
                     key={option.key}
                     onClick={() => selectPreset(option.key)}
                     type="button"
                   >
                     <PresetArtwork
+                      className={
+                        option.key === "blank"
+                          ? "bg-surface/10 text-surface"
+                          : undefined
+                      }
                       presetKey={option.key}
                       size="md"
                       variant="icon"
                     />
                     <span className="font-semibold">{option.label}</span>
                     {selected ? (
-                      <span className="bg-foreground text-surface rounded-pill absolute top-2 right-2 flex size-7 items-center justify-center">
+                      <span
+                        className={cn(
+                          "rounded-pill absolute top-2 right-2 flex size-7 items-center justify-center",
+                          option.key === "blank"
+                            ? "bg-surface text-foreground"
+                            : "bg-foreground text-surface",
+                        )}
+                      >
                         <Check aria-hidden="true" className="size-4" />
                         <span className="sr-only">Selected</span>
                       </span>

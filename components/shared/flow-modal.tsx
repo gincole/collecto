@@ -18,10 +18,15 @@ import {
   DialogContent,
   DialogTitle,
   DialogDescription,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
+  useDialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
 type Controls = {
+  header: HTMLDivElement | null;
   footer: HTMLDivElement | null;
   registerGuard: (handler: (() => void) | null) => void;
   dismiss: () => void;
@@ -66,12 +71,23 @@ export function ModalActions({
   className?: string;
 }) {
   const flow = useContext(FlowContext);
+  const dialogFooter = useDialogFooter();
+  const footer = dialogFooter === undefined ? flow?.footer : dialogFooter;
   const actions = <div className={className}>{children}</div>;
-  return flow
-    ? flow.footer
-      ? createPortal(actions, flow.footer)
+  return flow || dialogFooter !== undefined
+    ? footer
+      ? createPortal(actions, footer)
       : null
     : actions;
+}
+
+export function ModalHeader({ children }: { children: ReactNode }) {
+  const flow = useContext(FlowContext);
+  return flow
+    ? flow.header
+      ? createPortal(children, flow.header)
+      : null
+    : children;
 }
 
 export function FlowModal({
@@ -91,6 +107,7 @@ export function FlowModal({
     typeof document === "undefined" ? null : document.activeElement,
   );
   const [footer, setFooter] = useState<HTMLDivElement | null>(null);
+  const [header, setHeader] = useState<HTMLDivElement | null>(null);
   const [busySources, setBusySources] = useState<Set<symbol>>(() => new Set());
   const busy = busySources.size > 0;
   const registerBusy = useCallback((token: symbol, pending: boolean) => {
@@ -114,8 +131,8 @@ export function FlowModal({
     guard.current = handler;
   }, []);
   const context = useMemo(
-    () => ({ footer, registerGuard, dismiss, registerBusy }),
-    [footer, dismiss, registerGuard, registerBusy],
+    () => ({ header, footer, registerGuard, dismiss, registerBusy }),
+    [header, footer, dismiss, registerGuard, registerBusy],
   );
   return (
     <Dialog
@@ -145,11 +162,18 @@ export function FlowModal({
           close();
         }}
       >
-        <header
-          className={
-            showTitle
-              ? "flex items-center justify-between gap-4 px-5 pt-4"
-              : "relative z-10 h-0"
+        <DialogHeader
+          closeButton={
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              aria-label="Close"
+              onClick={close}
+              disabled={busy}
+            >
+              <X aria-hidden="true" />
+            </Button>
           }
         >
           <DialogTitle
@@ -158,32 +182,16 @@ export function FlowModal({
           >
             {title}
           </DialogTitle>
-          <Button
-            className={showTitle ? "ml-auto" : "absolute top-5 right-5"}
-            type="button"
-            variant="ghost"
-            size="icon"
-            aria-label="Close"
-            onClick={close}
-            disabled={busy}
-          >
-            <X aria-hidden="true" />
-          </Button>
+          {!showTitle ? <div ref={setHeader} /> : null}
           <DialogDescription className="sr-only">
             Close with the close button, Escape or the backdrop. Actions stay
             below the scrolling form.
           </DialogDescription>
-        </header>
+        </DialogHeader>
         <FlowContext.Provider value={context}>
-          <div className="flow-modal-body min-h-0 overflow-y-auto overscroll-contain p-5">
-            {children}
-          </div>
+          <DialogBody className="flow-modal-body">{children}</DialogBody>
         </FlowContext.Provider>
-        <div
-          ref={setFooter}
-          data-modal-footer
-          className="border-border bg-surface border-t px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] empty:hidden"
-        />
+        <DialogFooter ref={setFooter} />
       </DialogContent>
     </Dialog>
   );

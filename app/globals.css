@@ -261,6 +261,30 @@ body {
   padding: 0;
 }
 
+button:disabled,
+[role="button"][aria-disabled="true"] {
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.dialog-content
+  section[data-form-panel]:not([aria-labelledby="collection-general-heading"]),
+.dialog-content [data-modal-section] {
+  border-top: 1px solid var(--border);
+  padding-top: calc(var(--spacing) * 6);
+}
+
+.dialog-content [data-modal-header] {
+  padding-top: max(1rem, env(safe-area-inset-top));
+}
+
+.dialog-content [data-modal-header],
+.dialog-content [data-modal-body],
+.dialog-content [data-modal-footer] {
+  padding-left: max(1.25rem, env(safe-area-inset-left));
+  padding-right: max(1.25rem, env(safe-area-inset-right));
+}
+
 .dialog-content [data-form-heading="primary"] {
   font-size: var(--text-section-title-mobile);
   line-height: var(--text-section-title-mobile--line-height);

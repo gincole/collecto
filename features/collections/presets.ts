@@ -187,7 +187,7 @@ const PRESETS: Record<CollectionPresetKey, CollectionPreset> = {
     key: "favorites",
     label: "Favorites",
   },
-  blank: { aspectRatio: "3:4", fields: [], key: "blank", label: "Blank" },
+  blank: { aspectRatio: "3:4", fields: [], key: "blank", label: "Custom" },
 };
 
 function copyPreset(preset: CollectionPreset): CollectionPreset {

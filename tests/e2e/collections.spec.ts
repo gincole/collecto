@@ -88,7 +88,7 @@ test.describe("Collection creation journey", () => {
     expect(createdPreset.data?.field_definitions).toHaveLength(4);
 
     await page.goto("/collections/new");
-    await page.getByRole("button", { name: "Blank preset" }).click();
+    await page.getByRole("button", { name: "Custom preset" }).click();
     await page.getByRole("button", { name: "Continue" }).click();
     await page.getByLabel("Collection name").fill("Small Joys");
     await page.getByRole("button", { name: "Create collection" }).click();

@@ -213,7 +213,7 @@ export function ItemForm({
           hasImage={Boolean(item?.imagePath)}
           itemId={item?.id}
         />
-        <div className="min-w-0 space-y-6">
+        <div data-modal-section className="min-w-0 space-y-6">
           <div className="space-y-2">
             <label className="text-label block" htmlFor="title">
               Title<span aria-hidden="true"> *</span>

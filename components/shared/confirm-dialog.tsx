@@ -3,12 +3,14 @@
 import type { ReactElement, ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
 import { DeleteButton } from "./delete-button";
 import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
   DialogDescription,
   DialogTitle,
   DialogTrigger,
@@ -51,7 +53,7 @@ function ConfirmDialog({
       {trigger ? <DialogTrigger asChild>{trigger}</DialogTrigger> : null}
       <DialogContent
         role="alertdialog"
-        showCloseButton={false}
+        closeDisabled={isPending}
         onEscapeKeyDown={(event) => {
           if (isPending) event.preventDefault();
         }}
@@ -59,21 +61,12 @@ function ConfirmDialog({
           if (isPending) event.preventDefault();
         }}
       >
-        <Button
-          type="button"
-          variant="ghost"
-          className="absolute top-3 right-3"
-          size="icon"
-          aria-label="Close"
-          disabled={isPending}
-          onClick={() => onOpenChange(false)}
-        >
-          <X aria-hidden="true" />
-        </Button>
-        <div className="space-y-2 pr-12">
+        <DialogHeader>
           <DialogTitle className="pr-0 text-xl font-semibold">
             {title}
           </DialogTitle>
+        </DialogHeader>
+        <DialogBody className="space-y-2">
           <DialogDescription className="text-foreground-muted text-base leading-6">
             {description}
           </DialogDescription>
@@ -82,27 +75,29 @@ function ConfirmDialog({
               {error}
             </p>
           ) : null}
-        </div>
-        <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-          <DialogClose asChild>
-            <Button disabled={isPending} type="button" variant="outline">
-              {cancelLabel}
-            </Button>
-          </DialogClose>
-          {variant === "destructive" ? (
-            <DeleteButton confirm pending={isPending} onClick={onConfirm} />
-          ) : (
-            <Button
-              aria-busy={isPending}
-              disabled={isPending}
-              onClick={onConfirm}
-              type="button"
-              variant={variant}
-            >
-              {isPending ? "Working…" : confirmLabel}
-            </Button>
-          )}
-        </div>
+        </DialogBody>
+        <DialogFooter>
+          <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+            <DialogClose asChild>
+              <Button disabled={isPending} type="button" variant="outline">
+                {cancelLabel}
+              </Button>
+            </DialogClose>
+            {variant === "destructive" ? (
+              <DeleteButton confirm pending={isPending} onClick={onConfirm} />
+            ) : (
+              <Button
+                aria-busy={isPending}
+                disabled={isPending}
+                onClick={onConfirm}
+                type="button"
+                variant={variant}
+              >
+                {isPending ? "Working…" : confirmLabel}
+              </Button>
+            )}
+          </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

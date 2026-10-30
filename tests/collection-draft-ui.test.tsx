@@ -53,7 +53,7 @@ describe("Collection schema draft wizard", () => {
     await user.clear(screen.getByLabelText("Field 1 name"));
     await user.type(screen.getByLabelText("Field 1 name"), "Writer");
     await user.click(screen.getByRole("button", { name: "Change preset" }));
-    await user.click(screen.getByRole("button", { name: "Blank preset" }));
+    await user.click(screen.getByRole("button", { name: "Custom preset" }));
     await user.click(screen.getByRole("button", { name: "Continue" }));
     expect(screen.queryByLabelText("Field 1 name")).not.toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Change preset" }));
@@ -133,7 +133,7 @@ describe("Collection schema draft wizard", () => {
     }>();
     const action = vi.fn(() => request.promise);
     render(<CollectionWizard createAction={action} />);
-    await user.click(screen.getByRole("button", { name: "Blank preset" }));
+    await user.click(screen.getByRole("button", { name: "Custom preset" }));
     await user.click(screen.getByRole("button", { name: "Continue" }));
     await user.type(screen.getByLabelText("Collection name"), "Things");
     await user.click(screen.getByRole("button", { name: "Add field" }));
