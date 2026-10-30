@@ -265,3 +265,17 @@ verify:deployment` passed formatting, lint, strict TypeScript, all 364 tests
   across 54 files and the production build. Independent review and staged
   diff/secret checks passed. No browser testing.
 - Commit: SELF (this commit).
+
+## M7-T02W: Gallery visibility drag lists and centered preview
+
+- Status: Complete; dependency M7-T02V is complete.
+- Scope/acceptance: see M7-T02W in `docs/implementation-plan.md`.
+- Changes: Visible/Hidden drag lists with a short dashed separator and accessible
+  movement controls; centered preview rows; removed Gallery Cancel action.
+- Verification: `corepack pnpm verify:deployment` passed formatting, lint,
+  strict TypeScript, all 367 tests across 55 files and production build.
+  Drag-handler tests cover row/container drops, empty lists, capacity, disabled
+  state and outside drops; Gallery tests cover preview, ordering, save/failure
+  and Close/discard. Independent review and staged diff/secret checks passed.
+  No browser testing; rendered drag geometry was not tested.
+- Commit: SELF (this commit).

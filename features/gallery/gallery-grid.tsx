@@ -19,6 +19,14 @@ const columnClasses: Record<GalleryConfig["columns"], string> = {
   5: "grid-cols-1 @[20.5rem]:grid-cols-2 @[42rem]:grid-cols-3 @[56rem]:grid-cols-4 @[68rem]:grid-cols-5",
 };
 
+const previewColumns: Record<GalleryConfig["columns"], string> = {
+  1: "[--preview-columns:1]",
+  2: "[--preview-columns:1] @[20.5rem]:[--preview-columns:2]",
+  3: "[--preview-columns:1] @[20.5rem]:[--preview-columns:2] @[42rem]:[--preview-columns:3]",
+  4: "[--preview-columns:1] @[20.5rem]:[--preview-columns:2] @[42rem]:[--preview-columns:3] @[56rem]:[--preview-columns:4]",
+  5: "[--preview-columns:1] @[20.5rem]:[--preview-columns:2] @[42rem]:[--preview-columns:3] @[56rem]:[--preview-columns:4] @[68rem]:[--preview-columns:5]",
+};
+
 // The server snapshot keeps hydration stable; subsequent rendering uses browser locale.
 const subscribe = () => () => {};
 const browserLocale = () => navigator.language;
@@ -106,13 +114,29 @@ export function GalleryGrid({
     <div className="@container min-w-0">
       <ul
         className={cn(
-          "grid min-w-0",
-          columnClasses[config.columns],
+          "min-w-0",
+          preview
+            ? cn(
+                "flex flex-wrap justify-center",
+                previewColumns[config.columns],
+              )
+            : cn("grid", columnClasses[config.columns]),
           config.spacing === "tight" ? "gap-2" : "gap-4 sm:gap-5",
+          preview &&
+            (config.spacing === "tight"
+              ? "[--preview-gap:0.5rem]"
+              : "[--preview-gap:1rem] sm:[--preview-gap:1.25rem]"),
         )}
       >
         {(preview ? sortedItems.slice(0, 5) : sortedItems).map((item) => (
-          <li className="min-w-0" key={item.id}>
+          <li
+            className={cn(
+              "min-w-0",
+              preview &&
+                "w-[calc((100%_-_(var(--preview-columns)_-_1)*var(--preview-gap))/var(--preview-columns))]",
+            )}
+            key={item.id}
+          >
             {preview ? (
               <GalleryCard config={config} fields={fields} item={item} />
             ) : (

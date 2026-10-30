@@ -34,7 +34,7 @@ import {
   type GalleryConfig,
 } from "@/features/collections/schemas";
 import type { ItemRecord } from "@/features/items/types";
-import { ReorderButtons } from "@/features/fields/reorder-buttons";
+import { GalleryFieldVisibility } from "./gallery-field-visibility";
 import { GalleryGrid } from "./gallery-grid";
 import { sanitizeVisibleFields } from "./draft";
 import type { GallerySaveInput, GallerySaveResult } from "./service";
@@ -150,11 +150,6 @@ export function GallerySettings({
       setOpen(true);
     } else if (dirty) setDiscardOpen(true);
     else setOpen(false);
-  }
-  function moveField(index: number, direction: -1 | 1) {
-    const ids = [...safeDraft.visibleFieldIds];
-    [ids[index], ids[index + direction]] = [ids[index + direction], ids[index]];
-    change("visibleFieldIds", ids);
   }
   function save() {
     startTransition(async () => {
@@ -341,61 +336,12 @@ export function GallerySettings({
                   Choose up to three fields. The first is the primary label.
                   Selections are kept when details are off.
                 </p>
-                {choices.map((field) => (
-                  <label
-                    className="flex min-h-11 items-center gap-3"
-                    key={field.id}
-                  >
-                    <input
-                      type="checkbox"
-                      className="accent-selection-border size-5"
-                      checked={safeDraft.visibleFieldIds.includes(field.id)}
-                      disabled={
-                        !safeDraft.visibleFieldIds.includes(field.id) &&
-                        safeDraft.visibleFieldIds.length >= 3
-                      }
-                      onChange={(event) =>
-                        change(
-                          "visibleFieldIds",
-                          event.target.checked
-                            ? [...safeDraft.visibleFieldIds, field.id]
-                            : safeDraft.visibleFieldIds.filter(
-                                (id) => id !== field.id,
-                              ),
-                        )
-                      }
-                    />
-                    {field.name}
-                  </label>
-                ))}
-                <ol className="space-y-2">
-                  {safeDraft.visibleFieldIds.map((id, index) => {
-                    const name =
-                      choices.find((field) => field.id === id)?.name ?? "Field";
-                    return (
-                      <li
-                        className="border-border rounded-control flex items-center justify-between gap-2 border px-3"
-                        key={id}
-                      >
-                        <span className="min-w-0 break-words">
-                          {index + 1}. {name}
-                        </span>
-                        <ReorderButtons
-                          disabled={pending}
-                          label={name}
-                          onUp={
-                            index > 0 ? () => moveField(index, -1) : undefined
-                          }
-                          onDown={
-                            index < safeDraft.visibleFieldIds.length - 1
-                              ? () => moveField(index, 1)
-                              : undefined
-                          }
-                        />
-                      </li>
-                    );
-                  })}
-                </ol>
+                <GalleryFieldVisibility
+                  fields={choices}
+                  value={safeDraft.visibleFieldIds}
+                  disabled={pending}
+                  onChange={(ids) => change("visibleFieldIds", ids)}
+                />
               </section>
             </fieldset>
             <section
@@ -435,14 +381,6 @@ export function GallerySettings({
             ) : null}
           </div>
           <ModalActions>
-            <Button
-              disabled={pending}
-              onClick={() => onOpenChange(false)}
-              variant="outline"
-              type="button"
-            >
-              Cancel
-            </Button>
             <Button
               disabled={pending}
               aria-busy={pending}

@@ -257,7 +257,11 @@ describe("Gallery Settings draft", () => {
     );
     expect(within(preview).queryByRole("link")).not.toBeInTheDocument();
     await chooseOption(user, screen.getByLabelText("Spacing"), "tight");
-    expect(within(preview).getByRole("list")).toHaveClass("gap-2");
+    expect(within(preview).getByRole("list")).toHaveClass(
+      "gap-2",
+      "flex",
+      "justify-center",
+    );
   });
   it("caps selection at three and removes deleted Fields from an open draft", async () => {
     const user = userEvent.setup();
@@ -275,9 +279,15 @@ describe("Gallery Settings draft", () => {
       <GallerySettings collection={expanded} items={[]} saveAction={save} />,
     );
     await user.click(screen.getByRole("button", { name: "Gallery settings" }));
-    await user.click(screen.getByLabelText("Description"));
-    await user.click(screen.getByLabelText("Notes"));
-    expect(screen.getByLabelText("Other")).toBeDisabled();
+    await user.click(screen.getByRole("button", { name: "Show Description" }));
+    await user.click(screen.getByRole("button", { name: "Show Notes" }));
+    await user.click(screen.getByRole("button", { name: "Show Other" }));
+    expect(
+      screen.getByRole("status", { name: "Field visibility" }),
+    ).toHaveTextContent("Choose up to three");
+    expect(
+      within(screen.getByRole("list", { name: "Hidden" })).getByText("Other"),
+    ).toBeVisible();
     rerender(
       <GallerySettings
         collection={{ ...expanded, fields: [extraField] }}
@@ -286,7 +296,7 @@ describe("Gallery Settings draft", () => {
       />,
     );
     expect(screen.queryByLabelText("Notes")).not.toBeInTheDocument();
-    expect(screen.getByLabelText("Other")).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Show Other" })).toBeEnabled();
     await user.click(screen.getByRole("button", { name: "Save changes" }));
     expect(save).toHaveBeenCalledWith({
       collectionId: id,
@@ -319,7 +329,7 @@ describe("Gallery Settings draft", () => {
     const dialog = screen.getByRole("dialog", { name: "Gallery settings" });
     expect(within(dialog).getByText("Sample item")).toBeInTheDocument();
     await chooseOption(user, screen.getByLabelText("Columns"), "5");
-    await user.click(screen.getByLabelText("Description"));
+    await user.click(screen.getByRole("button", { name: "Show Description" }));
     await chooseOption(
       user,
       screen.getByRole("radiogroup", { name: "Show details" }),
@@ -340,7 +350,7 @@ describe("Gallery Settings draft", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(notifyMock).toHaveBeenCalledWith("Gallery settings saved.");
   });
-  it("confirms dirty Cancel and restores the saved draft when reopened", async () => {
+  it("confirms dirty Close and restores the saved draft when reopened", async () => {
     const user = userEvent.setup();
     const save = vi.fn();
     render(
@@ -349,7 +359,7 @@ describe("Gallery Settings draft", () => {
     const trigger = screen.getByRole("button", { name: "Gallery settings" });
     await user.click(trigger);
     await chooseOption(user, screen.getByLabelText("Columns"), "1");
-    await user.click(screen.getByRole("button", { name: "Cancel" }));
+    await user.click(screen.getByRole("button", { name: "Close" }));
     expect(
       screen.getByRole("alertdialog", { name: "Discard gallery changes?" }),
     ).toBeInTheDocument();
@@ -374,8 +384,11 @@ describe("Gallery Settings draft", () => {
       />,
     );
     await user.click(screen.getByRole("button", { name: "Gallery settings" }));
-    await user.click(screen.getByLabelText("Description"));
-    await user.click(screen.getByLabelText("Notes"));
+    await user.click(screen.getByRole("button", { name: "Show Description" }));
+    await user.click(screen.getByRole("button", { name: "Show Notes" }));
+    expect(screen.queryByRole("checkbox")).toBeNull();
+    expect(screen.queryByRole("button", { name: "Cancel" })).toBeNull();
+    expect(screen.getByRole("list", { name: "Hidden" })).toBeVisible();
     const up = screen.getByRole("button", { name: "Move Notes up" });
     up.focus();
     await user.keyboard("{Enter}");
@@ -383,7 +396,9 @@ describe("Gallery Settings draft", () => {
     expect(await screen.findByRole("alert")).toHaveTextContent(
       "Could not save",
     );
-    expect(screen.getByLabelText("Notes")).toBeChecked();
+    expect(
+      within(screen.getByRole("list", { name: "Visible" })).getByText("Notes"),
+    ).toBeVisible();
     expect(screen.getByRole("dialog")).toBeInTheDocument();
   });
   it("blocks dismissal and duplicate submission during Save", async () => {

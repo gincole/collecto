@@ -1069,3 +1069,20 @@ padding must keep all five choices inside the modal body at 320 px.
 Verification: Gallery component regression plus the full deployment gate,
 independent review and staged diff/secret inspection. No browser tests,
 dependencies or schema changes. One focused Conventional Commit, no push.
+
+## M7-T02W: Gallery visibility drag lists and centered preview
+
+User-approved refinement of M7-T02V (dependency complete). Replace the checkbox
+selection and separate ordering list with Visible and Hidden sortable field
+lists, separated by a centered dashed rule shorter than section dividers. Reuse
+dnd-kit and the shared drag handle, Button and ReorderButtons conventions. Drag
+whole rows between lists and reorder Visible fields; provide keyboard-accessible
+Show/Hide and arrow actions. Keep the three-field limit, reduced-motion support,
+draft-only edits, validation, preview and save/failure/unsaved-close behavior.
+Center preview cards, including incomplete rows, without changing the actual
+gallery layout. Remove the Gallery modal Cancel action; retain Close and Save.
+
+Verification: focused Gallery component checks for lists, limits, ordering,
+failure preservation, centering and Close/discard; full deployment gate and
+independent review. No browser tests, dependencies or database changes. One
+Conventional Commit with task tracker, no push.
