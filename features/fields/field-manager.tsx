@@ -1,4 +1,5 @@
 "use client";
+import { FormSectionHeader } from "@/components/shared/form-section-header";
 
 import { Plus } from "lucide-react";
 import { useMemo, useState, type RefObject } from "react";
@@ -42,18 +43,10 @@ function BuiltInFields() {
       aria-label="Built-in fields"
       className="border-border bg-surface rounded-card sm:p-panel border p-4"
     >
-      <div className="mb-4 space-y-1">
-        <h2
-          data-form-heading="section"
-          className="text-section-title-mobile sm:text-section-title"
-        >
-          Built-in fields
-        </h2>
-        <p className="text-foreground-muted">
-          Every Item includes these properties. They cannot be edited,
-          reordered, or deleted.
-        </p>
-      </div>
+      <FormSectionHeader
+        title="Built-in fields"
+        description="Every Item includes these properties. They cannot be edited, reordered, or deleted."
+      />
       <ul className="space-y-3">
         <BuiltInFieldRow name="Title" />
         <BuiltInFieldRow name="Description" />
@@ -109,36 +102,33 @@ function FieldManager({
         aria-label="Custom fields"
         className="border-border bg-surface rounded-card sm:p-panel border p-4"
       >
-        <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="space-y-1">
-            <h2
-              data-form-heading="section"
-              className="text-section-title-mobile sm:text-section-title"
-            >
-              Custom fields
-            </h2>
-            <p className="text-foreground-muted">
-              Field order controls Add Item, Edit Item, and Item Details.
-            </p>
-          </div>
-          {onAddField ? (
-            <Button
-              disabled={atLimit || pending}
-              onClick={onAddField}
-              ref={addFieldTriggerRef}
-              type="button"
-            >
-              <Plus aria-hidden="true" />
-              Add field
-            </Button>
-          ) : (
-            <AddFieldDialog
-              actions={actions}
-              collectionId={collectionId}
-              disabled={atLimit}
-            />
-          )}
-        </div>
+        <FormSectionHeader
+          title="Custom fields"
+          description="Field order controls Add Item, Edit Item, and Item Details."
+          action={
+            <>
+              {" "}
+              {onAddField ? (
+                <Button
+                  disabled={atLimit || pending}
+                  onClick={onAddField}
+                  ref={addFieldTriggerRef}
+                  type="button"
+                >
+                  <Plus aria-hidden="true" />
+                  Add field
+                </Button>
+              ) : (
+                <AddFieldDialog
+                  actions={actions}
+                  collectionId={collectionId}
+                  disabled={atLimit}
+                />
+              )}
+            </>
+          }
+        />
+
         {pending ? (
           <p className="sr-only" role="status">
             Updating field order…

@@ -1,4 +1,5 @@
 "use client";
+import { ConfirmationDialogContent } from "@/components/shared/confirmation-dialog-content";
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -8,7 +9,6 @@ import { DeleteButton } from "@/components/shared/delete-button";
 import { useFlowBusy } from "@/components/shared/flow-modal";
 import {
   Dialog,
-  DialogContent,
   DialogHeader,
   DialogBody,
   DialogFooter,
@@ -84,7 +84,7 @@ function DeleteSchemaDialog({
           type="button"
         />
       </DialogTrigger>
-      <DialogContent
+      <ConfirmationDialogContent
         role="alertdialog"
         closeDisabled={pending}
         onEscapeKeyDown={(event) => {
@@ -133,7 +133,7 @@ function DeleteSchemaDialog({
             />
           </div>
         </DialogFooter>
-      </DialogContent>
+      </ConfirmationDialogContent>
     </Dialog>
   );
 }

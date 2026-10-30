@@ -16,7 +16,15 @@ describe("Collection schema draft wizard", () => {
     await user.click(screen.getByRole("button", { name: "Continue" }));
     const author = screen.getByRole("group", { name: "Author" });
     expect(within(author).getAllByText("Text")[0]).toBeVisible();
-    expect(author.closest("li")).toHaveClass("border-t");
+    expect(
+      within(author).getByRole("heading", { name: "Author" }).parentElement
+        ?.parentElement,
+    ).toHaveClass("flex-col", "sm:flex-row");
+    expect(author.closest("li")).toHaveClass(
+      "border",
+      "rounded-control",
+      "p-4",
+    );
     const genre = screen.getByRole("group", { name: "Genre" });
     const option = within(genre).getByLabelText("Option 1 for field 2");
     expect(option.closest("li")).toHaveClass(

@@ -1,4 +1,5 @@
 "use client";
+import { FormSectionHeader } from "@/components/shared/form-section-header";
 
 import { Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -95,50 +96,39 @@ export function CollectionSchemaEditor({
         !modal && "border-border bg-surface rounded-card sm:p-panel border p-4",
       )}
     >
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <h2
-          data-form-heading="section"
-          className={cn(
-            "min-w-0",
-            modal
-              ? "text-card-title"
-              : "text-section-title-mobile sm:text-section-title",
-          )}
-          id="draft-fields-title"
-        >
-          Custom fields
-        </h2>
-        <Button
-          disabled={
-            disabled || fields.length >= DATABASE_LIMITS.collectionFields
-          }
-          onClick={() =>
-            onChange([
-              ...fields,
-              {
-                key: crypto.randomUUID(),
-                name: "",
-                type: "text",
-                required: false,
-                options: [],
-              },
-            ])
-          }
-          type="button"
-        >
-          <Plus aria-hidden="true" />
-          Add field
-        </Button>
-      </div>
+      <FormSectionHeader
+        id="draft-fields-title"
+        title="Custom fields"
+        description="Title and Description included. Field types lock after creation."
+        action={
+          <Button
+            disabled={
+              disabled || fields.length >= DATABASE_LIMITS.collectionFields
+            }
+            onClick={() =>
+              onChange([
+                ...fields,
+                {
+                  key: crypto.randomUUID(),
+                  name: "",
+                  type: "text",
+                  required: false,
+                  options: [],
+                },
+              ])
+            }
+            type="button"
+          >
+            <Plus aria-hidden="true" />
+            Add field
+          </Button>
+        }
+      />
       <fieldset
         disabled={disabled}
         aria-labelledby="draft-fields-title"
         className="min-w-0 space-y-6"
       >
-        <p className="text-foreground-muted text-sm">
-          <span className="block">Title and Description included.</span>
-          <span className="block">Field types lock after creation.</span>
-        </p>
         {serverError ? (
           <p className="text-error" role="alert" id="draft-server-error">
             {serverError}
@@ -155,7 +145,7 @@ export function CollectionSchemaEditor({
           {fields.map((field, index) => (
             <li
               data-draft-field
-              className="border-border space-y-5 border-t pt-6 first:border-t-0 first:pt-0"
+              className="border-border bg-surface rounded-control min-w-0 space-y-5 border p-4"
               key={field.key}
             >
               <div
@@ -163,7 +153,7 @@ export function CollectionSchemaEditor({
                 aria-labelledby={`draft-heading-${field.key}`}
                 className="space-y-5"
               >
-                <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div className="min-w-0 flex-1 space-y-1">
                     <h3
                       id={`draft-heading-${field.key}`}
@@ -182,7 +172,7 @@ export function CollectionSchemaEditor({
                       />
                     </div>
                   </div>
-                  <div className="flex flex-wrap items-center gap-1">
+                  <div className="flex flex-wrap items-center justify-end gap-1">
                     <ReorderButtons
                       disabled={disabled}
                       label={`Field ${field.name || index + 1}`}

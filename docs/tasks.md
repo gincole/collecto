@@ -348,3 +348,24 @@ verify:deployment` passed formatting, lint, strict TypeScript, all 364 tests
   lower-concurrency full suite passed. Separate field-guidance wording edit was
   preserved outside this commit.
 - Commit: SELF (this commit).
+
+## M7-T02AC: Unify modal section headers and frame draft fields
+
+- Status: Complete; dependency M7-T02AB is complete.
+- Scope/acceptance: see M7-T02AC in `docs/implementation-plan.md`.
+- Changes: shared modal section title/description/action structure, including both
+  wizard screens and matching Add field spacing; bordered draft field editors
+  with mobile-safe actions and divider-free compact confirmation prompts.
+- Verification: route types, formatting, lint, strict TypeScript, all 376 tests
+  across 55 files with two Vitest workers and production build passed. Shared
+  headers in Settings and both wizard screens, framed editor/option/axe and
+  confirmation/focus regressions pass. Independent review and staged diff/secret
+  checks passed. No browser testing. Existing guidance wording is preserved.
+- Commit: SELF (this commit).
+
+## M7-T02AD: Honor selected gallery columns on mobile
+
+- Status: Approved, queued; dependency M7-T02AC is complete.
+- Scope/acceptance: see M7-T02AD in `docs/implementation-plan.md`.
+- Verification: not started.
+- Commit: pending.

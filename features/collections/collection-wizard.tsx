@@ -1,4 +1,5 @@
 "use client";
+import { FormSectionHeader } from "@/components/shared/form-section-header";
 
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -176,18 +177,14 @@ export function CollectionWizard({
 
         {step === 1 ? (
           <section aria-labelledby="preset-title" className="space-y-6">
-            <div className="space-y-2">
-              <h1
-                data-form-heading="primary"
-                className={titleClassName}
-                id="preset-title"
-              >
-                What are you collecting?
-              </h1>
-              <p className="text-foreground-muted">
-                Choose a starting point. You can change its fields later.
-              </p>
-            </div>
+            <FormSectionHeader
+              as="h1"
+              primary
+              id="preset-title"
+              title="What are you collecting?"
+              description="Choose a starting point. You can change its fields later."
+              titleClassName={titleClassName}
+            />
 
             <div
               className={cn(
@@ -285,19 +282,14 @@ export function CollectionWizard({
             />
 
             <section aria-labelledby="details-title" className="space-y-6">
-              <div className="space-y-2">
-                <h1
-                  data-form-heading="primary"
-                  className={titleClassName}
-                  id="details-title"
-                >
-                  Set up your collection
-                </h1>
-                <p className="text-foreground-muted">
-                  Name this Collection and customize its fields before creating
-                  it.
-                </p>
-              </div>
+              <FormSectionHeader
+                as="h1"
+                primary
+                id="details-title"
+                title="Set up your collection"
+                description="Name this Collection and customize its fields before creating it."
+                titleClassName={titleClassName}
+              />
 
               <Button
                 data-preset-summary

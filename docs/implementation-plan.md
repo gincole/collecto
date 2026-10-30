@@ -1180,3 +1180,40 @@ keyboard activation with draft preservation. Run deployment checks with two test
 workers to avoid previously observed timing flakes. Inspect diff and staged
 secrets; no browser tests, dependencies or schema changes. One Conventional Commit
 with tracker update, no push.
+
+## M7-T02AC: Unify modal section headers and frame draft fields
+
+User-approved refinement after M7-T02AB (complete). Add a border, standard control
+radius and padding around each New Collection custom-field editor; preserve list
+and form accessibility and existing option/edit/order behavior. This explicitly
+supersedes the earlier no-frame preference for these field editors only.
+
+Introduce a shared FormSectionHeader for title, description and optional action.
+Use it in both New Collection screens, its Custom fields editor, Collection
+Settings sections, field options/deletion sections and Gallery settings sections.
+Both Custom fields headers must share description placement and Add field action
+spacing. Modal body section titles use the existing 20 px card-title token and
+supporting descriptions the existing 14 px body-sm token. Keep the top modal
+header distinct and preserve standalone page typography. Preserve the existing
+uncommitted guidance wording while moving it into the shared header.
+
+Verification: wizard/setup/Settings header structure, framed field/editor/option
+and axe regressions; full deployment checks with two Vitest workers, independent
+review and staged diff/secret scan. No browser tests, dependencies or schema
+changes. One Conventional Commit with tracker update, no push.
+
+The same task includes the user's compact-confirmation follow-up: share a dedicated
+ConfirmationDialogContent for discard and delete prompts without header/footer
+dividers. Preserve alertdialog semantics, pending guards, focus and typed deletion.
+On narrow screens stack draft-field metadata and action controls inside the new
+frames so Select type labels cannot collide with the three action buttons.
+
+## M7-T02AD: Honor selected gallery columns on mobile
+
+Approved follow-up, queued after M7-T02AC. Apply the selected Columns count on all
+viewport widths, including mobile: selecting 5 shows five columns. Remove current
+responsive count reductions in actual gallery and modal preview while retaining
+one-column horizontal cards, safe wrapping, image-ratio configuration and details
+settings. Verify saved settings and preview count classes, narrow-screen overflow
+constraints and existing gallery behavior. One separate Conventional Commit;
+implementation waits until the current modal task is committed and approved.

@@ -1,4 +1,6 @@
 "use client";
+import { ConfirmationDialogContent } from "@/components/shared/confirmation-dialog-content";
+import { FormSectionHeader } from "@/components/shared/form-section-header";
 
 import {
   useActionState,
@@ -16,7 +18,6 @@ import { FeedbackMessage } from "@/components/shared/feedback-message";
 import { useFeedback } from "@/components/shared/feedback";
 import {
   Dialog,
-  DialogContent,
   DialogHeader,
   DialogBody,
   DialogFooter,
@@ -128,18 +129,11 @@ export function CollectionSettings({
         aria-labelledby="collection-general-heading"
         className="border-border bg-surface rounded-card sm:p-panel border p-4"
       >
-        <div className="mb-6 space-y-1">
-          <h2
-            data-form-heading="section"
-            className="text-section-title-mobile sm:text-section-title"
-            id="collection-general-heading"
-          >
-            General
-          </h2>
-          <p className="text-foreground-muted">
-            Update the name and description shown in your Library.
-          </p>
-        </div>
+        <FormSectionHeader
+          id="collection-general-heading"
+          title="General"
+          description="Update the name and description shown in your Library."
+        />
         <form
           id={formId}
           noValidate
@@ -237,24 +231,17 @@ export function CollectionSettings({
         ref={deleteSectionRef}
       >
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="min-w-0 space-y-1">
-            <h2
-              data-form-heading="section"
-              className="text-section-title-mobile sm:text-section-title"
-              id="delete-collection-heading"
-            >
-              Delete collection
-            </h2>
-            <p className="text-foreground-muted">
-              Permanently delete this Collection, all of its Items, and its
-              private images. This cannot be undone.
-            </p>
-          </div>
+          <FormSectionHeader
+            id="delete-collection-heading"
+            title="Delete collection"
+            description="Permanently delete this Collection, all of its Items, and its private images. This cannot be undone."
+            className="mb-0"
+          />
           <Dialog onOpenChange={handleDeleteOpenChange} open={deleteOpen}>
             <DialogTrigger asChild>
               <DeleteButton aria-label="Delete collection" />
             </DialogTrigger>
-            <DialogContent
+            <ConfirmationDialogContent
               role="alertdialog"
               closeDisabled={deletePending}
               onEscapeKeyDown={(event) => {
@@ -341,7 +328,7 @@ export function CollectionSettings({
                   />
                 </div>
               </DialogFooter>
-            </DialogContent>
+            </ConfirmationDialogContent>
           </Dialog>
         </div>
       </section>

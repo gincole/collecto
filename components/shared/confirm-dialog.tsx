@@ -1,4 +1,5 @@
 "use client";
+import { ConfirmationDialogContent } from "@/components/shared/confirmation-dialog-content";
 
 import type { ReactElement, ReactNode } from "react";
 
@@ -7,7 +8,6 @@ import { DeleteButton } from "./delete-button";
 import {
   Dialog,
   DialogClose,
-  DialogContent,
   DialogHeader,
   DialogBody,
   DialogFooter,
@@ -51,7 +51,7 @@ function ConfirmDialog({
       open={open}
     >
       {trigger ? <DialogTrigger asChild>{trigger}</DialogTrigger> : null}
-      <DialogContent
+      <ConfirmationDialogContent
         role="alertdialog"
         closeDisabled={isPending}
         onEscapeKeyDown={(event) => {
@@ -100,7 +100,7 @@ function ConfirmDialog({
             )}
           </div>
         </DialogFooter>
-      </DialogContent>
+      </ConfirmationDialogContent>
     </Dialog>
   );
 }

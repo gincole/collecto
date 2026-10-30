@@ -293,16 +293,16 @@ button:disabled,
   margin-right: max(1.25rem, env(safe-area-inset-right));
 }
 
-.dialog-content [data-form-heading="primary"] {
-  font-size: var(--text-section-title-mobile);
-  line-height: var(--text-section-title-mobile--line-height);
-  font-weight: var(--text-section-title-mobile--font-weight);
-}
-
+.dialog-content [data-modal-body] [data-form-heading="primary"],
 .dialog-content [data-form-heading="section"] {
   font-size: var(--text-card-title);
   line-height: var(--text-card-title--line-height);
   font-weight: var(--text-card-title--font-weight);
+}
+
+.dialog-content [data-section-description] {
+  font-size: var(--text-body-sm);
+  line-height: var(--text-body-sm--line-height);
 }
 
 .dialog-overlay[data-state="open"] {

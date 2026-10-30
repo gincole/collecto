@@ -103,6 +103,11 @@ describe("ready local dialogs", () => {
     ]) {
       const heading = within(dialog).getByRole("heading", { name });
       expect(heading).toHaveAttribute("data-form-heading", "section");
+      const header = heading.closest("[data-section-header]");
+      expect(header).not.toBeNull();
+      expect(
+        header?.querySelector("[data-section-description]"),
+      ).not.toBeNull();
       expect(heading.closest("section")).toHaveAttribute("data-form-panel");
     }
     expect(within(dialog).getByLabelText("Collection name")).toBeVisible();
@@ -157,6 +162,11 @@ describe("ready local dialogs", () => {
     expect(custom.querySelector(".lucide-check")).toBeNull();
     const preset = within(dialog).getByRole("button", { name: "Books preset" });
     expect(preset).toHaveClass("items-center", "justify-center", "text-center");
+    expect(
+      within(dialog)
+        .getByRole("heading", { name: "What are you collecting?" })
+        .closest("[data-section-header]"),
+    ).not.toBeNull();
     await user.click(preset);
     expect(preset.querySelector(".lucide-check")).toBeNull();
     await user.click(within(dialog).getByRole("button", { name: "Continue" }));
@@ -181,15 +191,25 @@ describe("ready local dialogs", () => {
     expect(
       within(dialog).getByRole("button", { name: /Change preset/ }),
     ).toHaveClass("w-full", "h-11", "rounded-control");
+    expect(
+      within(dialog)
+        .getByRole("heading", { name: "Set up your collection" })
+        .closest("[data-section-header]"),
+    ).not.toBeNull();
     const fieldHeading = within(dialog).getByRole("heading", {
       name: "Custom fields",
     });
-    expect(fieldHeading.parentElement).toContainElement(
+    expect(fieldHeading.closest("[data-section-header]")).toHaveClass(
+      "mb-5",
+      "gap-3",
+      "sm:items-start",
+    );
+    expect(fieldHeading.closest("[data-section-header]")).toContainElement(
       within(dialog).getByRole("button", { name: "Add field" }),
     );
     expect(
-      within(dialog).getByText(/Title and Description included./).parentElement,
-    ).toHaveClass("text-sm");
+      within(dialog).getByText(/Title and Description included./),
+    ).toHaveAttribute("data-section-description");
     expect(dialog.querySelector("[data-schema-editor]")).toHaveAttribute(
       "data-form-panel",
     );

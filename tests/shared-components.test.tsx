@@ -128,6 +128,9 @@ describe("shared components", () => {
       "This permanently deletes the collection and its items.",
     );
 
+    expect(
+      screen.getByRole("alertdialog", { name: "Delete Books?" }),
+    ).toHaveAttribute("data-confirmation-dialog");
     fireEvent.click(screen.getByRole("button", { name: "Delete permanently" }));
     expect(onConfirm).toHaveBeenCalledOnce();
 

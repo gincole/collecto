@@ -1,4 +1,5 @@
 "use client";
+import { FormSectionHeader } from "@/components/shared/form-section-header";
 
 import {
   useRef,
@@ -231,15 +232,12 @@ export function GallerySettings({
           <FlowGuard onClose={() => onOpenChange(false)} busy={pending} />
           <div className="space-y-6">
             <fieldset className="space-y-5" disabled={pending}>
-              <legend className="mb-5">
-                <h3 data-form-heading="section" className="font-semibold">
-                  Display settings
-                </h3>
-              </legend>
-              <p className="text-foreground-muted">
-                Preview changes before saving. These settings apply to every
-                view in this Collection.
-              </p>
+              <legend className="sr-only">Display settings</legend>
+              <FormSectionHeader
+                as="h3"
+                title="Display settings"
+                description="Preview changes before saving. These settings apply to every view in this Collection."
+              />
               <SettingRow label="Sort order" icon={ArrowUpDown}>
                 <Select
                   aria-label="Sort order"
@@ -334,15 +332,11 @@ export function GallerySettings({
               className="space-y-3"
               aria-label="Visible fields"
             >
-              <h3 data-form-heading="section" className="font-semibold">
-                Visible fields
-              </h3>
-              <p className="text-foreground-muted text-sm">
-                Drag fields between the lists to choose up to three visible
-                fields. The first is the primary label. Selections are kept when
-                details are off. On a focused drag handle, Alt+Up shows a field
-                and Alt+Down hides it.
-              </p>
+              <FormSectionHeader
+                as="h3"
+                title="Visible fields"
+                description="Drag fields between the lists to choose up to three visible fields. The first is the primary label. Selections are kept when details are off. On a focused drag handle, Alt+Up shows a field and Alt+Down hides it."
+              />
               <GalleryFieldVisibility
                 fields={choices}
                 value={safeDraft.visibleFieldIds}
@@ -355,14 +349,15 @@ export function GallerySettings({
               aria-label="Gallery preview"
               className="space-y-3"
             >
-              <h3 data-form-heading="section" className="font-semibold">
-                Preview
-              </h3>
-              {items.length === 0 ? (
-                <p className="text-foreground-muted text-sm">
-                  A sample is shown until you add an Item.
-                </p>
-              ) : null}
+              <FormSectionHeader
+                as="h3"
+                title="Preview"
+                description={
+                  items.length === 0
+                    ? "A sample is shown until you add an Item."
+                    : undefined
+                }
+              />
               <GalleryGrid
                 collectionId={collection.id}
                 config={safeDraft}

@@ -1,4 +1,5 @@
 "use client";
+import { FormSectionHeader } from "@/components/shared/form-section-header";
 
 import { Plus, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -84,19 +85,12 @@ function OptionEditor({
       aria-labelledby="select-options-heading"
       className="space-y-4"
     >
-      <div className="space-y-1">
-        <h3
-          data-form-heading="section"
-          className="font-semibold"
-          id="select-options-heading"
-        >
-          Select options
-        </h3>
-        <p className="text-foreground-muted text-sm">
-          Renaming preserves Item membership. Order controls the Item dropdown
-          and Browse folders.
-        </p>
-      </div>
+      <FormSectionHeader
+        as="h3"
+        id="select-options-heading"
+        title="Select options"
+        description="Renaming preserves Item membership. Order controls the Item dropdown and Browse folders."
+      />
       {pending ? (
         <p className="text-foreground-muted text-sm" role="status">
           Updating options…
@@ -341,27 +335,20 @@ export function EditFieldForm({
         aria-labelledby={`delete-field-heading-${field.id}`}
         className="mt-6 space-y-3"
       >
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="min-w-0 space-y-1">
-            <h2
-              data-form-heading="section"
-              id={`delete-field-heading-${field.id}`}
-            >
-              Delete field
-            </h2>
-            <p className="text-foreground-muted">
-              Permanently delete this Field and its values from every Item. This
-              cannot be undone.
-            </p>
-          </div>
-          <DeleteFieldDialog
-            actions={actions}
-            collectionId={collectionId}
-            field={field}
-            disabled={busy}
-            onDeleted={onDeleted}
-          />
-        </div>
+        <FormSectionHeader
+          id={`delete-field-heading-${field.id}`}
+          title="Delete field"
+          description="Permanently delete this Field and its values from every Item. This cannot be undone."
+          action={
+            <DeleteFieldDialog
+              actions={actions}
+              collectionId={collectionId}
+              field={field}
+              disabled={busy}
+              onDeleted={onDeleted}
+            />
+          }
+        />
       </section>
       <ModalActions className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         {cancelLabel === "Back" ? (

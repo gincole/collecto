@@ -1,4 +1,5 @@
 "use client";
+import { FormSectionHeader } from "@/components/shared/form-section-header";
 import { ArrowLeft, Plus, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
@@ -159,18 +160,12 @@ export function AddFieldForm({
             aria-labelledby="initial-options-heading"
             className="space-y-3"
           >
-            <div className="space-y-1">
-              <h3
-                data-form-heading="section"
-                className="font-semibold"
-                id="initial-options-heading"
-              >
-                {createdFieldId ? "Remaining options" : "Initial options"}
-              </h3>
-              <p className="text-foreground-muted text-sm">
-                Empty option rows are ignored. Labels must be unique.
-              </p>
-            </div>
+            <FormSectionHeader
+              as="h3"
+              id="initial-options-heading"
+              title={createdFieldId ? "Remaining options" : "Initial options"}
+              description="Empty option rows are ignored. Labels must be unique."
+            />
             {options.map((label, index) => (
               <div className="flex items-center gap-2" key={index}>
                 <Input
