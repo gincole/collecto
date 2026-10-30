@@ -5,6 +5,8 @@ import Link from "@/components/shared/navigation-link";
 import { EmptyState, PresetArtwork } from "@/components/shared";
 import { Button } from "@/components/ui/button";
 import { DeleteMenuLink } from "@/components/shared/delete-button";
+import { cardHoverMotion } from "@/lib/design/card-motion";
+import { cn } from "@/lib/utils/cn";
 
 import type { CollectionRecord } from "./models";
 
@@ -34,7 +36,12 @@ export function LibraryView({ collections }: LibraryViewProps) {
     <ul className="grid min-w-0 grid-cols-1 gap-4 min-[360px]:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
       {collections.map((collection) => (
         <li key={collection.id}>
-          <article className="border-border bg-surface rounded-card duration-base ease-standard relative h-full border transition-[transform,border-color] motion-safe:hover:-translate-y-0.5">
+          <article
+            className={cn(
+              "border-border bg-surface rounded-card relative h-full border",
+              cardHoverMotion,
+            )}
+          >
             <Link
               aria-label={`Open ${collection.name}`}
               className="focus-ring rounded-card block h-full"

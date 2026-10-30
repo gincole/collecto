@@ -8,6 +8,7 @@ import { useOptimistic, useTransition, type MouseEvent } from "react";
 import type { CollectionRecord } from "@/features/collections/models";
 import type { ItemRecord } from "@/features/items/types";
 import { cn } from "@/lib/utils/cn";
+import { cardHoverMotion } from "@/lib/design/card-motion";
 import {
   browseHref,
   getBrowseFolders,
@@ -122,7 +123,10 @@ export function BrowseView({
                     navigate(event, { fieldId: field.id, optionId: folder.id })
                   }
                   aria-label={`Open ${folder.label}, ${folder.count} ${folder.count === 1 ? "item" : "items"}`}
-                  className="focus-ring border-border bg-surface rounded-card duration-base block h-full border transition-transform motion-safe:hover:-translate-y-0.5"
+                  className={cn(
+                    "focus-ring border-border bg-surface rounded-card block h-full border",
+                    cardHoverMotion,
+                  )}
                   href={
                     browseHref(collection.id, {
                       fieldId: field.id,

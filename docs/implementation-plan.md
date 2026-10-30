@@ -584,6 +584,14 @@ Use shared deletion triggers/menu links and permanent-confirmation styling while
 - **Verification:** design token/contrast regressions and existing component tests, formatter, ESLint, strict TypeScript, full Vitest suite, dependency audit, configured production build, and focused diff review. No browser/hosted tests per user instruction; full M7-T02 conformance remains separate.
 - **Expected commit:** `style(ui)` with the source reference, authority mapping, and task tracker included.
 
+### M7-T02D Match Collection and folder card hover motion
+
+- **Scope:** user-reported hover inconsistency between Library Collection cards and Select-folder cards.
+- **Depends on:** M7-T02C (complete).
+- **Acceptance:** share the same 150 ms duration, standard easing, 2 px hover lift and reduced-motion suppression. Animate Tailwind's standalone CSS translate property rather than only transform; preserve card layout, links and contextual actions.
+- **Verification:** rendered component regression for both card types, focused Library/Browse tests, formatting, lint, strict TypeScript, production build and generated CSS inspection. No browser testing per user instruction.
+- **Expected commit:** `fix(ui)`; do not include concurrent branding edits.
+
 ### M7-T03 Complete security and failure-path test suite
 
 - **Critical path:** No, but release-blocking P0

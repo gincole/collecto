@@ -17,6 +17,7 @@ import {
   UNCATEGORIZED,
 } from "@/features/gallery/browse";
 import { BrowseView } from "@/features/gallery/browse-view";
+import { LibraryView } from "@/features/collections/library-view";
 import type { CollectionRecord } from "@/features/collections/models";
 import type { ItemRecord } from "@/features/items/types";
 
@@ -88,6 +89,35 @@ const items: ItemRecord[] = [
 ];
 
 describe("Browse URL and membership", () => {
+  it("uses the same translate transition, timing and reduced-motion behavior for Collection and folder cards", () => {
+    render(
+      <>
+        <LibraryView collections={[collection]} />
+        <BrowseView
+          collection={collection}
+          items={items}
+          state={{ fieldId, optionId: null }}
+        />
+      </>,
+    );
+    const collectionCard = screen
+      .getByRole("link", { name: "Open Memories" })
+      .closest("article");
+    const folderCard = screen.getByRole("link", { name: "Open Kept, 1 item" });
+    for (const card of [collectionCard, folderCard]) {
+      expect(card).toHaveClass(
+        "transition-[translate,border-color]",
+        "duration-base",
+        "ease-standard",
+        "motion-safe:hover:-translate-y-0.5",
+        "motion-reduce:transition-none",
+      );
+      expect(card).not.toHaveClass(
+        "transition-[transform,border-color]",
+        "transition-transform",
+      );
+    }
+  });
   it("shows folders immediately while URL navigation is still pending and follows server history state", async () => {
     const request = Promise.withResolvers<void>();
     push.mockReturnValueOnce(request.promise);
