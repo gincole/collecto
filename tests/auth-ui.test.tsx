@@ -147,9 +147,10 @@ describe("authentication UI", () => {
     const user = userEvent.setup();
     render(<AppHeader email="person@example.com" logoutAction={vi.fn()} />);
 
-    expect(
-      screen.getByRole("link", { name: "little things." }),
-    ).toHaveAttribute("href", "/library");
+    expect(screen.getByRole("link", { name: "collecto" })).toHaveAttribute(
+      "href",
+      "/library",
+    );
     expect(
       screen.queryByRole("link", { name: "My Library" }),
     ).not.toBeInTheDocument();

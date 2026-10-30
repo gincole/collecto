@@ -4,7 +4,7 @@
 
 This file defines the working rules for humans and coding agents contributing to `collecto`. Follow it before planning, changing, testing, committing, or deploying the application.
 
-The project is the private personal collection application branded **little things.** The MVP lets an authenticated owner create customizable Collections, define ordered fields, create Items with zero or one private image, browse Select-based virtual folders, and configure one responsive gallery view per Collection.
+The project is the private personal collection application branded **collecto** The MVP lets an authenticated owner create customizable Collections, define ordered fields, create Items with zero or one private image, browse Select-based virtual folders, and configure one responsive gallery view per Collection.
 
 ## Requirement authority
 

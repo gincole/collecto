@@ -2,7 +2,7 @@
 
 ## Direction
 
-The current visual authority is root DESIGN.md (Awesomic), approved by the user on 30 October 2026. See docs/visual-direction.md for the explicit mapping and superseded original defaults. The interface uses editorial zinc neutrals, a bold geometric type hierarchy, generous rounded cards, compact controls, and hairline borders. The product remains **little things.**; no marketing-site sections or new workflows are introduced.
+The current visual authority is root DESIGN.md (Awesomic), approved by the user on 30 October 2026. See docs/visual-direction.md for the explicit mapping and superseded original defaults. The interface uses editorial zinc neutrals, a bold geometric type hierarchy, generous rounded cards, compact controls, and hairline borders. The product remains **collecto**; no marketing-site sections or new workflows are introduced.
 
 DM Sans is the reference's approved substitute for unavailable Cosmica assets. Noto Sans Thai remains a script fallback. Item photographs retain their original colors. Preset icons retain semantic keys with neutral tile surfaces.
 

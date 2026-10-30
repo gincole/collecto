@@ -1,4 +1,4 @@
-# little things.
+# collecto
 
 A private personal Collection and memory library. Create a Collection from a preset or Blank, customize its Fields, save Items with an optional private image, browse Select-based virtual folders, and choose how its gallery looks.
 
