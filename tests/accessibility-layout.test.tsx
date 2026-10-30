@@ -37,7 +37,11 @@ describe("accessible shared layout", () => {
     expect(step.closest("[data-modal-header]")).not.toBeNull();
     expect(step.closest("[data-modal-body]")).toBeNull();
     expect(step).toHaveClass("text-sm");
-    expect(screen.getByRole("dialog")).toHaveClass("p-4", "sm:p-panel");
+    expect(screen.getByRole("dialog")).toHaveClass(
+      "px-4",
+      "py-0",
+      "sm:px-panel",
+    );
     expect(step.closest("[data-modal-header]")).toHaveClass("mx-5");
   });
   it("keeps nested dialog actions in their nearest fixed footer", () => {
@@ -69,6 +73,12 @@ describe("accessible shared layout", () => {
     expect(inner).not.toBe(outer);
     expect(outer).not.toHaveTextContent("Inner save");
     expect(inner?.closest('[role="dialog"]')).toHaveTextContent("Inner editor");
+    for (const chrome of document.querySelectorAll(
+      "[data-modal-header], [data-modal-footer]",
+    )) {
+      expect(chrome).toHaveClass("py-panel");
+      expect(chrome).not.toHaveClass("py-4");
+    }
   });
   it("includes the visible checkbox label in its accessible name", () => {
     render(

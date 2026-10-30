@@ -82,8 +82,8 @@ describe("Collection wizard", () => {
 
     expect(books).toHaveAttribute("aria-pressed", "true");
     expect(
-      screen.getByText("Selected", { selector: ".sr-only" }),
-    ).toBeInTheDocument();
+      screen.queryByText("Selected", { selector: ".sr-only" }),
+    ).not.toBeInTheDocument();
     expect(continueButton).toBeEnabled();
   });
 

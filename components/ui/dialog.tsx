@@ -65,7 +65,7 @@ function DialogContent({
       <DialogPrimitive.Content
         ref={contentRef}
         className={cn(
-          "dialog-content border-border bg-surface text-foreground focus-ring rounded-dialog shadow-dialog sm:p-panel fixed top-1/2 left-1/2 z-50 grid max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 grid-rows-[auto_minmax(0,1fr)_auto] gap-0 overflow-hidden overscroll-contain border p-4 break-words sm:w-full",
+          "dialog-content border-border bg-surface text-foreground focus-ring rounded-dialog shadow-dialog sm:px-panel fixed top-1/2 left-1/2 z-50 grid max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 grid-rows-[auto_minmax(0,1fr)_auto] gap-0 overflow-hidden overscroll-contain border px-4 py-0 break-words sm:w-full",
           className,
         )}
         {...props}
@@ -94,7 +94,7 @@ function DialogHeader({
       {...props}
       data-modal-header
       className={cn(
-        "border-border mx-5 flex items-center justify-between gap-4 border-b py-4",
+        "border-border py-panel mx-5 flex items-center justify-between gap-4 border-b",
         className,
       )}
     >
@@ -144,7 +144,7 @@ function DialogFooter({ className, ref, ...props }: ComponentProps<"div">) {
       ref={footerRef}
       data-modal-footer
       className={cn(
-        "border-border bg-surface mx-5 border-t py-4 pb-[max(1rem,env(safe-area-inset-bottom))] empty:hidden",
+        "border-border bg-surface py-panel mx-5 border-t empty:hidden",
         className,
       )}
     />

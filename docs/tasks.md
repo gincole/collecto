@@ -306,3 +306,16 @@ verify:deployment` passed formatting, lint, strict TypeScript, all 364 tests
   confirmation test failed once in the gate; its isolated recheck and full suite
   rerun passed.
 - Commit: SELF (this commit).
+
+## M7-T02Z: Refine New Collection and balance modal chrome
+
+- Status: Complete; dependency M7-T02Y is complete.
+- Scope/acceptance: see M7-T02Z in `docs/implementation-plan.md`.
+- Changes: New collection header, no step/checkmarks, Custom emphasis and preset
+  badge, concise field guidance and adjacent Add field; symmetric shared chrome.
+- Verification: `corepack pnpm verify:deployment` passed formatting, lint,
+  strict TypeScript, all 373 tests across 55 files and production build.
+  Wizard/draft/selection and shared layout/accessibility checks pass; independent
+  review and staged diff/secret checks passed. No browser testing. An unrelated
+  Item validation focus test failed once, then passed isolated and full reruns.
+- Commit: SELF (this commit).

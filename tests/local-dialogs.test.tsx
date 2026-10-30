@@ -125,15 +125,17 @@ describe("ready local dialogs", () => {
     expect(within(dialog).queryByRole("button", { name: "Cancel" })).toBeNull();
     expect(
       within(dialog).getByRole("heading", { name: "New collection" }),
-    ).toHaveClass("sr-only");
+    ).not.toHaveClass("sr-only");
     expect(
       within(dialog).getByRole("heading", { name: "What are you collecting?" }),
     ).toHaveAttribute("data-form-heading", "primary");
-    expect(dialog.querySelector("header")).toHaveClass("border-b", "py-4");
+    expect(dialog.querySelector("header")).toHaveClass("border-b", "py-panel");
+    expect(within(dialog).queryByText(/Step [12] of 2/)).toBeNull();
     expect(
-      within(dialog).getByText("Step 1 of 2").closest("header"),
+      within(dialog)
+        .getByRole("heading", { name: "New collection" })
+        .closest("header"),
     ).not.toBeNull();
-    expect(within(dialog).getByText("Step 1 of 2")).toHaveClass("text-sm");
     expect(within(dialog).getByRole("button", { name: "Close" })).toHaveClass(
       "border",
     );
@@ -143,13 +145,16 @@ describe("ready local dialogs", () => {
     });
     expect(custom).toHaveClass("bg-foreground", "text-surface");
     expect(custom.querySelector(".lucide-sparkles")).not.toBeNull();
+    await user.click(custom);
+    expect(custom).toHaveAttribute("aria-pressed", "true");
+    expect(custom).toHaveClass("ring-2", "bg-foreground");
+    expect(custom.querySelector(".lucide-check")).toBeNull();
     const preset = within(dialog).getByRole("button", { name: "Books preset" });
     expect(preset).toHaveClass("items-center", "justify-center", "text-center");
     await user.click(preset);
+    expect(preset.querySelector(".lucide-check")).toBeNull();
     await user.click(within(dialog).getByRole("button", { name: "Continue" }));
-    expect(
-      within(dialog).getByText("Step 2 of 2").closest("header"),
-    ).not.toBeNull();
+    expect(within(dialog).queryByText(/Step [12] of 2/)).toBeNull();
     expect(dialog.querySelector("[data-modal-body]")).not.toHaveTextContent(
       "Step 2 of 2",
     );
@@ -164,6 +169,18 @@ describe("ready local dialogs", () => {
       "p-4",
       "rounded-card",
     );
+    expect(
+      within(dialog).getByText("Books preset", { selector: "span" }),
+    ).toHaveClass("bg-foreground", "text-surface");
+    const fieldHeading = within(dialog).getByRole("heading", {
+      name: "Custom fields",
+    });
+    expect(fieldHeading.parentElement).toContainElement(
+      within(dialog).getByRole("button", { name: "Add field" }),
+    );
+    expect(
+      within(dialog).getByText("Title and Description included.").parentElement,
+    ).toHaveClass("text-sm");
     expect(dialog.querySelector("[data-schema-editor]")).toHaveAttribute(
       "data-form-panel",
     );
@@ -173,9 +190,7 @@ describe("ready local dialogs", () => {
         .closest("[data-modal-footer]"),
     ).not.toBeNull();
     await user.click(within(dialog).getByRole("button", { name: "Back" }));
-    expect(
-      within(dialog).getByText("Step 1 of 2").closest("[data-modal-header]"),
-    ).not.toBeNull();
+    expect(within(dialog).queryByText(/Step [12] of 2/)).toBeNull();
     expect(dialog.querySelector("[data-modal-body]")).not.toHaveTextContent(
       "Step 1 of 2",
     );

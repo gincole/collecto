@@ -95,30 +95,49 @@ export function CollectionSchemaEditor({
         !modal && "border-border bg-surface rounded-card sm:p-panel border p-4",
       )}
     >
-      <h2
-        data-form-heading="section"
-        className={cn(
-          "mb-2",
-          modal
-            ? "text-card-title"
-            : "text-section-title-mobile sm:text-section-title",
-        )}
-        id="draft-fields-title"
-      >
-        Custom fields
-      </h2>
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <h2
+          data-form-heading="section"
+          className={cn(
+            "min-w-0",
+            modal
+              ? "text-card-title"
+              : "text-section-title-mobile sm:text-section-title",
+          )}
+          id="draft-fields-title"
+        >
+          Custom fields
+        </h2>
+        <Button
+          disabled={
+            disabled || fields.length >= DATABASE_LIMITS.collectionFields
+          }
+          onClick={() =>
+            onChange([
+              ...fields,
+              {
+                key: crypto.randomUUID(),
+                name: "",
+                type: "text",
+                required: false,
+                options: [],
+              },
+            ])
+          }
+          type="button"
+        >
+          <Plus aria-hidden="true" />
+          Add field
+        </Button>
+      </div>
       <fieldset
         disabled={disabled}
         aria-labelledby="draft-fields-title"
         className="min-w-0 space-y-6"
       >
-        <p className="text-foreground-muted">
-          Start with these fields, then change anything before creating your
-          Collection. Title and Description are always included.
-        </p>
         <p className="text-foreground-muted text-sm">
-          Field types can be changed here. After creation, types are locked;
-          names, order, required status and Select options remain editable.
+          <span className="block">Title and Description included.</span>
+          <span className="block">Field types lock after creation.</span>
         </p>
         {serverError ? (
           <p className="text-error" role="alert" id="draft-server-error">
@@ -337,26 +356,7 @@ export function CollectionSchemaEditor({
             </li>
           ))}
         </ol>
-        <Button
-          disabled={fields.length >= DATABASE_LIMITS.collectionFields}
-          onClick={() =>
-            onChange([
-              ...fields,
-              {
-                key: crypto.randomUUID(),
-                name: "",
-                type: "text",
-                required: false,
-                options: [],
-              },
-            ])
-          }
-          type="button"
-          variant="outline"
-        >
-          <Plus aria-hidden="true" />
-          Add field
-        </Button>
+
         <p className="text-foreground-muted text-sm">
           {fields.length} of {DATABASE_LIMITS.collectionFields} fields. Up to{" "}
           {DATABASE_LIMITS.selectOptions} options per Select field.

@@ -1118,3 +1118,22 @@ Verification: icon/absence/section-heading tests, keyboard transfer/focus and
 existing drag-target/cap/persistence/Close tests; full deployment gate, independent
 review and staged diff/secret scan. No browser tests or dependency/schema changes.
 One Conventional Commit, update task tracker, no push.
+
+## M7-T02Z: Refine New Collection and balance modal chrome
+
+User-approved refinement after M7-T02Y (complete). Show New collection in the
+shared modal header and remove visible step counters and obsolete header state.
+Remove preset selection checkmarks; retain accessible pressed state and border
+selection. Keep Custom naming, Sparkles and black emphasis, with a selected ring.
+Show the chosen preset as a black badge in setup. Replace long field guidance
+with two short, consistently sized lines: Title and Description included; Field
+types lock after creation. Move Add field beside Custom fields using the standard
+primary Button, preserving pending/cap guards and draft behavior.
+
+For every modal, remove outer vertical padding and give header/footer equal
+panel-token padding above and below content, including symmetric safe-area
+handling. Preserve horizontal gutters, inset dividers, body scrolling and fixed
+actions. No browser tests, dependencies or schema changes. Verify both wizard
+screens, selection/drafts, pending/caps, shared chrome/focus/accessibility and full
+deployment gate; independent review and staged diff/secret scan. One Conventional
+Commit, tracker update, no push.

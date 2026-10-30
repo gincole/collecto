@@ -750,7 +750,7 @@ describe("Field manager", () => {
     expect(within(editor).getByRole("button", { name: "Close" })).toBeVisible();
     expect(editor.querySelector("[data-modal-header]")).toHaveClass(
       "border-b",
-      "py-4",
+      "py-panel",
     );
     expect(within(editor).getByRole("button", { name: "Close" })).toHaveClass(
       "border",

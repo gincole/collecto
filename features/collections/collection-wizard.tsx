@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Check } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   useActionState,
@@ -39,13 +39,11 @@ const initialState: CollectionWizardState = { status: "idle" };
 type CollectionWizardProps = {
   createAction: CollectionWizardAction;
   modal?: boolean;
-  onStepChange?: (step: 1 | 2) => void;
 };
 
 export function CollectionWizard({
   createAction,
   modal = false,
-  onStepChange,
 }: CollectionWizardProps) {
   const formId = useId();
   const notify = useFeedback();
@@ -127,7 +125,6 @@ export function CollectionWizard({
 
   function changeStep(next: 1 | 2) {
     setStep(next);
-    onStepChange?.(next);
   }
   const titleClassName = modal
     ? "text-section-title-mobile"
@@ -146,9 +143,6 @@ export function CollectionWizard({
         {!modal ? (
           <>
             <div className="flex items-center justify-between gap-4">
-              <p className="text-foreground-muted text-sm font-medium">
-                Step {step} of 2
-              </p>
               <div className="flex items-center gap-1">
                 {step === 1 && !dismissFlow ? (
                   <button
@@ -211,6 +205,9 @@ export function CollectionWizard({
                     className={cn(
                       "focus-ring rounded-card relative flex min-h-36 flex-col items-center justify-center gap-4 border-2 text-center transition-[border-color,transform] motion-safe:hover:-translate-y-0.5",
                       modal ? "p-4" : "sm:p-panel p-5 sm:min-h-40",
+                      selected &&
+                        option.key === "blank" &&
+                        "ring-control-border ring-offset-surface ring-2 ring-offset-2",
                       option.key === "blank"
                         ? "border-foreground bg-foreground text-surface"
                         : selected
@@ -232,19 +229,6 @@ export function CollectionWizard({
                       variant="icon"
                     />
                     <span className="font-semibold">{option.label}</span>
-                    {selected ? (
-                      <span
-                        className={cn(
-                          "rounded-pill absolute top-2 right-2 flex size-7 items-center justify-center",
-                          option.key === "blank"
-                            ? "bg-surface text-foreground"
-                            : "bg-foreground text-surface",
-                        )}
-                      >
-                        <Check aria-hidden="true" className="size-4" />
-                        <span className="sr-only">Selected</span>
-                      </span>
-                    ) : null}
                     <span className="sr-only">{option.label} preset</span>
                   </button>
                 );
@@ -322,7 +306,9 @@ export function CollectionWizard({
                   !modal && "bg-art-lavender rounded-card px-4 py-3",
                 )}
               >
-                <span className="font-semibold">{preset.label}</span>
+                <span className="rounded-control bg-foreground text-surface px-3 py-2 text-sm font-semibold">
+                  {preset.key === "blank" ? "Custom" : `${preset.label} preset`}
+                </span>
                 <button
                   disabled={pending}
                   className="touch-target focus-ring rounded-control px-3 text-sm font-semibold underline underline-offset-4"
