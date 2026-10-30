@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import axe from "axe-core";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -72,6 +72,46 @@ function createActions(
 }
 
 describe("Field manager", () => {
+  it("announces a pending Field reorder until it completes", async () => {
+    const request = Promise.withResolvers<{ status: "success" }>();
+    const user = userEvent.setup();
+    render(
+      <FieldManager
+        collectionId={collectionId}
+        fields={fields}
+        actions={createActions({
+          reorderFields: () => request.promise,
+        })}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Move Genre down" }));
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Updating field order…",
+    );
+    expect(
+      screen.getByRole("button", { name: "Move Genre down" }),
+    ).toBeDisabled();
+    await act(async () => request.resolve({ status: "success" }));
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+  });
+  it("announces pending Option updates instead of only disabling controls", async () => {
+    const request = Promise.withResolvers<{ status: "success" }>();
+    const user = userEvent.setup();
+    render(
+      <FieldManager
+        collectionId={collectionId}
+        fields={fields}
+        actions={createActions({
+          updateOption: () => request.promise,
+        })}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Edit Genre" }));
+    await user.click(screen.getByRole("button", { name: "Save Finished" }));
+    expect(screen.getByRole("status")).toHaveTextContent("Updating options…");
+    await act(async () => request.resolve({ status: "success" }));
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+  });
   it("lets the user retry a failed destructive-impact check", async () => {
     const user = userEvent.setup();
     const actions = createActions({
@@ -286,10 +326,10 @@ describe("Field manager", () => {
     const dialog = await screen.findByRole("alertdialog", {
       name: "Delete Finished?",
     });
-    expect(dialog).toHaveTextContent("3 items");
+    expect(await within(dialog).findByText(/3 items/)).toBeVisible();
     expect(dialog).toHaveTextContent("Uncategorized");
     await user.click(
-      within(dialog).getByRole("button", { name: "Delete permanently" }),
+      await within(dialog).findByRole("button", { name: "Delete permanently" }),
     );
     expect(actions.deleteOption).toHaveBeenCalledWith({
       collectionId,

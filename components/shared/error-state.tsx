@@ -1,7 +1,7 @@
 "use client";
 
 import { CircleAlert } from "lucide-react";
-import { useId } from "react";
+import { useId, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
@@ -18,7 +18,7 @@ type ErrorStateProps = {
   className?: string;
   description: string;
   headingLevel?: keyof typeof headingElements;
-  onRetry?: () => void;
+  onRetry?: () => void | Promise<void>;
   retryLabel?: string;
   title: string;
 };
@@ -32,6 +32,7 @@ function ErrorState({
   title,
 }: ErrorStateProps) {
   const titleId = useId();
+  const [pending, startTransition] = useTransition();
   const Heading = headingElements[headingLevel];
 
   return (
@@ -57,8 +58,18 @@ function ErrorState({
         </p>
       </div>
       {onRetry ? (
-        <Button onClick={onRetry} type="button" variant="outline">
-          {retryLabel}
+        <Button
+          aria-busy={pending}
+          disabled={pending}
+          onClick={() =>
+            startTransition(async () => {
+              await onRetry();
+            })
+          }
+          type="button"
+          variant="outline"
+        >
+          {pending ? "Retrying…" : retryLabel}
         </Button>
       ) : null}
     </section>

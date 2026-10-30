@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/shared/navigation-link";
 import { useActionState, useEffect, useRef } from "react";
 import { useFeedback } from "@/components/shared/feedback";
 

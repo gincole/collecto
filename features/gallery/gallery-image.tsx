@@ -1,4 +1,5 @@
 "use client";
+import { LoadingImage } from "@/components/shared/loading-image";
 
 import { ImageOff } from "lucide-react";
 import { useState } from "react";
@@ -40,8 +41,7 @@ export function GalleryImage({
           <span className="sr-only">No image</span>
         </span>
       ) : (
-        // eslint-disable-next-line @next/next/no-img-element -- authenticated private image route
-        <img
+        <LoadingImage
           alt=""
           decoding="async"
           className={cn(

@@ -1,4 +1,5 @@
 "use client";
+import { LoadingImage } from "@/components/shared/loading-image";
 
 import { ImagePlus, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -42,9 +43,8 @@ export function ImageUploader({
         </p>
       </div>
       {displayedUrl && failedUrl !== displayedUrl ? (
-        <div className="border-border bg-surface-muted rounded-control overflow-hidden border">
-          {/* eslint-disable-next-line @next/next/no-img-element -- private object URL or authenticated route */}
-          <img
+        <div className="border-border bg-surface-muted rounded-control relative overflow-hidden border">
+          <LoadingImage
             alt="Item preview"
             className="aspect-[4/3] w-full object-contain"
             src={displayedUrl}

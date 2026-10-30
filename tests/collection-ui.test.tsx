@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import axe from "axe-core";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -42,6 +42,18 @@ const collection: CollectionRecord = {
 };
 
 describe("Collection wizard", () => {
+  it("shows progress while returning to Library after cancel", async () => {
+    const request = Promise.withResolvers<void>();
+    pushMock.mockReturnValueOnce(request.promise);
+    const user = userEvent.setup();
+    render(<CollectionWizard createAction={vi.fn()} />);
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Returning to My Library…",
+    );
+    expect(screen.getByRole("button", { name: "Cancel" })).toBeDisabled();
+    await act(async () => request.resolve());
+  });
   beforeEach(() => vi.clearAllMocks());
 
   it("has no detectable WCAG A or AA violations in preset selection", async () => {

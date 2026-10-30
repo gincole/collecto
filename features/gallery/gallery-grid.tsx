@@ -2,7 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import type { Route } from "next";
-import Link from "next/link";
+import Link from "@/components/shared/navigation-link";
 
 import type { GalleryConfig } from "@/features/collections/schemas";
 import type { ItemFieldDefinition, ItemRecord } from "@/features/items/types";

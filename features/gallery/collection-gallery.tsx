@@ -1,6 +1,6 @@
 import { Ellipsis } from "lucide-react";
 import type { Route } from "next";
-import Link from "next/link";
+import Link from "@/components/shared/navigation-link";
 
 import { EmptyState, PresetArtwork } from "@/components/shared";
 import { Button } from "@/components/ui/button";

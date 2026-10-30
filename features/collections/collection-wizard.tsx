@@ -2,7 +2,13 @@
 
 import { ArrowLeft, Check, ListChecks } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useActionState, useEffect, useRef, useState } from "react";
+import {
+  useActionState,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 
 import { ConfirmDialog, PresetArtwork } from "@/components/shared";
 import { Button } from "@/components/ui/button";
@@ -25,10 +31,12 @@ type CollectionWizardProps = { createAction: CollectionWizardAction };
 export function CollectionWizard({ createAction }: CollectionWizardProps) {
   const notify = useFeedback();
   const router = useRouter();
-  const [state, formAction, pending] = useActionState(
+  const [state, formAction, saving] = useActionState(
     createAction,
     initialState,
   );
+  const [leaving, startLeaving] = useTransition();
+  const pending = saving || leaving;
   const [step, setStep] = useState<1 | 2>(1);
   const [presetKey, setPresetKey] = useState<CollectionPresetKey | null>(null);
   const [requestId, setRequestId] = useState<string | null>(null);
@@ -56,8 +64,15 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
   }
 
   function cancel() {
+    if (pending) return;
     if (dirty) setCancelOpen(true);
-    else router.push("/library");
+    else leave();
+  }
+
+  function leave() {
+    startLeaving(async () => {
+      await router.push("/library");
+    });
   }
 
   return (
@@ -70,6 +85,7 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
           <div className="flex items-center gap-1">
             {step === 1 ? (
               <button
+                disabled={pending}
                 className="touch-target focus-ring rounded-control text-foreground-muted hover:bg-surface-muted px-3 text-sm font-semibold"
                 onClick={cancel}
                 type="button"
@@ -87,6 +103,11 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
             </button>
           </div>
         </div>
+        {leaving ? (
+          <p className="text-foreground-muted text-sm" role="status">
+            Returning to My Library…
+          </p>
+        ) : null}
 
         {step === 1 ? (
           <section aria-labelledby="preset-title" className="space-y-6">
@@ -107,6 +128,7 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
                 const selected = option.key === presetKey;
                 return (
                   <button
+                    disabled={pending}
                     aria-label={`${option.label} preset`}
                     aria-pressed={selected}
                     className={cn(
@@ -140,7 +162,7 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
             <div className="border-border bg-background sticky bottom-0 flex gap-3 border-t py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
               <Button
                 className="ml-auto w-full sm:w-auto"
-                disabled={!presetKey}
+                disabled={pending || !presetKey}
                 onClick={() => setStep(2)}
                 size="lg"
                 type="button"
@@ -303,7 +325,7 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
                 Back
               </Button>
               <Button disabled={pending || !requestId} size="lg" type="submit">
-                {pending ? "Creating collection…" : "Create collection"}
+                {saving ? "Creating collection…" : "Create collection"}
               </Button>
             </div>
           </form>
@@ -313,7 +335,8 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
       <ConfirmDialog
         confirmLabel="Discard collection"
         description="Your preset choice and collection details will be lost."
-        onConfirm={() => router.push("/library")}
+        isPending={leaving}
+        onConfirm={leave}
         onOpenChange={setCancelOpen}
         open={cancelOpen}
         title="Discard this collection?"

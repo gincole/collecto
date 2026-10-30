@@ -27,11 +27,32 @@ Audited on 30 October 2026 against the Product and Technical Specification, UX/U
 
 - M7-T02A audits all seven form locations: Auth, Collection wizard, Collection identity, Collection deletion, Item Add/Edit, Item deletion, and Logout. They use `noValidate`; server validation and inline errors remain authoritative. There are no `window.alert`, `window.confirm`, or `window.prompt` calls in application code. Field/Option and Gallery editors use explicit action buttons rather than native form submission. All persisted delete actions now share the documented destructive-control contract.
 - Item forms check native `validity.badInput` before serializing Number/Rating/Date controls. Unfinished input is retained for a custom inline error and cannot silently clear an optional saved value.
-- Still missing: immediate pending feedback/skeletons for Browse query-parameter navigation. The existing Collection route skeleton does not establish coverage of those transitions. Investigate serial/redundant data reads without weakening ownership checks.
-- Still missing: stable scrollbar gutter across short and long pages to avoid centered-header movement. These two reported gaps are M7-T02 work; they are not claimed fixed by M7-T01 or M7-T02A.
+- M7-T02B addresses Browse transitions with immediate optimistic views from already-loaded Items while the validated server URL synchronizes. Clicking the current view avoids a redundant request. The remaining server reads and ownership checks are retained; no network-latency reduction is claimed.
+- Still missing: stable scrollbar gutter across short and long pages to avoid centered-header movement. This remains M7-T02 work.
 
 - M7-T01A: customize preset Fields before final Create. The current wizard is an explicitly described preview; adding editing requires a separate validated creation contract and atomic persistence tests. Persisted custom Field types remain immutable under B02.
 - M7-T02: complete the cross-screen typography, spacing, focus, contrast, touch-target, and responsive conformance audit. Static/unit checks cannot establish final visual quality. User browser testing can supply additional evidence while automated browser testing remains excluded.
 - M7-T03: complete the broader security and failure-path acceptance suite.
 
 Verification is recorded in `docs/tasks.md`. No new dependencies, database migrations, or hosted writes are required for this task.
+
+## M7-T02B async interaction coverage
+
+This code audit covers every application Link, imperative navigation, form/action transition, retry, and image renderer. Browser timing, visual behavior, and real history interaction still require manual confirmation.
+
+| Interaction                                                                    | Immediate behavior while work is pending                                                                                                              |
+| ------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Initial page/session/layout                                                    | Root skeleton covers work above feature loading boundaries                                                                                            |
+| Library, Collection, Settings, Item, Auth, header/back/menu links              | Shared Next Link status drives a fixed, reduced-motion-aware progress bar; existing destination skeletons remain                                      |
+| All/Select tabs, option folders, folder back                                   | Optimistic content updates immediately using loaded Items; live status announces URL synchronization; server props reconcile history and stale schema |
+| Wizard steps, preset choice, field drafts, gallery drafts                      | Existing synchronous local state; no artificial loading delay                                                                                         |
+| Clean wizard cancel / confirmed discard                                        | Returning-to-Library status, disabled controls and pending confirmation                                                                               |
+| Auth, logout, Collection creation/identity/deletion, Item save/upload/deletion | Existing operation-specific pending labels and submission guards retained                                                                             |
+| Field create/edit/delete and Option deletion/impact lookup                     | Existing Saving/Creating/Deleting/Checking labels and pending dismissal guards retained                                                               |
+| Field order, Option save/add/order                                             | New visible live statuses and busy regions in addition to existing disabled controls                                                                  |
+| Gallery Settings save                                                          | Existing Saving state, draft retention, guarded dismissal, refresh, and error recovery retained                                                       |
+| Page, Library, gallery and route error retries                                 | Shared Retrying state prevents repeat requests and tracks refresh/reset transitions                                                                   |
+| Gallery images, Item Details/retry, upload previews                            | Shared image skeleton reserves caller geometry, clears on load/failure, handles cached images and source changes; existing fallbacks remain           |
+| Full-size private image in a new tab                                           | Native browser navigation to the authorized image route; no application-level prefetch or private URL cache added                                     |
+
+Navigation progress is portaled outside cards to avoid transformed or clipped ancestors. It does not move content or add a blocking overlay. Image placeholders and progress animation respect reduced motion. Existing server ownership checks, validated query recovery, private-image authorization, and persistence remain unchanged.

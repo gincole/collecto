@@ -103,7 +103,11 @@ function OptionEditor({
   }
 
   return (
-    <section aria-labelledby="select-options-heading" className="space-y-4">
+    <section
+      aria-busy={pending}
+      aria-labelledby="select-options-heading"
+      className="space-y-4"
+    >
       <div className="space-y-1">
         <h3 className="font-semibold" id="select-options-heading">
           Select options
@@ -113,6 +117,11 @@ function OptionEditor({
           and Browse folders.
         </p>
       </div>
+      {pending ? (
+        <p className="text-foreground-muted text-sm" role="status">
+          Updating options…
+        </p>
+      ) : null}
       <ul className="space-y-2">
         {field.options.map((option, index) => (
           <li

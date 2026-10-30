@@ -1,7 +1,7 @@
 "use client";
 
 import { LogOut, UserRound } from "lucide-react";
-import Link from "next/link";
+import Link from "@/components/shared/navigation-link";
 import { useActionState, useEffect } from "react";
 import { useFeedback } from "./feedback";
 

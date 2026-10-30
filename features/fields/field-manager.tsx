@@ -92,6 +92,7 @@ function FieldManager({
       <BuiltInFields />
       <section
         aria-label="Custom fields"
+        aria-busy={pending}
         className="border-border bg-surface rounded-card border p-4 sm:p-6"
       >
         <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -109,6 +110,11 @@ function FieldManager({
             disabled={atLimit}
           />
         </div>
+        {pending ? (
+          <p className="text-foreground-muted mb-4 text-sm" role="status">
+            Updating field order…
+          </p>
+        ) : null}
         {atLimit ? (
           <p className="text-foreground-muted mb-4 text-sm">
             This Collection has the maximum of{" "}

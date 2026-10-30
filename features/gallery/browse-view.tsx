@@ -1,6 +1,10 @@
+"use client";
+
 import { ArrowLeft, FolderOpen } from "lucide-react";
 import type { Route } from "next";
-import Link from "next/link";
+import Link from "@/components/shared/navigation-link";
+import { useRouter } from "next/navigation";
+import { useOptimistic, useTransition, type MouseEvent } from "react";
 import type { CollectionRecord } from "@/features/collections/models";
 import type { ItemRecord } from "@/features/items/types";
 import { cn } from "@/lib/utils/cn";
@@ -18,12 +22,37 @@ import { saveGalleryConfigAction } from "./actions";
 export function BrowseView({
   collection,
   items,
-  state,
+  state: serverState,
 }: {
   collection: CollectionRecord;
   items: ItemRecord[];
   state: BrowseState;
 }) {
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const [state, setOptimisticState] = useOptimistic(serverState);
+
+  function navigate(event: MouseEvent<HTMLAnchorElement>, next: BrowseState) {
+    // Preserve normal links for new tabs, modified clicks, and non-JS navigation.
+    if (
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    )
+      return;
+    event.preventDefault();
+    if (next.fieldId === state.fieldId && next.optionId === state.optionId)
+      return;
+    startTransition(async () => {
+      setOptimisticState(next);
+      await router.push(browseHref(collection.id, next) as Route, {
+        scroll: false,
+      });
+    });
+  }
   const fields = collection.fields.filter((field) => field.type === "select");
   const field = fields.find((field) => field.id === state.fieldId);
   const folderName =
@@ -43,6 +72,9 @@ export function BrowseView({
             {[{ id: null, name: "All" }, ...fields].map((tab) => (
               <Link
                 key={tab.id ?? "all"}
+                onClick={(event) =>
+                  navigate(event, { fieldId: tab.id, optionId: null })
+                }
                 href={
                   browseHref(collection.id, {
                     fieldId: tab.id,
@@ -72,6 +104,11 @@ export function BrowseView({
           />
         </div>
       </div>
+      {pending ? (
+        <p role="status" aria-label="Updating view" className="sr-only">
+          Updating view…
+        </p>
+      ) : null}
       {field && !state.optionId ? (
         <section aria-label={`${field.name} folders`} className="space-y-4">
           <h2 className="text-section-title-mobile sm:text-section-title break-words">
@@ -81,6 +118,9 @@ export function BrowseView({
             {getBrowseFolders(field, items).map((folder) => (
               <li className="min-w-0" key={folder.id}>
                 <Link
+                  onClick={(event) =>
+                    navigate(event, { fieldId: field.id, optionId: folder.id })
+                  }
                   aria-label={`Open ${folder.label}, ${folder.count} ${folder.count === 1 ? "item" : "items"}`}
                   className="focus-ring border-border bg-surface rounded-card duration-base block h-full border p-3 transition-transform motion-safe:hover:-translate-y-0.5"
                   href={
@@ -109,6 +149,9 @@ export function BrowseView({
           {field && folderName ? (
             <div className="space-y-3">
               <Link
+                onClick={(event) =>
+                  navigate(event, { fieldId: field.id, optionId: null })
+                }
                 className="touch-target focus-ring rounded-control inline-flex max-w-full items-center gap-2 text-sm font-semibold break-words"
                 href={
                   browseHref(collection.id, {

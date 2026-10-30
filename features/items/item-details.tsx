@@ -1,7 +1,8 @@
 "use client";
+import { LoadingImage } from "@/components/shared/loading-image";
 
 import { ImageOff, Star } from "lucide-react";
-import Link from "next/link";
+import Link from "@/components/shared/navigation-link";
 import { useActionState, useEffect, useRef, useState } from "react";
 
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
@@ -94,9 +95,8 @@ function ImagePanel({ item }: { item: ItemRecord }) {
     );
   return (
     <div className="space-y-3">
-      <div className="border-border bg-surface-muted rounded-control overflow-hidden border">
-        {/* eslint-disable-next-line @next/next/no-img-element -- authenticated private image route */}
-        <img
+      <div className="border-border bg-surface-muted rounded-control relative overflow-hidden border">
+        <LoadingImage
           alt={item.title}
           className="aspect-[4/3] w-full object-contain"
           onError={() => setFailed(true)}

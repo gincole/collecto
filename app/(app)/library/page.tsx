@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/shared/navigation-link";
 
 import { PageContainer } from "@/components/shared";
 import { Button } from "@/components/ui/button";

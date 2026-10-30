@@ -189,3 +189,7 @@ Test 320, 375, 640, 768, 1024, and 1440 px. Never allow a saved column preferenc
 - Respect `prefers-reduced-motion`.
 - Safe areas and software keyboards do not cover the last control, errors, or Save.
 - Reserve image dimensions to limit unexpected layout shift.
+
+### Async interaction feedback (M7-T02B)
+
+Internal links use the shared NavigationLink and Next useLinkStatus progress feedback while destination route skeletons load. The root skeleton also covers initial session/layout work. Pending progress is portaled at the viewport top without affecting layout and respects reduced motion. Browse uses loaded data for immediate optimistic views, retains native modified links and validated URL navigation, and reconciles authoritative server props. It does not replace correct loaded content with artificial skeletons. Retries use Retrying labels and repeat-request guards; schema order/Option operations announce visible pending status. Private image renderers use the shared LoadingImage skeleton within a reserved aspect ratio until load or error, including cached images, replacements, and retry.

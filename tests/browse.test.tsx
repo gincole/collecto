@@ -1,11 +1,14 @@
-import { render, screen, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import axe from "axe-core";
 
 vi.mock("@/features/gallery/actions", () => ({
   saveGalleryConfigAction: vi.fn(),
 }));
-vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
+const { push } = vi.hoisted(() => ({ push: vi.fn() }));
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ refresh: vi.fn(), push }),
+}));
 
 import {
   browseHref,
@@ -85,6 +88,109 @@ const items: ItemRecord[] = [
 ];
 
 describe("Browse URL and membership", () => {
+  it("shows folders immediately while URL navigation is still pending and follows server history state", async () => {
+    const request = Promise.withResolvers<void>();
+    push.mockReturnValueOnce(request.promise);
+    const { rerender } = render(
+      <BrowseView
+        collection={collection}
+        items={items}
+        state={{ fieldId: null, optionId: null }}
+      />,
+    );
+    fireEvent.click(screen.getByRole("link", { name: "Status" }));
+    expect(
+      screen.getByRole("link", { name: "Open Kept, 1 item" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("status", { name: "Updating view" }),
+    ).toBeInTheDocument();
+    expect(push).toHaveBeenCalledWith(
+      browseHref(collectionId, { fieldId, optionId: null }),
+      { scroll: false },
+    );
+    await act(async () => request.resolve());
+    rerender(
+      <BrowseView
+        collection={collection}
+        items={items}
+        state={{ fieldId, optionId: null }}
+      />,
+    );
+    expect(
+      screen.queryByRole("status", { name: "Updating view" }),
+    ).not.toBeInTheDocument();
+    rerender(
+      <BrowseView
+        collection={collection}
+        items={items}
+        state={{ fieldId: null, optionId: null }}
+      />,
+    );
+    expect(
+      screen.getByRole("link", { name: "Open Remembered" }),
+    ).toBeInTheDocument();
+  });
+  it.each([
+    [
+      "Open Kept, 1 item",
+      { fieldId, optionId: null },
+      { fieldId, optionId },
+      "Open Remembered",
+    ],
+    [
+      "Back to Status folders",
+      { fieldId, optionId },
+      { fieldId, optionId: null },
+      "Open Kept, 1 item",
+    ],
+    [
+      "All",
+      { fieldId, optionId: null },
+      { fieldId: null, optionId: null },
+      "Open Unsorted",
+    ],
+  ])(
+    "updates %s before the server finishes",
+    async (label, initial, next, visibleLink) => {
+      const request = Promise.withResolvers<void>();
+      push.mockReturnValueOnce(request.promise);
+      render(
+        <BrowseView collection={collection} items={items} state={initial} />,
+      );
+      fireEvent.click(screen.getByRole("link", { name: label }));
+      expect(
+        screen.getByRole("link", { name: visibleLink }),
+      ).toBeInTheDocument();
+      expect(push).toHaveBeenLastCalledWith(browseHref(collectionId, next), {
+        scroll: false,
+      });
+      await act(async () => request.resolve());
+    },
+  );
+  it("keeps modified clicks native and skips redundant current-view requests", () => {
+    push.mockClear();
+    render(
+      <BrowseView
+        collection={collection}
+        items={items}
+        state={{ fieldId: null, optionId: null }}
+      />,
+    );
+    fireEvent.click(screen.getByRole("link", { name: "All" }));
+    window.addEventListener(
+      "click",
+      (event) => {
+        expect(event.defaultPrevented).toBe(false);
+        event.preventDefault(); // jsdom cannot open the browser's native new tab.
+      },
+      { once: true },
+    );
+    fireEvent.click(screen.getByRole("link", { name: "Status" }), {
+      ctrlKey: true,
+    });
+    expect(push).not.toHaveBeenCalled();
+  });
   it("preserves valid stable-ID state and the Uncategorized sentinel", () => {
     expect(
       resolveBrowseState(

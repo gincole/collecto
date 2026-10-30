@@ -562,6 +562,14 @@ Add a local schema draft to the existing wizard for Field name/type/required/ord
 
 Use shared deletion triggers/menu links and permanent-confirmation styling while preserving exact impact, ownership checks, typed Collection confirmation, and pending guards. Replace permanent outcome banners with timed animated toasts, pause dismissal during interaction, preserve inline errors, and audit every form for native validation popovers. Verify shared controls, timers, focus, validation dispatch, and existing deletion/recovery flows with unit tests; no browser tests per user instruction. Record the separate Browse-pending and scrollbar-gutter gaps under M7-T02.
 
+### M7-T02B Complete immediate loading feedback
+
+- **Depends on:** M7-T02A (complete)
+- **Scope:** user-requested correction of delayed or absent feedback, separate from the broader responsive audit.
+- **Requirements:** PTS loading/feedback and double-submit protection; UX sections 21 and 23; B12 validated Browse URL state.
+- **Acceptance:** Browse tabs, folders, and folder-back render immediately from loaded Items while synchronizing the URL; authoritative server state and ownership checks remain intact. Navigation has feedback before route skeletons arrive, including initial layout loading. Retries, Field/Option mutations, wizard cancellation, and private images visibly indicate pending work. Local draft edits remain immediate. Preserve modified links, errors, image retry, reduced motion, and reserved image geometry.
+- **Verification:** deferred-request component tests, existing ownership/route and mutation tests, formatter, lint, strict TypeScript, full Vitest suite, dependency audit, production build, and diff review. Browser and hosted checks excluded per user instruction; no claim of measured end-to-end latency or final visual conformance.
+
 ### M7-T03 Complete security and failure-path test suite
 
 - **Critical path:** No, but release-blocking P0
