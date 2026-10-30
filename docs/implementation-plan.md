@@ -558,6 +558,8 @@ Add a local schema draft to the existing wizard for Field name/type/required/ord
 
 **Verification:** automated accessibility tests, viewport matrix, keyboard checklist, contrast report, lint, typecheck, build.
 
+**30 October execution boundary:** User instructions exclude browser tests. `docs/accessibility-audit.md` records the source/component audit, shared fixes, code-derived viewport matrix and remaining actual-browser acceptance checks. Keep M7-T02 In progress until that evidence exists; passing unit/axe checks must not be presented as completed viewport or full WCAG conformance.
+
 ### M7-T02A Standardize destructive actions and notification UX
 
 - **Depends on:** M7-T01

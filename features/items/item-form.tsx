@@ -149,7 +149,7 @@ export function ItemForm({
   return (
     <form
       noValidate
-      className="w-full min-w-0 space-y-6 pb-28 sm:pb-0"
+      className="w-full min-w-0 space-y-6"
       onSubmit={(event) => {
         event.preventDefault();
         if (isPending) return;
@@ -243,7 +243,7 @@ export function ItemForm({
           ) : null}
         </div>
       </div>
-      <div className="bg-background/95 border-border fixed inset-x-0 bottom-0 flex flex-wrap justify-end gap-3 border-t px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur sm:static sm:border-0 sm:bg-transparent sm:p-0">
+      <div className="border-border flex flex-wrap justify-end gap-3 border-t py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:border-0 sm:p-0">
         <Button asChild variant="outline">
           <Link
             aria-disabled={isPending}

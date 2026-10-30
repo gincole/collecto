@@ -195,7 +195,7 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
               })}
             </div>
 
-            <div className="border-border bg-background sticky bottom-0 flex gap-3 border-t py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+            <div className="border-border bg-background flex gap-3 border-t py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
               <Button
                 className="ml-auto w-full sm:w-auto"
                 disabled={pending || !presetKey}
@@ -362,7 +362,7 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
               <FeedbackMessage kind="error">{state.message}</FeedbackMessage>
             ) : null}
 
-            <div className="border-border bg-background sticky bottom-0 flex flex-col-reverse gap-3 border-t py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:flex-row sm:justify-between">
+            <div className="border-border bg-background flex flex-col-reverse gap-3 border-t py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:flex-row sm:justify-between">
               <Button
                 disabled={pending}
                 onClick={() => setStep(1)}

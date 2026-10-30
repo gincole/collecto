@@ -27,8 +27,8 @@ export function AppHeader({ email, logoutAction }: AppHeaderProps) {
   }, [logoutState, notify]);
 
   return (
-    <header className="bg-surface sticky top-0 z-20">
-      <div className="max-w-page px-page-mobile sm:px-page-tablet lg:px-page-desktop mx-auto flex h-16 items-center justify-between gap-4">
+    <header className="bg-surface sticky top-0 z-20 pt-[env(safe-area-inset-top)]">
+      <div className="max-w-page page-insets mx-auto flex h-16 items-center justify-between gap-4">
         <Link className="text-card-title font-semibold" href="/library">
           little things.
         </Link>

@@ -48,6 +48,10 @@ function contrastRatio(foreground: string, background: string) {
 }
 
 describe("design-system tokens", () => {
+  it("supports safe areas without disabling browser zoom", () => {
+    expect(layout).toContain('viewportFit: "cover"');
+    expect(layout).not.toMatch(/userScalable:\s*false|maximumScale:\s*1/);
+  });
   it("applies the approved DESIGN.md zinc palette and border-led geometry", () => {
     for (const [token, value] of Object.entries({
       background: "#f4f4f5",

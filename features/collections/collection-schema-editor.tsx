@@ -211,7 +211,7 @@ export function CollectionSchemaEditor({
                   className="accent-selection-border size-5"
                   type="checkbox"
                   id={`draft-required-${field.key}`}
-                  aria-label={`Field ${index + 1} required`}
+                  aria-label={`Required field ${index + 1}`}
                   checked={field.required}
                   onChange={(event) =>
                     update(index, { required: event.target.checked })

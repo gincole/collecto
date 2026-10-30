@@ -25,7 +25,7 @@ function DialogContent({
       <DialogPrimitive.Overlay className="dialog-overlay bg-foreground/50 fixed inset-0 z-50" />
       <DialogPrimitive.Content
         className={cn(
-          "dialog-content border-border bg-surface text-foreground focus-ring rounded-dialog shadow-dialog sm:p-panel fixed top-1/2 left-1/2 z-50 grid w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 border p-5 sm:w-full",
+          "dialog-content border-border bg-surface text-foreground focus-ring rounded-dialog shadow-dialog sm:p-panel fixed top-1/2 left-1/2 z-50 grid max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 overflow-y-auto overscroll-contain border p-5 break-words sm:w-full",
           className,
         )}
         {...props}
@@ -33,6 +33,7 @@ function DialogContent({
         {children}
         {showCloseButton ? (
           <DialogPrimitive.Close
+            data-dialog-close
             aria-label="Close dialog"
             className="touch-target text-foreground-muted hover:bg-surface-muted focus-ring rounded-control absolute top-3 right-3 inline-flex items-center justify-center"
           >

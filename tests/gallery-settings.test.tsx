@@ -1,6 +1,7 @@
 import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import axe from "axe-core";
 const { notifyMock } = vi.hoisted(() => ({ notifyMock: vi.fn() }));
 vi.mock("@/components/shared/feedback", () => ({
   useFeedback: () => notifyMock,
@@ -134,6 +135,37 @@ describe("Gallery Settings validation and persistence", () => {
 });
 
 describe("Gallery Settings draft", () => {
+  it("keeps sheet controls labelled and accessible in its open state", async () => {
+    const user = userEvent.setup();
+    render(
+      <GallerySettings
+        collection={collection}
+        items={[]}
+        saveAction={vi.fn()}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Gallery settings" }));
+    const dialog = screen.getByRole("dialog");
+    expect(dialog).toHaveClass("max-h-dvh", "safe-area-panel");
+    const results = await axe.run(dialog, {
+      runOnly: {
+        type: "tag",
+        values: [
+          "wcag2a",
+          "wcag2aa",
+          "wcag21a",
+          "wcag21aa",
+          "wcag22a",
+          "wcag22aa",
+        ],
+      },
+      rules: {
+        "color-contrast": { enabled: false },
+        "label-content-name-mismatch": { enabled: false },
+      },
+    });
+    expect(results.violations).toEqual([]);
+  });
   it("previews sorted real Items with shared grid spacing without navigation", async () => {
     const user = userEvent.setup();
     const base = {

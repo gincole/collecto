@@ -169,7 +169,7 @@ export function GallerySettings({ collection, items, saveAction }: Props) {
           </Button>
         </DialogTrigger>
         <DialogContent
-          className="sm:rounded-l-card sm:p-panel top-0 right-0 left-auto grid h-dvh w-screen max-w-none translate-x-0 translate-y-0 grid-rows-[auto_minmax(0,1fr)_auto] gap-4 rounded-none border-0 p-4 sm:w-full sm:max-w-md sm:border-l"
+          className="sm:rounded-l-card sm:p-panel safe-area-panel top-0 right-0 left-auto grid h-dvh max-h-dvh w-screen max-w-none translate-x-0 translate-y-0 grid-rows-[auto_minmax(0,1fr)_auto] gap-4 rounded-none border-0 p-4 sm:w-full sm:max-w-md sm:border-l"
           showCloseButton={!pending}
           onEscapeKeyDown={(event) => {
             if (pending) event.preventDefault();
@@ -187,7 +187,7 @@ export function GallerySettings({ collection, items, saveAction }: Props) {
               in this Collection.
             </DialogDescription>
           </div>
-          <div className="min-h-0 space-y-6 overflow-y-auto px-1 pb-2">
+          <div className="min-h-0 space-y-6 overflow-y-auto overscroll-contain px-1 pb-2">
             <fieldset className="space-y-5" disabled={pending}>
               <legend className="sr-only">Gallery appearance</legend>
               <div className="grid grid-cols-2 gap-4">

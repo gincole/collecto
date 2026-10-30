@@ -143,6 +143,9 @@ Test 320, 375, 640, 768, 1024, and 1440 px. Never allow a saved column preferenc
 
 ## Accessibility acceptance
 
+- The root Skip to content link targets the focusable `main-content` landmark on normal, loading/error, Auth and unavailable routes.
+- Shared dialogs bound and scroll long content within the dynamic viewport. Full-screen panels and their absolute close controls account for safe-area insets; page/header gutters and header clearance do too. Zoom remains enabled.
+- Creation and Item actions stay in document flow rather than overlaying long forms. Root scroll padding clears the sticky header.
 - Target WCAG 2.2 AA and 4.5:1 contrast for normal text.
 - All workflows operate with keyboard alone.
 - Reordering always has Move up/down alternatives.
@@ -152,6 +155,8 @@ Test 320, 375, 640, 768, 1024, and 1440 px. Never allow a saved column preferenc
 - Respect `prefers-reduced-motion`.
 - Safe areas and software keyboards do not cover the last control, errors, or Save.
 - Reserve image dimensions to limit unexpected layout shift.
+
+M7-T02 code/component evidence and the unverified browser/device acceptance matrix are recorded in `docs/accessibility-audit.md`; passing component checks alone does not close that task.
 
 ### Async interaction feedback (M7-T02B)
 

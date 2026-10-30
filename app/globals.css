@@ -128,6 +128,7 @@ html {
   background: var(--background);
   scroll-behavior: smooth;
   scrollbar-gutter: stable;
+  scroll-padding-top: calc(5rem + env(safe-area-inset-top));
 }
 
 * {
@@ -161,6 +162,41 @@ body {
 @utility touch-target {
   min-width: 2.75rem;
   min-height: 2.75rem;
+  touch-action: manipulation;
+}
+
+@utility page-insets {
+  padding-left: max(var(--spacing-page-mobile), env(safe-area-inset-left));
+  padding-right: max(var(--spacing-page-mobile), env(safe-area-inset-right));
+  @media (width >= 40rem) {
+    padding-left: max(var(--spacing-page-tablet), env(safe-area-inset-left));
+    padding-right: max(var(--spacing-page-tablet), env(safe-area-inset-right));
+  }
+  @media (width >= 64rem) {
+    padding-left: max(var(--spacing-page-desktop), env(safe-area-inset-left));
+    padding-right: max(var(--spacing-page-desktop), env(safe-area-inset-right));
+  }
+}
+
+.safe-area-panel {
+  --panel-inset: var(--spacing-page-mobile);
+  padding-top: max(var(--panel-inset), env(safe-area-inset-top));
+  padding-bottom: max(var(--panel-inset), env(safe-area-inset-bottom));
+  padding-left: max(var(--panel-inset), env(safe-area-inset-left));
+  padding-right: max(var(--panel-inset), env(safe-area-inset-right));
+}
+.safe-area-panel [data-dialog-close] {
+  top: max(0.75rem, env(safe-area-inset-top));
+  right: max(0.75rem, env(safe-area-inset-right));
+}
+@media (width >= 40rem) {
+  .safe-area-panel {
+    --panel-inset: var(--spacing-panel);
+  }
+}
+
+:where(h1, h2, h3, h4, label, legend, dt, summary) {
+  overflow-wrap: anywhere;
 }
 
 @utility focus-ring {

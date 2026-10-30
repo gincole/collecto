@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { DM_Sans, Noto_Sans_Thai } from "next/font/google";
 import type { ReactNode } from "react";
 
 import "./globals.css";
 import { FeedbackProvider } from "@/components/shared/feedback";
+import { SkipLink } from "@/components/shared/skip-link";
 
 const dmSans = DM_Sans({
   display: "swap",
@@ -24,6 +25,8 @@ export const metadata: Metadata = {
   title: "little things.",
 };
 
+export const viewport: Viewport = { viewportFit: "cover" };
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
@@ -34,6 +37,7 @@ export default function RootLayout({
       lang="en"
     >
       <body className="font-sans">
+        <SkipLink />
         <FeedbackProvider>{children}</FeedbackProvider>
       </body>
     </html>

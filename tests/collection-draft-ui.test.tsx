@@ -1,12 +1,41 @@
 import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+import axe from "axe-core";
 import { CollectionWizard } from "@/features/collections/collection-wizard";
 import type { CollectionWizardAction } from "@/features/collections/wizard-state";
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
 
 describe("Collection schema draft wizard", () => {
+  it("has no detectable WCAG A/AA violations in the populated draft editor", async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <main>
+        <CollectionWizard createAction={vi.fn()} />
+      </main>,
+    );
+    await user.click(screen.getByRole("button", { name: "Books preset" }));
+    await user.click(screen.getByRole("button", { name: "Continue" }));
+    const results = await axe.run(container, {
+      runOnly: {
+        type: "tag",
+        values: [
+          "wcag2a",
+          "wcag2aa",
+          "wcag21a",
+          "wcag21aa",
+          "wcag22a",
+          "wcag22aa",
+        ],
+      },
+      rules: {
+        "color-contrast": { enabled: false },
+        "label-content-name-mismatch": { enabled: false },
+      },
+    });
+    expect(results.violations).toEqual([]);
+  });
   it("preserves independent preset drafts and Select options while changing draft types", async () => {
     const user = userEvent.setup();
     const action = vi.fn();
@@ -45,7 +74,7 @@ describe("Collection schema draft wizard", () => {
     await user.clear(screen.getByLabelText("Field 1 name"));
     await user.type(screen.getByLabelText("Field 1 name"), "Creator");
     await user.selectOptions(screen.getByLabelText("Field 1 type"), "url");
-    await user.click(screen.getByLabelText("Field 1 required"));
+    await user.click(screen.getByLabelText("Required field 1"));
     await user.click(
       screen.getByRole("button", { name: "Remove field Rating" }),
     );
