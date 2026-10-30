@@ -38,6 +38,15 @@ Critical-path marker `Yes` means delay directly threatens the two-day MVP or pro
 | M8-T02 | Delivery       | Complete README and release verification           | M8-T01, M7-T02         | Yes      | `docs(release)`           | Not started | —             | —                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | M8-T03 | Deployment     | Configure Vercel and smoke-test production         | M8-T02, authorization  | Yes      | `chore(deploy)` if needed | Not started | —             | —                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 
+## Deferred manual-test feedback for M7-T01
+
+Reported by the user on 30 October 2026; recorded for the M7-T01 audit only. No fixes have been implemented from this feedback.
+
+- Create Collection, Books preset (screenshot 1): the default Fields are a read-only preview. The user expects to customize preset Fields before final Create, rather than having to create the Collection first and edit Settings afterward. Review that expectation against the approved wizard/schema contracts before implementation; preserve the approved rule that persisted custom Field types are immutable.
+- Collection Settings (screenshot 3): the Delete collection button clips its label and icon. Keep the action readable and contained at the reported width and on narrow screens.
+- Collection Settings (screenshots 2–3): provide a clear back action to the Collection.
+- Overall interaction: investigate the reported lack of smoothness, especially route/loading skeletons, saving feedback, and restrained transitions. Identify missing states before adding animation, and retain reduced-motion support. Browser-based testing remains excluded by the user's instruction.
+
 ## Deferred P1 tasks
 
 | ID     | Task                                           | Status      | Actual commit |
