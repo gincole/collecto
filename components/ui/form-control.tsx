@@ -6,6 +6,7 @@ import {
   useRef,
   useId,
   type ComponentProps,
+  type ReactNode,
 } from "react";
 import {
   DropdownMenu,
@@ -36,13 +37,17 @@ function Textarea({ className, ...props }: ComponentProps<"textarea">) {
 type SelectProps = Omit<
   ComponentProps<"select">,
   "onChange" | "multiple" | "ref"
-> & { onChange?: (event: { target: { value: string } }) => void };
+> & {
+  onChange?: (event: { target: { value: string } }) => void;
+  optionIcon?: (value: string) => ReactNode;
+};
 function Select({
   className,
   children,
   value,
   defaultValue,
   onChange,
+  optionIcon,
   name,
   disabled,
   required,
@@ -142,7 +147,12 @@ function Select({
             className,
           )}
         >
-          <span>{selectedOption?.props.children ?? "Choose an option"}</span>
+          <span className="inline-flex min-w-0 items-center gap-2">
+            {optionIcon?.(selected)}
+            <span className="min-w-0 truncate">
+              {selectedOption?.props.children ?? "Choose an option"}
+            </span>
+          </span>
           <ChevronDown aria-hidden="true" className="size-4 shrink-0" />
         </DropdownMenuTrigger>
         <DropdownMenuContent
@@ -179,6 +189,7 @@ function Select({
                   choose(optionValue);
                 }}
               >
+                {optionIcon?.(optionValue)}
                 {option.props.children}
                 {selected === optionValue ? (
                   <Check

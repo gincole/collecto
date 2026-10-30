@@ -3,14 +3,14 @@ import { ArrowLeft, Plus, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
-import { Input, Select } from "@/components/ui/form-control";
+import { Input } from "@/components/ui/form-control";
 import { ModalActions, useFlowBusy } from "@/components/shared/flow-modal";
 import { DATABASE_LIMITS } from "@/lib/validation/limits";
+import { FieldTypeSelect } from "./field-type";
 import { RequiredControl } from "./required-control";
 import { fieldTypeSchema } from "./schemas";
 import {
   errorMessage,
-  fieldTypeLabels,
   type FieldManagerActions,
   type FieldType,
 } from "./field-manager-contract";
@@ -136,20 +136,14 @@ export function AddFieldForm({
           <label className="text-label block" htmlFor="new-field-type">
             Field type
           </label>
-          <Select
+          <FieldTypeSelect
             disabled={Boolean(createdFieldId)}
             id="new-field-type"
             onChange={(event) =>
               handleTypeChange(fieldTypeSchema.parse(event.target.value))
             }
             value={type}
-          >
-            {Object.entries(fieldTypeLabels).map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </Select>
+          />
           <p className="text-foreground-muted text-sm">
             Field type cannot be changed after creation.
           </p>

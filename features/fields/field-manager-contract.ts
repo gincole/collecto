@@ -41,12 +41,12 @@ export type Field = CollectionRecord["fields"][number];
 export type FieldType = Field["type"];
 
 export const fieldTypeLabels: Record<FieldType, string> = {
-  date: "📅 Date",
-  number: "🔢 Number",
-  rating: "⭐ Rating",
-  select: "📋 Select",
-  text: "📝 Text",
-  url: "🔗 URL",
+  date: "Date",
+  number: "Number",
+  rating: "Rating",
+  select: "Select",
+  text: "Text",
+  url: "URL",
 };
 
 export const editorClassName =

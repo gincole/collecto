@@ -20,12 +20,12 @@ import { DeleteOptionDialog } from "./field-delete-dialogs";
 import {
   editorClassName,
   errorMessage,
-  fieldTypeLabels,
   move,
   type ActionResult,
   type Field,
   type FieldManagerActions,
 } from "./field-manager-contract";
+import { FieldTypeLabel } from "./field-type";
 import { RequiredControl } from "./required-control";
 import { AddFieldForm } from "./add-field-form";
 import { ReorderButtons } from "./reorder-buttons";
@@ -330,7 +330,9 @@ export function EditFieldDialog({
           </div>
           <dl className="border-border bg-surface-muted rounded-control flex items-center justify-between gap-4 border px-3 py-2">
             <dt className="text-foreground-muted text-sm">Field type</dt>
-            <dd className="font-semibold">{fieldTypeLabels[field.type]}</dd>
+            <dd className="font-semibold">
+              <FieldTypeLabel type={field.type} />
+            </dd>
           </dl>
           <RequiredControl required={required} setRequired={setRequired} />
           {field.type === "select" ? (

@@ -7,13 +7,10 @@ import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { DeleteButton } from "@/components/shared/delete-button";
 import { cn } from "@/lib/utils/cn";
-import {
-  fieldTypeLabels,
-  type Field,
-  type FieldManagerActions,
-} from "./field-manager-contract";
+import { type Field, type FieldManagerActions } from "./field-manager-contract";
 import { EditFieldDialog } from "./field-editors";
 import { DeleteFieldDialog } from "./field-delete-dialogs";
+import { FieldTypeLabel } from "./field-type";
 import { ReorderButtons } from "./reorder-buttons";
 
 const rowClass =
@@ -37,10 +34,12 @@ function FieldRowBody({
             {field.name}
           </p>
           <div className="text-foreground-muted flex flex-wrap items-center gap-x-2 text-sm">
-            <span>
-              {fieldTypeLabels[field.type]}
-              {field.type === "select" ? ` (${field.options.length})` : ""}
-            </span>
+            <FieldTypeLabel
+              type={field.type}
+              optionCount={
+                field.type === "select" ? field.options.length : undefined
+              }
+            />
             {field.required ? (
               <span className="inline-flex items-center gap-1">
                 <span aria-hidden="true">•</span>

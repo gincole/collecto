@@ -182,3 +182,16 @@ Reported by the user on 30 October 2026. The M7-T01 state audit and implementati
   and subtitle removal; independent review and staged diff/secret checks passed.
   No browser testing.
 - Commit: SELF (this commit).
+
+## M7-T02Q: Use Lucide icons for every Field type
+
+- Status: Complete; dependency M7-T02P is complete.
+- Scope/acceptance: see M7-T02Q in `docs/implementation-plan.md`; the latest user
+  clarification supersedes the earlier emoji presentation requests.
+- Changes: shared icon/label and type chooser components cover all Field surfaces.
+- Verification: `corepack pnpm verify:deployment` passed formatting, lint,
+  strict TypeScript, all 359 tests across 54 files and the production build.
+  Six decorative type icons, plain option names, typeahead and selected-label
+  truncation are covered. Independent review and staged diff/secret checks passed.
+  No browser testing.
+- Commit: SELF (this commit).

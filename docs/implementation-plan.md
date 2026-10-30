@@ -928,3 +928,23 @@ ordering/editing remains functional; duplicate subtitle is absent. Extend existi
 component regressions and accessibility checks, then run the deployment gate,
 independent review and staged diff/secret inspection. No browser checks at user
 request, no dependencies/schema changes. One `fix(fields)` commit; no push.
+
+## M7-T02Q: Use Lucide icons for every Field type
+
+Latest user clarification supersedes the earlier emoji requests: every displayed
+Field type must have a Lucide icon, not an emoji. Depends on M7-T02P. Restore
+plain shared type labels and use one icon mapping/label renderer for built-in and
+custom rows, overlay, and immutable Field type. Use one FieldTypeSelect wrapper
+for wizard/Add Field choices and selected values. No persisted type key changes.
+
+Extend the existing Select with an optional decorative option-icon renderer while
+keeping option children as plain text, preserving accessible option names and
+keyboard typeahead. Icons are aria-hidden; the text carries the meaning. Do not
+alter other dropdowns, form validation, schema editing, ordering or controls.
+
+Acceptance/verification: all six types have consistent Lucide icons and no emoji
+prefixes; chooser values and options display the icon; typing n still selects
+Number; shared row/editor/wizard use the same components. Update relevant
+component expectations, run the deployment gate, independent review and staged
+diff/secret checks. No browser checks at user request, dependencies or schema
+changes. One `fix(fields)` commit; no push.

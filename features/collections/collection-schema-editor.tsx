@@ -2,12 +2,10 @@
 
 import { Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input, Select } from "@/components/ui/form-control";
+import { Input } from "@/components/ui/form-control";
+import { FieldTypeSelect } from "@/features/fields/field-type";
 import { ReorderButtons } from "@/features/fields/reorder-buttons";
-import {
-  fieldTypeLabels,
-  move,
-} from "@/features/fields/field-manager-contract";
+import { move } from "@/features/fields/field-manager-contract";
 import { fieldTypeSchema } from "@/features/fields/schemas";
 import { DATABASE_LIMITS } from "@/lib/validation/limits";
 import { cn } from "@/lib/utils/cn";
@@ -202,7 +200,7 @@ export function CollectionSchemaEditor({
                   >
                     Type
                   </label>
-                  <Select
+                  <FieldTypeSelect
                     aria-label={`Field ${index + 1} type`}
                     id={`draft-type-${field.key}`}
                     value={field.type}
@@ -211,13 +209,7 @@ export function CollectionSchemaEditor({
                         type: fieldTypeSchema.parse(event.target.value),
                       })
                     }
-                  >
-                    {fieldTypeSchema.options.map((type) => (
-                      <option key={type} value={type}>
-                        {fieldTypeLabels[type]}
-                      </option>
-                    ))}
-                  </Select>
+                  />
                 </div>
               </div>
               <label

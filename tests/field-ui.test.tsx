@@ -81,6 +81,43 @@ function createActions(
 }
 
 describe("Field manager", () => {
+  it("uses decorative Lucide icons with plain type labels and working typeahead", async () => {
+    const user = userEvent.setup();
+    render(
+      <FieldManager
+        fields={fields}
+        collectionId={collectionId}
+        actions={createActions()}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Add field" }));
+    const chooser = screen.getByLabelText("Field type");
+    await user.click(chooser);
+    for (const [value, label] of Object.entries({
+      text: "Text",
+      number: "Number",
+      date: "Date",
+      select: "Select",
+      rating: "Rating",
+      url: "URL",
+    })) {
+      const option = screen.getByRole("option", { name: label });
+      expect(
+        option.querySelector(`[data-field-type-icon="${value}"]`),
+      ).toHaveAttribute("aria-hidden", "true");
+    }
+    await user.click(screen.getByRole("option", { name: "Text" }));
+    chooser.focus();
+    await user.keyboard("n");
+    expect(chooser).toHaveTextContent("Number");
+    expect(within(chooser).getByText("Number")).toHaveClass(
+      "min-w-0",
+      "truncate",
+    );
+    expect(
+      chooser.querySelector('[data-field-type-icon="number"]'),
+    ).not.toBeNull();
+  });
   it("animates an arrow swap even before the first drag", async () => {
     mockRowRects();
     const user = userEvent.setup();
@@ -156,7 +193,7 @@ describe("Field manager", () => {
     const name = screen.getByText(longName);
     expect(name).toHaveClass("truncate");
     expect(name).toHaveAttribute("title", longName);
-    const metadata = screen.getByText("📋 Select (2)");
+    const metadata = screen.getByText("Select (2)");
     expect(metadata.parentElement).toHaveTextContent("Required");
     expect(
       within(metadata.parentElement ?? document.body).getByText("Required"),
@@ -616,13 +653,13 @@ describe("Field manager", () => {
         within(builtIn).getByRole("button", { name: `Delete ${name}` }),
       ).toBeDisabled();
     }
-    expect(within(builtIn).getAllByText("📝 Text")).toHaveLength(2);
+    expect(within(builtIn).getAllByText("Text")).toHaveLength(2);
     expect(
       within(builtIn).queryByRole("button", { name: /^Drag / }),
     ).toBeNull();
 
     const custom = screen.getByRole("region", { name: "Custom fields" });
-    expect(within(custom).getByText("📋 Select (2)")).toBeVisible();
+    expect(within(custom).getByText("Select (2)")).toBeVisible();
     expect(within(custom).getAllByText("Rating")[0]).toBeVisible();
     expect(within(custom).getByText("Required")).toBeVisible();
 
@@ -717,9 +754,7 @@ describe("Field manager", () => {
 
     await user.click(screen.getByRole("button", { name: "Edit Rating" }));
     const editor = screen.getByRole("dialog", { name: "Edit Rating" });
-    expect(
-      within(editor).getByText("⭐ Rating", { selector: "dd" }),
-    ).toBeVisible();
+    expect(within(editor).getByText("Rating").closest("dd")).toBeVisible();
     expect(within(editor).queryByLabelText("Field type")).toBeNull();
     await user.clear(within(editor).getByLabelText("Field name"));
     await user.type(within(editor).getByLabelText("Field name"), "Score");
