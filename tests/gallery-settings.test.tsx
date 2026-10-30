@@ -1,6 +1,11 @@
 import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+const { notifyMock } = vi.hoisted(() => ({ notifyMock: vi.fn() }));
+vi.mock("@/components/shared/feedback", () => ({
+  useFeedback: () => notifyMock,
+}));
+beforeEach(() => notifyMock.mockClear());
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 
@@ -234,9 +239,7 @@ describe("Gallery Settings draft", () => {
       },
     });
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-    expect(screen.getByRole("status")).toHaveTextContent(
-      "Gallery settings saved",
-    );
+    expect(notifyMock).toHaveBeenCalledWith("Gallery settings saved.");
   });
   it("confirms dirty Cancel and restores the saved draft when reopened", async () => {
     const user = userEvent.setup();

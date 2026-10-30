@@ -3,6 +3,7 @@
 import type { ReactElement, ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
+import { DeleteButton } from "./delete-button";
 import {
   Dialog,
   DialogClose,
@@ -74,15 +75,19 @@ function ConfirmDialog({
               {cancelLabel}
             </Button>
           </DialogClose>
-          <Button
-            aria-busy={isPending}
-            disabled={isPending}
-            onClick={onConfirm}
-            type="button"
-            variant={variant}
-          >
-            {isPending ? "Working…" : confirmLabel}
-          </Button>
+          {variant === "destructive" ? (
+            <DeleteButton confirm pending={isPending} onClick={onConfirm} />
+          ) : (
+            <Button
+              aria-busy={isPending}
+              disabled={isPending}
+              onClick={onConfirm}
+              type="button"
+              variant={variant}
+            >
+              {isPending ? "Working…" : confirmLabel}
+            </Button>
+          )}
         </div>
       </DialogContent>
     </Dialog>

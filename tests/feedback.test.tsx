@@ -1,5 +1,11 @@
-import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { readFileSync } from "node:fs";
 
 vi.mock("next/navigation", () => ({
@@ -42,6 +48,51 @@ function Harness() {
 }
 
 describe("application feedback", () => {
+  afterEach(() => vi.useRealTimers());
+  it("slides out and automatically dismisses, pausing while hovered", () => {
+    vi.useFakeTimers();
+    render(
+      <FeedbackProvider>
+        <Harness />
+      </FeedbackProvider>,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Complete" }));
+    expect(screen.getByTestId("notification-toast")).toHaveAttribute(
+      "data-state",
+      "open",
+    );
+    fireEvent.mouseEnter(screen.getByTestId("notification-toast"));
+    act(() => vi.advanceTimersByTime(10000));
+    expect(screen.getByRole("status")).toBeInTheDocument();
+    fireEvent.mouseLeave(screen.getByTestId("notification-toast"));
+    act(() => vi.advanceTimersByTime(4000));
+    expect(screen.getByTestId("notification-toast")).toHaveAttribute(
+      "data-state",
+      "closed",
+    );
+    act(() => vi.advanceTimersByTime(180));
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+  });
+  it("keeps an error readable while keyboard focus is inside the toast", () => {
+    vi.useFakeTimers();
+    render(
+      <FeedbackProvider>
+        <Harness />
+      </FeedbackProvider>,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Fail" }));
+    fireEvent.focus(
+      screen.getByRole("button", { name: "Dismiss notification" }),
+    );
+    act(() => vi.advanceTimersByTime(20000));
+    expect(screen.getByRole("alert")).toBeInTheDocument();
+    fireEvent.blur(
+      screen.getByRole("button", { name: "Dismiss notification" }),
+    );
+    act(() => vi.advanceTimersByTime(6000));
+    act(() => vi.advanceTimersByTime(180));
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
   it("announces redirect feedback once and removes only its query parameter", () => {
     window.history.replaceState(
       {},
@@ -58,7 +109,7 @@ describe("application feedback", () => {
     expect(window.location.search).toBe("?keep=value");
     window.history.replaceState({}, "", "/");
   });
-  it("announces outcomes with distinct live roles and lets the user dismiss them", () => {
+  it("announces outcomes with distinct live roles and lets the user dismiss them", async () => {
     render(
       <FeedbackProvider>
         <Harness />
@@ -73,7 +124,9 @@ describe("application feedback", () => {
     fireEvent.click(
       screen.getByRole("button", { name: "Dismiss notification" }),
     );
-    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.queryByRole("alert")).not.toBeInTheDocument(),
+    );
   });
   it("uses allowlisted navigation messages without reflecting arbitrary URL text", () => {
     expect(feedbackHref("/library", "collection-deleted")).toBe(

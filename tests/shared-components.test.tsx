@@ -128,7 +128,7 @@ describe("shared components", () => {
       "This permanently deletes the collection and its items.",
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "Delete collection" }));
+    fireEvent.click(screen.getByRole("button", { name: "Delete permanently" }));
     expect(onConfirm).toHaveBeenCalledOnce();
 
     fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
@@ -182,7 +182,7 @@ describe("shared components", () => {
     await user.click(trigger);
 
     const cancel = screen.getByRole("button", { name: "Cancel" });
-    const confirm = screen.getByRole("button", { name: "Delete collection" });
+    const confirm = screen.getByRole("button", { name: "Delete permanently" });
 
     expect(cancel).toHaveFocus();
     await user.tab();

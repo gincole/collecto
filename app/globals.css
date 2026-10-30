@@ -192,6 +192,34 @@ body {
   }
 }
 
+.notification-toast[data-state="open"] {
+  animation: notification-enter var(--duration-dialog) var(--ease-standard);
+}
+.notification-toast[data-state="closed"] {
+  animation: notification-exit var(--duration-dialog) var(--ease-standard)
+    forwards;
+}
+@keyframes notification-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes notification-exit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-1rem);
+  }
+}
+
 @keyframes dialog-overlay-hide {
   from {
     opacity: 1;

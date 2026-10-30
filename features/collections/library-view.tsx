@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { EmptyState, PresetArtwork } from "@/components/shared";
 import { Button } from "@/components/ui/button";
+import { DeleteMenuLink } from "@/components/shared/delete-button";
 
 import type { CollectionRecord } from "./models";
 
@@ -68,15 +69,12 @@ export function LibraryView({ collections }: LibraryViewProps) {
                 >
                   Rename
                 </Link>
-                <Link
+                <DeleteMenuLink
                   aria-label={`Delete ${collection.name}`}
-                  className="touch-target text-destructive hover:bg-surface-muted focus-ring flex w-full items-center rounded-lg px-3 text-left text-sm"
                   href={
                     `/collections/${collection.id}/settings#delete-collection` as Route
                   }
-                >
-                  Delete
-                </Link>
+                />
               </div>
             </details>
           </article>

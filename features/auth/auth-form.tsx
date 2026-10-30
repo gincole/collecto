@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef } from "react";
+import { useFeedback } from "@/components/shared/feedback";
 
 import { Button } from "@/components/ui/button";
 import { FeedbackMessage } from "@/components/shared/feedback-message";
@@ -37,6 +38,23 @@ function FieldError({ id, message }: { id: string; message?: string }) {
 
 export function AuthForm({ action, mode, returnTo }: AuthFormProps) {
   const [state, formAction, pending] = useActionState(action, initialState);
+  const notify = useFeedback();
+  const formRef = useRef<HTMLFormElement>(null);
+  const emailRef = useRef("");
+  useEffect(() => {
+    if (state.status === "idle") return;
+    if (state.status === "error") {
+      notify(
+        state.message ?? "Review the highlighted fields and try again.",
+        "error",
+      );
+      const email = formRef.current?.elements.namedItem("email");
+      if (email instanceof HTMLInputElement) email.value = emailRef.current;
+      const first = Object.keys(state.fieldErrors ?? {})[0];
+      const control = first ? formRef.current?.elements.namedItem(first) : null;
+      if (control instanceof HTMLElement) control.focus();
+    } else notify("Check your email to continue.", "info");
+  }, [state, notify]);
   const registering = mode === "register";
   const alternatePath = registering ? "/login" : "/register";
   const alternateHref = {
@@ -45,7 +63,16 @@ export function AuthForm({ action, mode, returnTo }: AuthFormProps) {
   };
 
   return (
-    <form action={formAction} className="space-y-5">
+    <form
+      noValidate
+      ref={formRef}
+      onSubmitCapture={(event) => {
+        const email = new FormData(event.currentTarget).get("email");
+        emailRef.current = typeof email === "string" ? email : "";
+      }}
+      action={formAction}
+      className="space-y-5"
+    >
       {returnTo ? (
         <input name="returnTo" type="hidden" value={returnTo} />
       ) : null}
@@ -131,6 +158,11 @@ export function AuthForm({ action, mode, returnTo }: AuthFormProps) {
         </FeedbackMessage>
       ) : null}
 
+      {state.status === "error" && !state.message ? (
+        <FeedbackMessage kind="error">
+          Review the highlighted fields and try again.
+        </FeedbackMessage>
+      ) : null}
       <Button className="w-full" disabled={pending} size="lg" type="submit">
         {pending
           ? registering

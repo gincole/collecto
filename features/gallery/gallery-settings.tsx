@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { FeedbackMessage } from "@/components/shared/feedback-message";
+import { useFeedback } from "@/components/shared/feedback";
 import { Select } from "@/components/ui/form-control";
 import {
   Dialog,
@@ -56,13 +57,13 @@ function Choice({
 }
 
 export function GallerySettings({ collection, items, saveAction }: Props) {
+  const notify = useFeedback();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [discardOpen, setDiscardOpen] = useState(false);
   const [draft, setDraft] = useState(collection.viewConfig);
   const [baseline, setBaseline] = useState(collection.viewConfig);
   const [message, setMessage] = useState<string>();
-  const [saved, setSaved] = useState(false);
   const [pending, startTransition] = useTransition();
   const safeDraft = sanitizeVisibleFields(draft, collection.fields);
   const dirty =
@@ -91,7 +92,6 @@ export function GallerySettings({ collection, items, saveAction }: Props) {
       setDraft(initial);
       setBaseline(initial);
       setMessage(undefined);
-      setSaved(false);
       setOpen(true);
     } else if (dirty) setDiscardOpen(true);
     else setOpen(false);
@@ -110,7 +110,7 @@ export function GallerySettings({ collection, items, saveAction }: Props) {
         });
         if (result.status === "success") {
           setOpen(false);
-          setSaved(true);
+          notify("Gallery settings saved.");
           router.refresh();
           return;
         }
@@ -126,9 +126,11 @@ export function GallerySettings({ collection, items, saveAction }: Props) {
           error: "Could not save gallery settings. Try again.",
         };
         setMessage(errors[result.status]);
+        notify(errors[result.status], "error");
         if (result.status === "conflict") router.refresh();
       } catch {
         setMessage("Could not save gallery settings. Try again.");
+        notify("Could not save gallery settings. Try again.", "error");
       }
     });
   }
@@ -393,9 +395,6 @@ export function GallerySettings({ collection, items, saveAction }: Props) {
           />
         </DialogContent>
       </Dialog>
-      {saved ? (
-        <FeedbackMessage>Gallery settings saved.</FeedbackMessage>
-      ) : null}
     </>
   );
 }

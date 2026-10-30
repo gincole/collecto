@@ -234,6 +234,28 @@ describe("Library view", () => {
 });
 
 describe("Collection settings", () => {
+  it("uses custom validation for an empty name rather than a browser popup", async () => {
+    const user = userEvent.setup();
+    const updateAction = vi.fn(async () => ({
+      status: "error" as const,
+      fieldErrors: { name: "Enter a Collection name." },
+    }));
+    render(
+      <CollectionSettings
+        collection={collection}
+        updateAction={updateAction}
+        deleteAction={vi.fn()}
+      />,
+    );
+    expect(
+      screen.getByLabelText("Collection name").closest("form"),
+    ).toHaveAttribute("novalidate");
+    await user.clear(screen.getByLabelText("Collection name"));
+    await user.click(screen.getByRole("button", { name: "Save changes" }));
+    expect(updateAction).toHaveBeenCalledOnce();
+    expect(await screen.findByText("Enter a Collection name.")).toBeVisible();
+    expect(screen.getByLabelText("Collection name")).toHaveFocus();
+  });
   it("saves identity changes and preserves recoverable errors", async () => {
     const user = userEvent.setup();
     const updateAction = vi.fn(async () => ({

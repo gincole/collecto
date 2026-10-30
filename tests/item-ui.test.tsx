@@ -166,7 +166,7 @@ describe("Item details", () => {
     await user.click(screen.getByRole("button", { name: "Delete item" }));
     const dialog = screen.getByRole("alertdialog");
     await user.click(
-      screen.getAllByRole("button", { name: "Delete item" }).at(-1)!,
+      screen.getByRole("button", { name: "Delete permanently" }),
     );
     expect(await screen.findByRole("alert")).toHaveTextContent(
       "Could not delete",

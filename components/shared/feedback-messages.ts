@@ -1,14 +1,11 @@
 import type { Route } from "next";
 
 const messages = {
-  "collection-created":
-    "Collection created. You can customize its Fields in Collection settings.",
-  "collection-deleted":
-    "Collection deleted. Private image cleanup has been scheduled where needed.",
+  "collection-created": "Collection created.",
+  "collection-deleted": "Collection deleted.",
   "item-created": "Item created.",
   "item-updated": "Item saved.",
-  "item-deleted":
-    "Item deleted. Private image cleanup has been scheduled where needed.",
+  "item-deleted": "Item deleted.",
   "logged-in": "You are logged in.",
   "logged-out": "You are logged out.",
 } as const;

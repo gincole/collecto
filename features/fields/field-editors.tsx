@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 
@@ -586,7 +586,7 @@ export function AddFieldDialog({
                       type="button"
                       variant="ghost"
                     >
-                      <Trash2 aria-hidden="true" />
+                      <X aria-hidden="true" />
                     </Button>
                   ) : null}
                 </div>

@@ -554,6 +554,14 @@ Add a local schema draft to the existing wizard for Field name/type/required/ord
 
 **Verification:** automated accessibility tests, viewport matrix, keyboard checklist, contrast report, lint, typecheck, build.
 
+### M7-T02A Standardize destructive actions and notification UX
+
+- **Depends on:** M7-T01
+- **Scope:** User-requested consistency correction for delete controls, transient top toasts, and custom form validation across existing flows.
+- **Expected commit:** `fix(ux)`
+
+Use shared deletion triggers/menu links and permanent-confirmation styling while preserving exact impact, ownership checks, typed Collection confirmation, and pending guards. Replace permanent outcome banners with timed animated toasts, pause dismissal during interaction, preserve inline errors, and audit every form for native validation popovers. Verify shared controls, timers, focus, validation dispatch, and existing deletion/recovery flows with unit tests; no browser tests per user instruction. Record the separate Browse-pending and scrollbar-gutter gaps under M7-T02.
+
 ### M7-T03 Complete security and failure-path test suite
 
 - **Critical path:** No, but release-blocking P0

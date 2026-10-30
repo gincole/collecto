@@ -1,7 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useEffect, useRef, useTransition } from "react";
+import {
+  useActionState,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input, Textarea } from "@/components/ui/form-control";
@@ -10,6 +16,7 @@ import { DATABASE_LIMITS } from "@/lib/validation/limits";
 import type { ItemFieldDefinition, ItemRecord } from "./types";
 import { ImageUploader } from "./image-uploader";
 import { FeedbackMessage } from "@/components/shared/feedback-message";
+import { useFeedback } from "@/components/shared/feedback";
 
 export type ItemFormState = {
   fieldErrors?: Record<string, string>;
@@ -108,16 +115,25 @@ export function ItemForm({
   item?: ItemRecord;
   mode: "create" | "edit";
 }) {
-  const [state, formAction, pending] = useActionState(action, {
+  const [serverState, formAction, pending] = useActionState(action, {
     status: "idle",
   });
+  const [clientState, setClientState] = useState<ItemFormState>();
+  const state = clientState ?? serverState;
+  const notify = useFeedback();
   const [transitionPending, startTransition] = useTransition();
   const isPending = pending || transitionPending;
   const formRef = useRef<HTMLFormElement>(null);
   const submittedRef = useRef<FormData | undefined>(undefined);
   useEffect(() => {
-    if (state.status !== "error") return;
-    for (const [name, value] of submittedRef.current?.entries() ?? []) {
+    if (state.status !== "error" || isPending) return;
+    notify(
+      state.message ?? "Review the highlighted fields and try again.",
+      "error",
+    );
+    for (const [name, value] of clientState
+      ? []
+      : (submittedRef.current?.entries() ?? [])) {
       const control = formRef.current?.elements.namedItem(name);
       if (
         (control instanceof HTMLInputElement ||
@@ -132,12 +148,32 @@ export function ItemForm({
       : undefined;
     const target = first ? formRef.current?.elements.namedItem(first) : null;
     if (target instanceof HTMLElement) target.focus();
-  }, [state]);
+  }, [state, notify, clientState, isPending]);
   return (
     <form
+      noValidate
       className="w-full min-w-0 space-y-6 pb-28 sm:pb-0"
       onSubmit={(event) => {
         event.preventDefault();
+        if (isPending) return;
+        // Native number/date controls serialize unfinished input as empty. Preserve it for custom errors.
+        const badInputs = Array.from(event.currentTarget.elements).filter(
+          (control): control is HTMLInputElement =>
+            control instanceof HTMLInputElement && control.validity.badInput,
+        );
+        if (badInputs.length) {
+          setClientState({
+            status: "error",
+            fieldErrors: Object.fromEntries(
+              badInputs.map((control) => [
+                control.name,
+                "Enter a valid value.",
+              ]),
+            ),
+          });
+          return;
+        }
+        setClientState(undefined);
         const submitted = new FormData(event.currentTarget);
         submittedRef.current = submitted;
         startTransition(() => formAction(submitted));

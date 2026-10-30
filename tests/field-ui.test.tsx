@@ -289,7 +289,7 @@ describe("Field manager", () => {
     expect(dialog).toHaveTextContent("3 items");
     expect(dialog).toHaveTextContent("Uncategorized");
     await user.click(
-      within(dialog).getByRole("button", { name: "Delete option" }),
+      within(dialog).getByRole("button", { name: "Delete permanently" }),
     );
     expect(actions.deleteOption).toHaveBeenCalledWith({
       collectionId,
@@ -458,7 +458,7 @@ describe("Field manager", () => {
       name: "Delete Rating?",
     });
     await user.click(
-      within(reopened).getByRole("button", { name: "Delete field" }),
+      within(reopened).getByRole("button", { name: "Delete permanently" }),
     );
     expect(actions.deleteField).toHaveBeenCalledWith({
       collectionId,

@@ -2,7 +2,8 @@
 
 import { LogOut, UserRound } from "lucide-react";
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+import { useFeedback } from "./feedback";
 
 import { Button } from "@/components/ui/button";
 import type {
@@ -16,9 +17,14 @@ type AppHeaderProps = {
 };
 
 export function AppHeader({ email, logoutAction }: AppHeaderProps) {
+  const notify = useFeedback();
   const [logoutState, formAction, pending] = useActionState(logoutAction, {
     status: "idle",
   } satisfies AuthActionState);
+  useEffect(() => {
+    if (logoutState.status === "error" && logoutState.message)
+      notify(logoutState.message, "error");
+  }, [logoutState, notify]);
 
   return (
     <header className="border-border bg-surface/95 sticky top-0 z-20 border-b backdrop-blur">
@@ -42,7 +48,7 @@ export function AppHeader({ email, logoutAction }: AppHeaderProps) {
               <p className="text-foreground-muted truncate px-2 py-2 text-sm">
                 {email}
               </p>
-              <form action={formAction}>
+              <form noValidate action={formAction}>
                 {logoutState.status === "error" ? (
                   <p className="text-error px-2 pb-2 text-sm" role="alert">
                     {logoutState.message}

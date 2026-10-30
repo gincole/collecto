@@ -1,6 +1,5 @@
 "use client";
 
-import { Trash2 } from "lucide-react";
 import {
   useActionState,
   useEffect,
@@ -10,7 +9,9 @@ import {
 } from "react";
 
 import { Button } from "@/components/ui/button";
+import { DeleteButton } from "@/components/shared/delete-button";
 import { FeedbackMessage } from "@/components/shared/feedback-message";
+import { useFeedback } from "@/components/shared/feedback";
 import {
   Dialog,
   DialogClose,
@@ -45,6 +46,7 @@ export function CollectionSettings({
   deleteAction,
   updateAction,
 }: CollectionSettingsProps) {
+  const notify = useFeedback();
   const [name, setName] = useState(collection.name);
   const [description, setDescription] = useState(collection.description ?? "");
   const [confirmationName, setConfirmationName] = useState("");
@@ -74,7 +76,23 @@ export function CollectionSettings({
 
   useEffect(() => {
     if (updateState.fieldErrors?.name) nameRef.current?.focus();
-  }, [updateState]);
+    else if (updateState.fieldErrors?.description)
+      document.getElementById("collection-description")?.focus();
+    if (updateState.status === "success") notify("Collection settings saved.");
+    if (updateState.status === "error")
+      notify(
+        updateState.message ?? "Review the highlighted fields and try again.",
+        "error",
+      );
+  }, [updateState, notify]);
+  useEffect(() => {
+    if (deleteState.status === "error")
+      notify(
+        deleteState.message ??
+          "Review the deletion confirmation and try again.",
+        "error",
+      );
+  }, [deleteState, notify]);
 
   function handleDeleteOpenChange(open: boolean) {
     if (deletePending) return;
@@ -99,7 +117,7 @@ export function CollectionSettings({
             Update the name and description shown in your Library.
           </p>
         </div>
-        <form action={updateFormAction} className="space-y-5">
+        <form noValidate action={updateFormAction} className="space-y-5">
           <div className="space-y-2">
             <label className="text-label block" htmlFor="collection-name">
               Collection name
@@ -154,7 +172,7 @@ export function CollectionSettings({
               </p>
             ) : null}
           </div>
-          {updateState.message ? (
+          {updateState.status === "error" && updateState.message ? (
             <FeedbackMessage
               kind={updateState.status === "error" ? "error" : "success"}
             >
@@ -200,10 +218,7 @@ export function CollectionSettings({
           </div>
           <Dialog onOpenChange={handleDeleteOpenChange} open={deleteOpen}>
             <DialogTrigger asChild>
-              <Button variant="destructive">
-                <Trash2 aria-hidden="true" />
-                Delete collection
-              </Button>
+              <DeleteButton aria-label="Delete collection" />
             </DialogTrigger>
             <DialogContent
               role="alertdialog"
@@ -229,7 +244,7 @@ export function CollectionSettings({
                   . There is no trash or undo.
                 </DialogDescription>
               </div>
-              <form action={deleteFormAction} className="space-y-4">
+              <form noValidate action={deleteFormAction} className="space-y-4">
                 {populated ? (
                   <div className="space-y-2">
                     <label
@@ -283,14 +298,12 @@ export function CollectionSettings({
                       Cancel
                     </Button>
                   </DialogClose>
-                  <Button
-                    aria-busy={deletePending}
+                  <DeleteButton
+                    confirm
+                    pending={deletePending}
                     disabled={!deletionConfirmed || deletePending}
                     type="submit"
-                    variant="destructive"
-                  >
-                    {deletePending ? "Deleting…" : "Delete permanently"}
-                  </Button>
+                  />
                 </div>
               </form>
             </DialogContent>

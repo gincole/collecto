@@ -141,6 +141,14 @@ Test 320, 375, 640, 768, 1024, and 1440 px. Never allow a saved column preferenc
 - Link text must remain distinguishable without relying only on color.
 - Icon-only buttons require accessible names and tooltips where meaning is not obvious.
 
+### Destructive actions and notifications
+
+- Persisted deletion triggers use `DeleteButton`: Trash icon, visible Delete label, contextual accessible name, 44 px height, 14 px text, shared padding/radius, and outlined danger styling. Confirmation uses the same sizing with a filled danger surface and Delete permanently label. Pending/checking states disable the action. Collection/Item menus use `DeleteMenuLink` with matching icon, type, touch height, and danger color in the menu layout.
+- Removing an unsaved draft option uses an X rather than a permanent-delete icon.
+- Transient outcomes use one top-center toast host below the top navigation. Toasts enter/exit vertically, do not reflow the page, and dismiss after 4 seconds (success/info) or 6 seconds (error), with a 180 ms exit. Hover, keyboard focus, and window blur pause dismissal; reduced-motion rules suppress animation. Users can dismiss manually.
+- Actionable field/form errors and blocking page errors remain inline until corrected or retried. They are not replaced by a disappearing toast. Forms use `noValidate` to avoid native validation popovers while retaining required/type semantics, server-side validation, error associations, and first-error focus.
+- Toast interaction references: [Radix Toast](https://www.radix-ui.com/primitives/docs/components/toast) and [Fluent 2 toast guidance](https://fluent2.microsoft.design/components/web/react/core/toast/usage). Timing and placement above are the project's selected implementation defaults.
+
 ### Inputs
 
 - Label above control, associated programmatically.

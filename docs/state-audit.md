@@ -20,10 +20,15 @@ Audited on 30 October 2026 against the Product and Technical Specification, UX/U
 - Shared buttons do not shrink in flex layouts. The Delete section's text can wrap, preserving the action label and icon.
 - Collection setup, Settings, and Item pages use a 64 rem form container; gallery/Library retain the 80 rem content container and Auth retains its 27.5 rem card. These widths intentionally follow content roles. Form headings and content now align.
 - Reused semantic surface, border, radius, error, and success tokens for image controls and feedback. Kept existing restrained transitions and reduced-motion support instead of adding decorative animation.
-- Notifications have success/error icons, appropriate live roles, and a dismiss control. They remain in document flow so they do not cover Save or navigation controls. Failures also stay next to the active form or dialog.
+- M7-T02A replaces the original permanent notification region with a timed top toast, retaining live roles, manual dismissal, interaction pauses, and reduced-motion support. Inline errors remain next to the active form or dialog; successful Settings/Gallery saves no longer leave permanent banners.
 - Redirect notices use fixed, allowlisted codes and are removed from the URL after consumption; arbitrary URL text is not rendered as feedback.
 
 ## Remaining work
+
+- M7-T02A audits all seven form locations: Auth, Collection wizard, Collection identity, Collection deletion, Item Add/Edit, Item deletion, and Logout. They use `noValidate`; server validation and inline errors remain authoritative. There are no `window.alert`, `window.confirm`, or `window.prompt` calls in application code. Field/Option and Gallery editors use explicit action buttons rather than native form submission. All persisted delete actions now share the documented destructive-control contract.
+- Item forms check native `validity.badInput` before serializing Number/Rating/Date controls. Unfinished input is retained for a custom inline error and cannot silently clear an optional saved value.
+- Still missing: immediate pending feedback/skeletons for Browse query-parameter navigation. The existing Collection route skeleton does not establish coverage of those transitions. Investigate serial/redundant data reads without weakening ownership checks.
+- Still missing: stable scrollbar gutter across short and long pages to avoid centered-header movement. These two reported gaps are M7-T02 work; they are not claimed fixed by M7-T01 or M7-T02A.
 
 - M7-T01A: customize preset Fields before final Create. The current wizard is an explicitly described preview; adding editing requires a separate validated creation contract and atomic persistence tests. Persisted custom Field types remain immutable under B02.
 - M7-T02: complete the cross-screen typography, spacing, focus, contrast, touch-target, and responsive conformance audit. Static/unit checks cannot establish final visual quality. User browser testing can supply additional evidence while automated browser testing remains excluded.

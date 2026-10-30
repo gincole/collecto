@@ -7,6 +7,7 @@ import { useActionState, useEffect, useRef, useState } from "react";
 import { ConfirmDialog, PresetArtwork } from "@/components/shared";
 import { Button } from "@/components/ui/button";
 import { FeedbackMessage } from "@/components/shared/feedback-message";
+import { useFeedback } from "@/components/shared/feedback";
 import { Input, Textarea } from "@/components/ui/form-control";
 import { cn } from "@/lib/utils/cn";
 
@@ -22,6 +23,7 @@ const initialState: CollectionWizardState = { status: "idle" };
 type CollectionWizardProps = { createAction: CollectionWizardAction };
 
 export function CollectionWizard({ createAction }: CollectionWizardProps) {
+  const notify = useFeedback();
   const router = useRouter();
   const [state, formAction, pending] = useActionState(
     createAction,
@@ -41,7 +43,12 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
 
   useEffect(() => {
     if (state.fieldErrors?.name) nameInputRef.current?.focus();
-  }, [state.fieldErrors?.name]);
+    if (state.status === "error")
+      notify(
+        state.message ?? "Review the highlighted fields and try again.",
+        "error",
+      );
+  }, [state, notify]);
 
   function selectPreset(key: CollectionPresetKey) {
     setPresetKey(key);

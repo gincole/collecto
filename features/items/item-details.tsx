@@ -1,12 +1,14 @@
 "use client";
 
-import { ImageOff, Star, Trash2 } from "lucide-react";
+import { ImageOff, Star } from "lucide-react";
 import Link from "next/link";
-import { useActionState, useRef, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { Button } from "@/components/ui/button";
+import { DeleteButton } from "@/components/shared/delete-button";
 import { FeedbackMessage } from "@/components/shared/feedback-message";
+import { useFeedback } from "@/components/shared/feedback";
 
 import type { ItemFieldDefinition, ItemRecord } from "./types";
 
@@ -126,11 +128,16 @@ export function ItemDetails({
   item: ItemRecord;
 }) {
   const rows = getItemDetailRows(item, fields);
+  const notify = useFeedback();
   const [dialogOpen, setDialogOpen] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const [state, formAction, pending] = useActionState(deleteAction, {
     status: "idle",
   });
+  useEffect(() => {
+    if (state.status === "error" && state.message)
+      notify(state.message, "error");
+  }, [state, notify]);
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:items-start">
       <ImagePanel item={item} />
@@ -208,19 +215,17 @@ export function ItemDetails({
               Edit item
             </Link>
           </Button>
-          <Button
+          <DeleteButton
+            aria-label="Delete item"
             onClick={() => setDialogOpen(true)}
             type="button"
-            variant="ghost"
-          >
-            <Trash2 aria-hidden="true" className="size-4" /> Delete item
-          </Button>
+          />
         </div>
-        <form action={formAction} ref={formRef}>
+        <form noValidate action={formAction} ref={formRef}>
           <input name="collectionId" type="hidden" value={collectionId} />
           <input name="itemId" type="hidden" value={item.id} />
           <ConfirmDialog
-            confirmLabel="Delete item"
+            confirmLabel="Delete permanently"
             description="This permanently deletes the Item and schedules its private image for removal. This cannot be undone."
             error={state.message}
             isPending={pending}

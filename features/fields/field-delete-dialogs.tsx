@@ -1,10 +1,10 @@
 "use client";
 
-import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
+import { DeleteButton } from "@/components/shared/delete-button";
 import {
   Dialog,
   DialogClose,
@@ -62,18 +62,10 @@ function DeleteSchemaDialog({ target }: { target: DeleteTarget }) {
     });
   }
 
-  const subjectLabel = target.subject.toLowerCase();
   return (
     <Dialog onOpenChange={handleOpenChange} open={open}>
       <DialogTrigger asChild>
-        <Button
-          aria-label={`Delete ${target.name}`}
-          size="icon"
-          type="button"
-          variant="ghost"
-        >
-          <Trash2 aria-hidden="true" />
-        </Button>
+        <DeleteButton aria-label={`Delete ${target.name}`} type="button" />
       </DialogTrigger>
       <DialogContent
         role="alertdialog"
@@ -116,19 +108,14 @@ function DeleteSchemaDialog({ target }: { target: DeleteTarget }) {
               Cancel
             </Button>
           </DialogClose>
-          <Button
-            aria-busy={pending}
+          <DeleteButton
+            confirm
+            checking={pending && impact === undefined}
+            pending={pending && impact !== undefined}
             disabled={pending || impact === undefined}
             onClick={handleDelete}
             type="button"
-            variant="destructive"
-          >
-            {pending
-              ? impact === undefined
-                ? "Checking…"
-                : "Deleting…"
-              : `Delete ${subjectLabel}`}
-          </Button>
+          />
         </div>
       </DialogContent>
     </Dialog>

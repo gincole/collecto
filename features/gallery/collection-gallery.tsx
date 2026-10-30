@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { EmptyState, PresetArtwork } from "@/components/shared";
 import { Button } from "@/components/ui/button";
+import { DeleteMenuLink } from "@/components/shared/delete-button";
 import type { CollectionRecord } from "@/features/collections/models";
 import type { ItemRecord } from "@/features/items/types";
 import { GalleryGrid } from "./gallery-grid";
@@ -49,14 +50,12 @@ export function CollectionHeader({
             >
               Collection settings
             </Link>
-            <Link
-              className="touch-target text-destructive hover:bg-surface-muted focus-ring flex items-center rounded-lg px-3 text-sm"
+            <DeleteMenuLink
+              aria-label="Delete collection"
               href={
                 `/collections/${collection.id}/settings#delete-collection` as Route
               }
-            >
-              Delete collection
-            </Link>
+            />
           </div>
         </details>
       </div>

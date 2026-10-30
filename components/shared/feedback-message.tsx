@@ -5,9 +5,11 @@ import { cn } from "@/lib/utils/cn";
 export function FeedbackMessage({
   children,
   kind = "success",
+  className,
 }: {
   children: ReactNode;
   kind?: "success" | "error" | "info";
+  className?: string;
 }) {
   const Icon =
     kind === "error" ? CircleAlert : kind === "success" ? CheckCircle2 : Info;
@@ -22,6 +24,7 @@ export function FeedbackMessage({
           : kind === "success"
             ? "border-success/30 bg-success/5 text-success"
             : "border-border bg-surface-muted text-foreground",
+        className,
       )}
     >
       <Icon aria-hidden="true" className="mt-0.5 size-5 shrink-0" />
