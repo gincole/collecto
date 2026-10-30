@@ -755,3 +755,11 @@ Exclude deployment/tool caches from Git, formatting, ESLint and TypeScript;
 provide a checked-in verify:deployment gate and reproduce cloud artifact shapes
 in an isolated source-copy check. See docs/deployment-build.md for acceptance,
 commands and limitations. This repair does not close M8-T02 or certify production.
+
+## M8-T03B: Production-host component test runtime
+
+Repair the reported React.act failure after M8-T03A by pinning only Vitest workers
+to NODE_ENV=test. Reproduce the production parent environment, preserve the real
+production application build, keep every validation gate and replay the full
+pipeline with cloud cache fixtures. See docs/deployment-build.md for evidence and
+acceptance. No new deployment, runtime smoke test or release certification.

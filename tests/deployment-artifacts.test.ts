@@ -86,6 +86,7 @@ describe("deployment artifact boundaries", () => {
     }
   });
 
+  // Cold Next/TypeScript ESLint initialization can exceed a unit-test timeout.
   it("keeps generated caches out of ESLint while checking application source", async () => {
     const eslint = new ESLint({ cwd: root });
     for (const file of generated)
@@ -95,5 +96,5 @@ describe("deployment artifact boundaries", () => {
         path.join(root, "features/collections/models.ts"),
       ),
     ).toBe(false);
-  });
+  }, 15_000);
 });

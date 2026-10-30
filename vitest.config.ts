@@ -12,6 +12,8 @@ export default defineConfig({
     },
   },
   test: {
+    // Deploy hosts can supply production; React's act API is test-only.
+    env: { NODE_ENV: "test" },
     environment: "jsdom",
     include: ["tests/**/*.test.{ts,tsx}"],
     setupFiles: ["./tests/setup.ts"],

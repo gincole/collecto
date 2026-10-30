@@ -69,3 +69,37 @@ Git ignore probes and focused independent review pass.
 This is local Windows evidence for the reported failure, not a completed Vercel
 redeployment or runtime/mobile smoke test. No remote push, hosted environment
 change, deployment, database access or browser test was performed by the agent.
+
+## M8-T03B: Explicit test runtime under a production build host
+
+The next Vercel attempt of e92ae2c passed formatting, lint and TypeScript, then
+failed at Vitest with `React.act is not a function` from React's production bundle.
+The initial local replay did not inherit NODE_ENV=production. The installed Vitest
+sets NODE_ENV=test only when no value already exists; the deployment host's value
+therefore selected the React production runtime during component tests.
+
+Scope: set NODE_ENV=test in Vitest's worker-only `test.env` configuration. Do not
+change the Vercel project environment or the application build, disable checks,
+mock React.act or skip tests. This follows Vitest's documented per-test env option:
+https://vitest.dev/config/env . Application, security and product behavior stay
+unchanged.
+
+Acceptance: with the parent NODE_ENV=production, the regression verifies the worker
+sees test mode, React.act exists and a real component renders. The complete source
+verification gate must pass with production/CI/Vercel environment flags, while the
+parent and subsequent Next build retain production mode. Retain the cache-shaped
+fixture files from M8-T03A. No browser or hosted tests are authorized by this fix.
+
+Final M8-T03B evidence: the regression fails before the worker override and passes
+afterward with parent NODE_ENV=production. The isolated full verification gate
+passes route generation, formatting, lint, types, 337 tests across 52 files and
+Next production build with NODE_ENV=production, CI=1, VERCEL=1 and
+VERCEL_ENV=production. The outer shell still reports production afterward.
+
+The replay also exposed a cold ESLint configuration-load timeout in the existing
+infrastructure regression; only that integration check now allows 15 seconds.
+Assertions, component-test timeouts and checks remain intact. Independent review
+found no actionable issue. This is local Windows evidence; a successful hosted
+retry and runtime/mobile acceptance remain pending. No push or deployment was
+performed by the agent. The existing explicit dashboard command chain also uses
+this Vitest configuration, so it need not change for this fix.
