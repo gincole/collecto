@@ -1055,3 +1055,17 @@ Add Item action alignment, Gallery ordering/icons/radios/keyboard/size and exist
 preview/save/axe checks; full deployment gate, independent review and staged
 secret/diff inspection. No browser testing, dependencies or schema changes. One
 focused fix(ui) commit, no push.
+
+## M7-T02V: Equal-width Gallery setting controls
+
+User-approved refinement of M7-T02U (dependency complete). All six Gallery
+appearance rows share the same right-side control width: full width below the
+small breakpoint, 20 rem alongside labels above it. Sort fills its container;
+each choice group divides its container equally between options. Reuse the
+standard modal Button corners and 44 px height. Preserve keyboard navigation,
+selection, draft validation, preview and persistence. Narrow-screen gaps and
+padding must keep all five choices inside the modal body at 320 px.
+
+Verification: Gallery component regression plus the full deployment gate,
+independent review and staged diff/secret inspection. No browser tests,
+dependencies or schema changes. One focused Conventional Commit, no push.

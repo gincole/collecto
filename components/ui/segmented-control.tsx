@@ -23,7 +23,7 @@ export function SegmentedControl({
     <div
       role="radiogroup"
       aria-label={label}
-      className="flex min-w-0 flex-wrap justify-end gap-1"
+      className="grid w-full min-w-0 auto-cols-fr grid-flow-col gap-0.5 sm:gap-1"
     >
       {options.map((option, index) => (
         <Button
@@ -37,7 +37,7 @@ export function SegmentedControl({
           disabled={disabled}
           variant="outline"
           className={cn(
-            "rounded-pill min-w-11 px-3",
+            "w-full min-w-0 px-1 sm:px-3",
             option.value === value && "border-selection-border bg-art-lavender",
           )}
           onClick={() => onChange(option.value)}

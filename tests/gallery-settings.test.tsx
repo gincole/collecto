@@ -146,7 +146,9 @@ describe("Gallery Settings draft", () => {
       />,
     );
     await user.click(screen.getByRole("button", { name: "Gallery settings" }));
-    const rows = document.querySelectorAll("[data-gallery-setting]");
+    const rows = document.querySelectorAll<HTMLElement>(
+      "[data-gallery-setting]",
+    );
     expect(
       Array.from(rows).map((row) => row.getAttribute("data-gallery-setting")),
     ).toEqual([
@@ -157,8 +159,23 @@ describe("Gallery Settings draft", () => {
       "Spacing",
       "Show details",
     ]);
-    for (const row of rows)
+    for (const row of rows) {
       expect(row.querySelector("svg[aria-hidden=true]")).not.toBeNull();
+      expect(row).toHaveClass("sm:grid-cols-[minmax(0,1fr)_minmax(0,20rem)]");
+      const control = within(row).getByRole(
+        row.getAttribute("data-gallery-setting") === "Sort order"
+          ? "combobox"
+          : "radiogroup",
+      );
+      expect(control).toHaveClass("w-full");
+      if (control.getAttribute("role") === "radiogroup") {
+        expect(control).toHaveClass("grid", "auto-cols-fr", "grid-flow-col");
+        for (const choice of within(control).getAllByRole("radio")) {
+          expect(choice).toHaveClass("rounded-control", "w-full", "min-w-0");
+          expect(choice).not.toHaveClass("rounded-pill");
+        }
+      }
+    }
     expect(screen.getByRole("combobox", { name: "Sort order" })).toBeVisible();
     expect(screen.queryByRole("combobox", { name: "Columns" })).toBeNull();
     const columns = screen.getByRole("radiogroup", { name: "Columns" });

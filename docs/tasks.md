@@ -253,3 +253,15 @@ Reported by the user on 30 October 2026. The M7-T01 state audit and implementati
   shared 44 px action/icon heights. Independent review and staged diff/secret
   checks passed. No browser testing.
 - Commit: SELF (this commit).
+
+## M7-T02V: Equal-width Gallery setting controls
+
+- Status: Complete; dependency M7-T02U is complete.
+- Scope/acceptance: see M7-T02V in `docs/implementation-plan.md`.
+- Changes: all six controls share a responsive width; choice buttons divide that
+  width evenly and reuse standard modal Button corners and heights.
+- Verification: Gallery regression passed (13 tests). `corepack pnpm
+verify:deployment` passed formatting, lint, strict TypeScript, all 364 tests
+  across 54 files and the production build. Independent review and staged
+  diff/secret checks passed. No browser testing.
+- Commit: SELF (this commit).

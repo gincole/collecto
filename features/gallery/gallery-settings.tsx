@@ -60,7 +60,7 @@ function SettingRow({
   return (
     <div
       data-gallery-setting={label}
-      className="grid min-w-0 items-center gap-3 sm:grid-cols-[minmax(0,1fr)_auto]"
+      className="grid min-w-0 items-center gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,20rem)]"
     >
       <span className="text-label inline-flex items-center gap-2">
         <Icon aria-hidden="true" className="size-4 shrink-0" />
@@ -244,7 +244,7 @@ export function GallerySettings({
               <SettingRow label="Sort order" icon={ArrowUpDown}>
                 <Select
                   aria-label="Sort order"
-                  className="w-full sm:w-48"
+                  className="w-full"
                   value={`${safeDraft.sortBy}:${safeDraft.sortDirection}`}
                   onChange={(event) => {
                     const [sortBy, sortDirection] =
