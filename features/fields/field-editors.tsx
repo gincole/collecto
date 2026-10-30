@@ -282,8 +282,12 @@ export function EditFieldDialog({
   return (
     <Dialog onOpenChange={handleOpenChange} open={open}>
       <DialogTrigger asChild>
-        <Button type="button" variant="outline">
-          Edit {field.name}
+        <Button
+          aria-label={`Edit ${field.name}`}
+          type="button"
+          variant="outline"
+        >
+          Edit
         </Button>
       </DialogTrigger>
       <DialogContent

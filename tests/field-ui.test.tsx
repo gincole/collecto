@@ -81,6 +81,87 @@ function createActions(
 }
 
 describe("Field manager", () => {
+  it("animates an arrow swap even before the first drag", async () => {
+    mockRowRects();
+    const user = userEvent.setup();
+    render(
+      <FieldManager
+        fields={fields}
+        collectionId={collectionId}
+        actions={createActions()}
+      />,
+    );
+    const styles: string[] = [];
+    const observer = new MutationObserver((records) => {
+      for (const record of records)
+        if (record.oldValue) styles.push(record.oldValue);
+    });
+    observer.observe(screen.getByRole("region", { name: "Custom fields" }), {
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["style"],
+      attributeOldValue: true,
+    });
+    await user.click(screen.getByRole("button", { name: "Move Genre down" }));
+    observer.disconnect();
+    expect(
+      styles.some((style) => /translate3d\(0px, -?100px/.test(style)),
+    ).toBe(true);
+    const row = screen
+      .getByRole("button", { name: "Edit Genre" })
+      .closest("li");
+    expect(row?.style.transition).toMatch(/transform (?!0ms)\d+ms/);
+  });
+
+  it("keeps arrow swaps unanimated when reduced motion is preferred", async () => {
+    vi.stubGlobal("matchMedia", () => ({
+      matches: true,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    }));
+    mockRowRects();
+    const user = userEvent.setup();
+    render(
+      <FieldManager
+        fields={fields}
+        collectionId={collectionId}
+        actions={createActions()}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Move Genre down" }));
+    expect(visibleFieldOrder()).toEqual(["Edit Rating", "Edit Genre"]);
+    expect(
+      screen.getByRole("button", { name: "Edit Genre" }).closest("li")?.style
+        .transition,
+    ).toBe("");
+  });
+
+  it("keeps short actions together and truncates names with inline metadata", () => {
+    const longName =
+      "A very long custom field name that must never squeeze the arrow buttons";
+    render(
+      <FieldManager
+        fields={[{ ...fields[0], name: longName, required: true }, fields[1]]}
+        collectionId={collectionId}
+        actions={createActions()}
+      />,
+    );
+    const edit = screen.getByRole("button", { name: `Edit ${longName}` });
+    expect(edit).toHaveTextContent(/^Edit$/);
+    const actions = edit.closest("[data-field-actions]");
+    expect(actions).not.toBeNull();
+    expect(actions).toContainElement(
+      screen.getByRole("button", { name: `Move ${longName} down` }),
+    );
+    const name = screen.getByText(longName);
+    expect(name).toHaveClass("truncate");
+    expect(name).toHaveAttribute("title", longName);
+    const metadata = screen.getByText("📋 Select (2)");
+    expect(metadata.parentElement).toHaveTextContent("Required");
+    expect(
+      within(metadata.parentElement ?? document.body).getByText("Required"),
+    ).not.toHaveClass("rounded-badge");
+  });
   it("keeps a successful drop when a previous refresh arrived during the drag", async () => {
     const request = Promise.withResolvers<{ status: "success" }>();
     const actions = createActions({ reorderFields: () => request.promise });
@@ -102,7 +183,10 @@ describe("Field manager", () => {
       genreId,
     ]);
   });
-  afterEach(() => vi.restoreAllMocks());
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+  });
   function mockRowRects() {
     vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(
       function (this: HTMLElement) {
@@ -139,7 +223,7 @@ describe("Field manager", () => {
     ]);
     expect(
       document.querySelector("[data-field-drag-preview]"),
-    ).toHaveTextContent("Edit Genre");
+    ).toHaveTextContent("Edit");
     expect(actions.reorderFields).not.toHaveBeenCalled();
     await user.pointer({ keys: "[/MouseLeft]" });
     await waitFor(() =>
@@ -194,7 +278,7 @@ describe("Field manager", () => {
     await user.keyboard(" ");
     const preview = document.querySelector("[data-field-drag-preview]");
     expect(preview).toHaveTextContent("Genre");
-    expect(preview).toHaveTextContent("Edit Genre");
+    expect(preview).toHaveTextContent("Edit");
     expect(preview).toHaveTextContent("Delete");
     expect(preview).toHaveAttribute("aria-hidden", "true");
     expect(screen.getByRole("status")).toHaveTextContent("Genre");
@@ -212,9 +296,10 @@ describe("Field manager", () => {
     ).getByRole("list");
     return within(list)
       .getAllByRole("listitem")
-      .map(
-        (row) =>
-          within(row).getByRole("button", { name: /^Edit / }).textContent,
+      .map((row) =>
+        within(row)
+          .getByRole("button", { name: /^Edit / })
+          .getAttribute("aria-label"),
       );
   }
 
@@ -512,7 +597,7 @@ describe("Field manager", () => {
     ).toBeNull();
 
     const custom = screen.getByRole("region", { name: "Custom fields" });
-    expect(within(custom).getByText("Select · 2 options")).toBeVisible();
+    expect(within(custom).getByText("📋 Select (2)")).toBeVisible();
     expect(within(custom).getAllByText("Rating")[0]).toBeVisible();
     expect(within(custom).getByText("Required")).toBeVisible();
 
@@ -608,7 +693,7 @@ describe("Field manager", () => {
     await user.click(screen.getByRole("button", { name: "Edit Rating" }));
     const editor = screen.getByRole("dialog", { name: "Edit Rating" });
     expect(
-      within(editor).getByText("Rating", { selector: "dd" }),
+      within(editor).getByText("⭐ Rating", { selector: "dd" }),
     ).toBeVisible();
     expect(within(editor).queryByLabelText("Field type")).toBeNull();
     await user.clear(within(editor).getByLabelText("Field name"));

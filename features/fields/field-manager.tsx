@@ -6,6 +6,7 @@ import { createPortal } from "react-dom";
 import {
   DndContext,
   DragOverlay,
+  MeasuringStrategy,
   PointerSensor,
   KeyboardSensor,
   closestCenter,
@@ -170,6 +171,7 @@ function FieldManager({
           </div>
         ) : (
           <DndContext
+            measuring={{ droppable: { strategy: MeasuringStrategy.Always } }}
             accessibility={{
               screenReaderInstructions: {
                 draggable:

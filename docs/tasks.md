@@ -156,3 +156,16 @@ Reported by the user on 30 October 2026. The M7-T01 state audit and implementati
   independent review passed after fixing the deferred-refresh race and naming
   drag announcements. Staged diff/secret checks passed. No browser testing.
 - Commit: SELF (this commit).
+
+## M7-T02O: Protect Field actions and animate arrow swaps
+
+- Status: Complete; dependency M7-T02N is complete.
+- Scope/acceptance/research: see M7-T02O in `docs/implementation-plan.md`.
+- Changes: stable arrow/Edit/Delete group, ellipsis names, short Edit, inline
+  Required, parenthesized Select counts and centralized emoji type labels;
+  always-measured sortable rows enable the first arrow swap animation.
+- Verification: formatting, lint, strict TypeScript, all 358 tests across 54
+  files and the production build passed. First-arrow transform/transition and
+  reduced-motion regressions passed; independent review found no issues.
+  Staged diff/secret inspection passed. No browser testing.
+- Commit: SELF (this commit).

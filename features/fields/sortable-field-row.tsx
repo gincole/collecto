@@ -30,24 +30,30 @@ function FieldRowBody({
 }) {
   return (
     <>
-      <div className="flex min-w-0 items-start gap-2">
+      <div className="flex min-w-0 items-center gap-2">
         {handle}
         <div className="min-w-0">
-          <p className="font-semibold break-words">{field.name}</p>
-          <p className="text-foreground-muted text-sm">
-            {fieldTypeLabels[field.type]}
-            {field.type === "select"
-              ? ` · ${field.options.length} ${field.options.length === 1 ? "option" : "options"}`
-              : ""}
+          <p className="truncate font-semibold" title={field.name}>
+            {field.name}
           </p>
-          {field.required ? (
-            <span className="bg-surface-muted border-border rounded-badge mt-2 inline-flex border px-2 py-0.5 text-xs font-semibold">
-              Required
+          <div className="text-foreground-muted flex flex-wrap items-center gap-x-2 text-sm">
+            <span>
+              {fieldTypeLabels[field.type]}
+              {field.type === "select" ? ` (${field.options.length})` : ""}
             </span>
-          ) : null}
+            {field.required ? (
+              <span className="inline-flex items-center gap-1">
+                <span aria-hidden="true">•</span>
+                Required
+              </span>
+            ) : null}
+          </div>
         </div>
       </div>
-      <div className="flex flex-wrap items-center justify-end gap-1">
+      <div
+        data-field-actions
+        className="flex min-w-0 shrink-0 flex-wrap items-center justify-end gap-1 sm:flex-nowrap"
+      >
         {children}
       </div>
     </>
@@ -139,8 +145,8 @@ export function FieldDragPreview({ field }: { field: Field }) {
         }
       >
         <ReorderButtons disabled label={field.name} />
-        <Button disabled variant="outline">
-          Edit {field.name}
+        <Button disabled aria-label={`Edit ${field.name}`} variant="outline">
+          Edit
         </Button>
         <DeleteButton disabled />
       </FieldRowBody>

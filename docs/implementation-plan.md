@@ -874,3 +874,34 @@ obsolete/latest failures and rollback; stale props while saving; preference
 subscription/cleanup; existing Field/Settings tests; full deployment gate,
 dependency audit, independent review and staged secret/diff inspection. No browser
 checks at user request. One `fix(fields)` commit, no push.
+
+## M7-T02O: Protect Field actions and animate arrow swaps
+
+User's screenshot/review requests a stable right-side action group, ellipsis for
+long Field names, short Edit labels, inline dot Required after the type, Select
+counts in parentheses, and emoji-prefixed Field types everywhere they are shown.
+It also reports arrow swaps still lack visible motion. Depends on M7-T02N.
+
+Keep arrows/Edit/Delete together, prevent desktop wrapping/shrink, and let narrow
+mobile action groups wrap without squeezing 44 px controls. Use the short visible
+Edit label while retaining the full Field name in its accessible label. Truncate
+only the Field name; preserve full text through accessible content/title. Reuse
+one row renderer for the list and overlay. Change the existing shared type-label
+mapping so wizard options, Add Field, immutable types and row summaries agree;
+never change persisted Field type keys or Item field names.
+
+Diagnosis: dnd-kit defaults droppable measurement to WhileDragging, leaving no
+pre-move row rect for an arrow click before dragging. Set measurement to Always
+with existing sortable layout transforms/transitions. Regression must observe
+nonzero inverse transforms and an enabled transition for the first arrow move;
+reduce-motion must still move immediately without animation. Retain the save
+queue, cancellation, focus, errors, pending exit guard and sensor behavior.
+
+Research: [official useSortable transform/transition documentation](https://dndkit.com/legacy/presets/sortable/use-sortable/)
+and installed core 6.3.1 measuring defaults/useDerivedTransform implementation.
+No new dependencies, data/schema changes or unrelated layout work.
+
+Verification: focused layout/metadata and first-arrow animation regressions with
+mocked geometry, existing Field/wizard/dialog tests, full deployment gate,
+independent review and staged diff/secret inspection. No browser checks at user
+request. One `fix(fields)` commit; no push.
