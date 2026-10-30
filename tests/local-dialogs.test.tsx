@@ -213,7 +213,7 @@ describe("ready local dialogs", () => {
     const confirm = screen.getByRole("alertdialog", {
       name: "Discard this collection?",
     });
-    await user.click(within(confirm).getByRole("button", { name: "Cancel" }));
+    await user.click(within(confirm).getByRole("button", { name: "Close" }));
     expect(screen.getByLabelText("Collection name")).toHaveValue("Memories");
     await user.click(screen.getByRole("button", { name: "Create collection" }));
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());

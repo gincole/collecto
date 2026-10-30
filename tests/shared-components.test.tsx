@@ -131,7 +131,8 @@ describe("shared components", () => {
     fireEvent.click(screen.getByRole("button", { name: "Delete permanently" }));
     expect(onConfirm).toHaveBeenCalledOnce();
 
-    fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+    expect(screen.queryByRole("button", { name: "Cancel" })).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Close" }));
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 
@@ -181,13 +182,11 @@ describe("shared components", () => {
     });
     await user.click(trigger);
 
-    const cancel = screen.getByRole("button", { name: "Cancel" });
+    expect(screen.queryByRole("button", { name: "Cancel" })).toBeNull();
     const confirm = screen.getByRole("button", { name: "Delete permanently" });
 
     const back = screen.getByRole("button", { name: "Close" });
     expect(back).toHaveFocus();
-    await user.tab();
-    expect(cancel).toHaveFocus();
     await user.tab();
     expect(confirm).toHaveFocus();
     await user.tab();

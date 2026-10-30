@@ -313,7 +313,7 @@ describe("Collection settings", () => {
       "My Books",
     );
     expect(confirm).toBeEnabled();
-    await user.click(screen.getByRole("button", { name: "Cancel" }));
+    await user.click(screen.getByRole("button", { name: "Close" }));
     expect(trigger).toHaveFocus();
   });
 

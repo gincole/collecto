@@ -279,3 +279,16 @@ verify:deployment` passed formatting, lint, strict TypeScript, all 364 tests
   and Close/discard. Independent review and staged diff/secret checks passed.
   No browser testing; rendered drag geometry was not tested.
 - Commit: SELF (this commit).
+
+## M7-T02X: Remove redundant modal Cancel actions
+
+- Status: Complete; dependency M7-T02W is complete.
+- Scope/acceptance: see M7-T02X in `docs/implementation-plan.md`.
+- Changes: audited modal footers and removed Cancel where Close already exists;
+  kept internal Back, page cancellation and explicit Keep editing choices.
+- Verification: `corepack pnpm verify:deployment` passed formatting, lint,
+  strict TypeScript, all 371 tests across 55 files and production build.
+  Modal Close/focus/absence checks, internal Back, page Cancel and pending
+  guards pass. Independent review and staged diff/secret checks passed.
+  No browser testing.
+- Commit: SELF (this commit).

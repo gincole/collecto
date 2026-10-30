@@ -16,7 +16,6 @@ import { FeedbackMessage } from "@/components/shared/feedback-message";
 import { useFeedback } from "@/components/shared/feedback";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogHeader,
   DialogBody,
@@ -333,15 +332,6 @@ export function CollectionSettings({
               </DialogBody>
               <DialogFooter>
                 <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-                  <DialogClose asChild>
-                    <Button
-                      disabled={deletePending}
-                      type="button"
-                      variant="outline"
-                    >
-                      Cancel
-                    </Button>
-                  </DialogClose>
                   <DeleteButton
                     confirm
                     pending={deletePending}

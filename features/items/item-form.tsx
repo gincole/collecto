@@ -273,7 +273,7 @@ export function ItemForm({
         </div>
       </div>
       <ModalActions>
-        {!(modal && mode === "create") ? (
+        {!modal ? (
           <Button asChild variant="outline">
             <Link
               aria-disabled={isPending}

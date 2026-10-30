@@ -676,6 +676,8 @@ describe("Field manager", () => {
 
     await user.click(screen.getByRole("button", { name: "Add field" }));
     const editor = screen.getByRole("dialog", { name: "Add custom field" });
+    expect(within(editor).queryByRole("button", { name: "Cancel" })).toBeNull();
+    expect(within(editor).getByRole("button", { name: "Close" })).toBeVisible();
     expect(editor).toHaveClass("max-sm:h-dvh");
     await user.type(within(editor).getByLabelText("Field name"), "Mood");
     await chooseOption(
@@ -744,6 +746,8 @@ describe("Field manager", () => {
 
     await user.click(screen.getByRole("button", { name: "Edit Rating" }));
     const editor = screen.getByRole("dialog", { name: "Edit Rating" });
+    expect(within(editor).queryByRole("button", { name: "Cancel" })).toBeNull();
+    expect(within(editor).getByRole("button", { name: "Close" })).toBeVisible();
     expect(editor.querySelector("[data-modal-header]")).toHaveClass(
       "border-b",
       "py-4",
@@ -1001,7 +1005,7 @@ describe("Field manager", () => {
     });
     expect(dialog).toHaveTextContent("2 items");
     expect(dialog).toHaveTextContent("permanently removed");
-    await user.click(within(dialog).getByRole("button", { name: "Cancel" }));
+    await user.click(within(dialog).getByRole("button", { name: "Close" }));
     expect(trigger).toHaveFocus();
 
     await user.click(trigger);

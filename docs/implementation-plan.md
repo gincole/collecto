@@ -1086,3 +1086,19 @@ Verification: focused Gallery component checks for lists, limits, ordering,
 failure preservation, centering and Close/discard; full deployment gate and
 independent review. No browser tests, dependencies or database changes. One
 Conventional Commit with task tracker, no push.
+
+## M7-T02X: Remove redundant modal Cancel actions
+
+User-approved continuation after M7-T02W (complete). Audit all modal footers;
+remove Cancel wherever the shared header already provides Close. Cover standalone
+Add/Edit Field, all modal ItemForm modes and Collection/Field/Option/shared
+confirmation dialogs. Preserve Back for internal screen navigation and page-mode
+Cancel. Shared confirmations no longer add Cancel by default; retain explicitly
+labelled alternatives such as Keep editing. Preserve Escape/backdrop handling,
+unsaved-change prompts, initial non-destructive focus, focus restoration and
+pending guards. No functional scope, dependency or schema changes.
+
+Verification: modal absence and Close assertions, page Cancel preservation,
+confirmation focus trapping/dismissal and pending/destructive regressions; full
+deployment gate, independent review, staged diff/secret scan. No browser tests.
+One Conventional Commit, update task tracker, no push.

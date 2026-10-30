@@ -8,7 +8,6 @@ import { DeleteButton } from "@/components/shared/delete-button";
 import { useFlowBusy } from "@/components/shared/flow-modal";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogHeader,
   DialogBody,
@@ -124,11 +123,6 @@ function DeleteSchemaDialog({
         </DialogBody>
         <DialogFooter>
           <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-            <DialogClose asChild>
-              <Button disabled={pending} type="button" variant="outline">
-                Cancel
-              </Button>
-            </DialogClose>
             <DeleteButton
               confirm
               checking={pending && impact === undefined}

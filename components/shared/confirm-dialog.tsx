@@ -31,7 +31,7 @@ type ConfirmDialogProps = {
 };
 
 function ConfirmDialog({
-  cancelLabel = "Cancel",
+  cancelLabel,
   confirmLabel,
   description,
   error,
@@ -78,11 +78,13 @@ function ConfirmDialog({
         </DialogBody>
         <DialogFooter>
           <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-            <DialogClose asChild>
-              <Button disabled={isPending} type="button" variant="outline">
-                {cancelLabel}
-              </Button>
-            </DialogClose>
+            {cancelLabel ? (
+              <DialogClose asChild>
+                <Button disabled={isPending} type="button" variant="outline">
+                  {cancelLabel}
+                </Button>
+              </DialogClose>
+            ) : null}
             {variant === "destructive" ? (
               <DeleteButton confirm pending={isPending} onClick={onConfirm} />
             ) : (

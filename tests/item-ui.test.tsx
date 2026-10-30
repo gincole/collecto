@@ -3,6 +3,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
+import { FlowModal } from "@/components/shared/flow-modal";
 import { ItemForm } from "@/features/items/item-form";
 import { ItemDetails } from "@/features/items/item-details";
 
@@ -10,6 +11,38 @@ const collectionId = "00000000-0000-4000-8000-000000000001";
 const fieldId = "00000000-0000-4000-8000-000000000010";
 
 describe("Item form", () => {
+  it.each<{ mode: "create" | "edit"; modal: boolean }>([
+    { mode: "create", modal: true },
+    { mode: "edit", modal: true },
+    { mode: "create", modal: false },
+    { mode: "edit", modal: false },
+  ])(
+    "uses Close for $mode modal=$modal while preserving page Cancel",
+    ({ mode, modal }) => {
+      const form = (
+        <ItemForm
+          action={vi.fn()}
+          collectionId={collectionId}
+          fields={[]}
+          mode={mode}
+          modal={modal}
+        />
+      );
+      render(
+        modal ? (
+          <FlowModal title="Item" onClose={vi.fn()}>
+            {form}
+          </FlowModal>
+        ) : (
+          form
+        ),
+      );
+      if (modal) {
+        expect(screen.queryByRole("link", { name: "Cancel" })).toBeNull();
+        expect(screen.getByRole("button", { name: "Close" })).toBeVisible();
+      } else expect(screen.getByRole("link", { name: "Cancel" })).toBeVisible();
+    },
+  );
   it("renders schema fields in order and focuses the first server error", async () => {
     const user = userEvent.setup();
     const action = vi.fn(async () => ({

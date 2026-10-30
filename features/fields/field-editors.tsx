@@ -246,7 +246,7 @@ export function EditFieldForm({
   onCancel,
   onDeleted = onSaved,
   onPendingChange,
-  cancelLabel = "Cancel",
+  cancelLabel,
 }: {
   actions: FieldManagerActions;
   collectionId: string;
@@ -255,7 +255,7 @@ export function EditFieldForm({
   onCancel: () => void;
   onDeleted?: () => void;
   onPendingChange?: (pending: boolean) => void;
-  cancelLabel?: string;
+  cancelLabel?: "Back";
 }) {
   const router = useRouter();
   const [name, setName] = useState(field.name);
@@ -364,15 +364,17 @@ export function EditFieldForm({
         </div>
       </section>
       <ModalActions className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-        <Button
-          disabled={busy}
-          onClick={onCancel}
-          type="button"
-          variant="outline"
-        >
-          {cancelLabel === "Back" ? <ArrowLeft aria-hidden="true" /> : null}
-          {cancelLabel}
-        </Button>
+        {cancelLabel === "Back" ? (
+          <Button
+            disabled={busy}
+            onClick={onCancel}
+            type="button"
+            variant="outline"
+          >
+            <ArrowLeft aria-hidden="true" />
+            Back
+          </Button>
+        ) : null}
         <Button
           aria-busy={pending}
           disabled={busy || !name.trim()}

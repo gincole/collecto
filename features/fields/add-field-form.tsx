@@ -20,14 +20,14 @@ export function AddFieldForm({
   onCancel,
   onCreated,
   onPendingChange,
-  cancelLabel = "Cancel",
+  cancelLabel,
 }: {
   actions: FieldManagerActions;
   collectionId: string;
   onCancel: () => void;
   onCreated: () => void;
   onPendingChange?: (pending: boolean) => void;
-  cancelLabel?: string;
+  cancelLabel?: "Back";
 }) {
   const router = useRouter();
   const [name, setName] = useState("");
@@ -222,19 +222,17 @@ export function AddFieldForm({
         ) : null}
       </div>
       <ModalActions className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-        <Button
-          disabled={pending}
-          onClick={onCancel}
-          type="button"
-          variant="outline"
-        >
-          {cancelLabel === "Back" ? <ArrowLeft aria-hidden="true" /> : null}
-          {cancelLabel === "Back"
-            ? "Back"
-            : createdFieldId
-              ? "Close"
-              : cancelLabel}
-        </Button>
+        {cancelLabel === "Back" ? (
+          <Button
+            disabled={pending}
+            onClick={onCancel}
+            type="button"
+            variant="outline"
+          >
+            <ArrowLeft aria-hidden="true" />
+            Back
+          </Button>
+        ) : null}
         <Button
           aria-busy={pending}
           disabled={pending || !name.trim()}
