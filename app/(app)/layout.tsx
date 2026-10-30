@@ -5,6 +5,8 @@ import { AppHeader } from "@/components/shared/app-header";
 import { FeedbackRegion } from "@/components/shared/feedback";
 import { logoutAction } from "@/features/auth/actions";
 import { createClient } from "@/lib/supabase/server";
+import { serverEnv } from "@/lib/env/server";
+import { DemoNotice } from "@/components/shared/demo-notice";
 
 export default async function ProtectedLayout({
   children,
@@ -21,6 +23,10 @@ export default async function ProtectedLayout({
   return (
     <>
       <AppHeader email={data.user.email} logoutAction={logoutAction} />
+      {serverEnv.DEMO_USER_EMAIL?.toLowerCase() ===
+      data.user.email.toLowerCase() ? (
+        <DemoNotice />
+      ) : null}
       <FeedbackRegion />
       {children}
     </>

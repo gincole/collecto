@@ -189,6 +189,8 @@ Never claim cross-service atomicity.
 
 ## Migration and verification strategy
 
+M8-T01 adds `demo_seed_runs` as an RLS-protected, admin-only idempotency marker. The `seed_demo_library` security-definer function grants execution only to `service_role`, checks the configured Auth UUID/email pair, requires explicit reset confirmation, serializes seed calls, locks owner/Collection/Item rows before the image snapshot, queues private-image cleanup, and replaces only the selected demo owner's data in one transaction. No public route calls it. See `docs/demo-operations.md` for operator setup and reset consequences.
+
 - Use timestamped, forward-only Supabase migrations.
 - Apply migrations to a clean local database before connected environments.
 - Generate TypeScript database types after schema changes and review the diff.

@@ -9,6 +9,12 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      demo_seed_runs: {
+        Row: { owner_id: string; seeded_at: string };
+        Insert: { owner_id: string; seeded_at?: string };
+        Update: { owner_id?: string; seeded_at?: string };
+        Relationships: [];
+      };
       collections: {
         Row: {
           created_at: string;
@@ -239,6 +245,16 @@ export type Database = {
           p_view_config: Json;
         };
         Returns: string;
+      };
+      seed_demo_library: {
+        Args: {
+          p_owner_id: string;
+          p_expected_email: string;
+          p_collections: Json;
+          p_reset?: boolean;
+          p_confirm_owner_id?: string | null;
+        };
+        Returns: Json;
       };
       create_field: {
         Args: {

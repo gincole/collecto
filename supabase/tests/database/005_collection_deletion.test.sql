@@ -123,7 +123,7 @@ select extensions.ok(
 );
 
 update public.storage_cleanup_jobs
-set status = 'processing'
+set status = 'processing', created_at = '-infinity'::timestamptz
 where owner_id = '50000000-0000-0000-0000-000000000001';
 
 set local role service_role;
@@ -131,7 +131,9 @@ set local role service_role;
 select extensions.is(
   (
     select count(*)::integer
-    from public.claim_storage_cleanup_jobs(10, now() + interval '1 minute')
+    from public.claim_storage_cleanup_jobs(100, now() + interval '1 minute') as claimed
+    join public.storage_cleanup_jobs as jobs on jobs.id = claimed.id
+    where jobs.owner_id = '50000000-0000-0000-0000-000000000001'
   ),
   1,
   'A stale processing cleanup job is atomically reclaimed for retry'

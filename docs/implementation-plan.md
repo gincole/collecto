@@ -628,6 +628,8 @@ Use shared deletion triggers/menu links and permanent-confirmation styling while
 
 **Acceptance criteria:** Seed/reset is repeatable, fictional, non-sensitive, and cannot be triggered by a demo visitor.
 
+**Implementation:** `supabase/seed/demo-data.ts` supplies three Collections with six fictional Items each and no images. `scripts/demo.mjs` verifies the configured Auth UUID/email pair and calls a service-role-only transactional RPC. Initial seed refuses an already populated unmarked account; repeat seed preserves edits. Reset requires an exact UUID confirmation, replaces only that user's Collections, queues old image paths through the existing cleanup jobs, and rolls back on any fixture failure. A server-selected shared demo notice explains visibility, writable concurrency and reset behavior. See `docs/demo-operations.md` for private environment setup and user-owned credential/reset responsibilities. No browser or hosted execution is part of implementation verification.
+
 **Verification:** clean seed, mutate, reset, and compare expected counts; secret scan; two-session smoke test.
 
 ### M8-T02 Complete README and release verification

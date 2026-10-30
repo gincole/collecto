@@ -29,7 +29,8 @@ select extensions.is(
 );
 reset role;
 select extensions.is(
-  (select count(*)::integer from public.storage_cleanup_jobs where status = 'pending'),
+  (select count(*)::integer from public.storage_cleanup_jobs where status = 'pending'
+    and owner_id = '80000000-0000-4000-8000-000000000001'),
   1,
   'image cleanup is durably queued in the delete transaction'
 );
