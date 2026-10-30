@@ -75,10 +75,8 @@ export default async function CollectionPage({
                 </p>
               ) : null}
               <Button asChild className="mt-3" size="sm" variant="outline">
-                <Link
-                  href={`/collections/${id}/items/${item.id}/edit` as Route}
-                >
-                  Edit {item.title}
+                <Link href={`/collections/${id}/items/${item.id}` as Route}>
+                  View {item.title}
                 </Link>
               </Button>
             </li>

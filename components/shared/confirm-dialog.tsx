@@ -16,6 +16,7 @@ type ConfirmDialogProps = {
   cancelLabel?: string;
   confirmLabel: string;
   description: ReactNode;
+  error?: ReactNode;
   isPending?: boolean;
   onConfirm: () => void;
   onOpenChange: (open: boolean) => void;
@@ -29,6 +30,7 @@ function ConfirmDialog({
   cancelLabel = "Cancel",
   confirmLabel,
   description,
+  error,
   isPending = false,
   onConfirm,
   onOpenChange,
@@ -46,6 +48,11 @@ function ConfirmDialog({
           <DialogDescription className="text-foreground-muted text-base leading-6">
             {description}
           </DialogDescription>
+          {error ? (
+            <p className="text-error text-sm" role="alert">
+              {error}
+            </p>
+          ) : null}
         </div>
         <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
           <DialogClose asChild>

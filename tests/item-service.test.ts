@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import {
   createItem,
+  deleteItem,
   getItem,
   updateItem,
   type ItemGateway,
@@ -25,7 +26,14 @@ const fields = [
 function gateway(overrides: Partial<ItemGateway> = {}): ItemGateway {
   return {
     createOwned: vi.fn(async () => ({ data: { id: itemId }, error: null })),
-    deleteOwned: vi.fn(async () => ({ data: { id: itemId }, error: null })),
+    deleteOwned: vi.fn(async () => ({
+      data: {
+        cleanupJobId: "job-1",
+        id: itemId,
+        imagePath: "private/path.png",
+      },
+      error: null,
+    })),
     getCollectionSchemaOwned: vi.fn(async () => ({
       data: { fields, id: collectionId, name: "Memories" },
       error: null,
@@ -97,5 +105,21 @@ describe("Item server operations", () => {
       userId,
       expect.objectContaining({ collectionId, itemId }),
     );
+  });
+
+  it("returns durable image cleanup information from an owned delete", async () => {
+    const store = gateway();
+    await expect(deleteItem({ collectionId, itemId }, store)).resolves.toEqual({
+      data: {
+        cleanupJobId: "job-1",
+        id: itemId,
+        imagePath: "private/path.png",
+      },
+      status: "success",
+    });
+    expect(store.deleteOwned).toHaveBeenCalledWith(userId, {
+      collectionId,
+      itemId,
+    });
   });
 });

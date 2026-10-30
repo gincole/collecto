@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import type { Route } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { createItemGateway } from "./gateway";
 import { createItemImageGateway } from "./image-gateway";
@@ -12,7 +13,8 @@ import {
 } from "./image-service";
 import { validateItemImage } from "./image-validation";
 import type { ItemFormState } from "./item-form";
-import { createItem, updateItem } from "./service";
+import type { DeleteItemState } from "./item-details";
+import { createItem, deleteItem, updateItem } from "./service";
 
 function valuesFrom(formData: FormData) {
   const values: Record<string, FormDataEntryValue> = {};
@@ -111,6 +113,41 @@ export async function createItemFromFormAction(
   revalidatePath(`/collections/${collectionId}`);
   redirect(`/collections/${collectionId}`);
 }
+
+export async function deleteItemFromDetailsAction(
+  _previous: DeleteItemState,
+  formData: FormData,
+): Promise<DeleteItemState> {
+  const collectionId = String(formData.get("collectionId") ?? "");
+  const itemId = String(formData.get("itemId") ?? "");
+  const client = await createClient();
+  const result = await deleteItem(
+    { collectionId, itemId },
+    createItemGateway(client),
+  );
+  if (result.status !== "success")
+    return {
+      message:
+        result.status === "unauthorized"
+          ? "Your session has ended. Log in and try again."
+          : result.status === "not_found"
+            ? "This Item is no longer available."
+            : "Could not delete the Item. Try again.",
+      status: "error",
+    };
+
+  if (result.data.imagePath && result.data.cleanupJobId) {
+    const imageGateway = createItemImageGateway(client);
+    try {
+      await imageGateway.removeObject(result.data.imagePath);
+      await imageGateway.completeCleanup(result.data.cleanupJobId);
+    } catch {
+      // The durable cleanup job remains pending for the protected retry runner.
+    }
+  }
+  revalidatePath(`/collections/${collectionId}`);
+  redirect(`/collections/${collectionId}`);
+}
 export async function updateItemFromFormAction(
   _previous: ItemFormState,
   formData: FormData,
@@ -144,5 +181,5 @@ export async function updateItemFromFormAction(
       );
   }
   revalidatePath(`/collections/${collectionId}`);
-  redirect(`/collections/${collectionId}`);
+  redirect(`/collections/${collectionId}/items/${itemId}` as Route);
 }

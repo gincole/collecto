@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import { ItemForm } from "@/features/items/item-form";
+import { ItemDetails } from "@/features/items/item-details";
 
 const collectionId = "00000000-0000-4000-8000-000000000001";
 const fieldId = "00000000-0000-4000-8000-000000000010";
@@ -85,5 +86,62 @@ describe("Item form", () => {
     expect(
       screen.getByLabelText<HTMLInputElement>("Item image").files?.[0],
     ).toBe(image);
+  });
+});
+
+describe("Item details", () => {
+  it("shows a neutral no-image state and secondary edit/delete actions", () => {
+    render(
+      <ItemDetails
+        collectionId={collectionId}
+        fields={[]}
+        item={{
+          collectionId,
+          createdAt: "2026-10-30T00:00:00Z",
+          description: null,
+          id: "00000000-0000-4000-8000-000000000002",
+          imagePath: null,
+          title: "A memory",
+          updatedAt: "2026-10-30T00:00:00Z",
+          values: {},
+        }}
+      />,
+    );
+    expect(screen.getByText("No image")).toBeVisible();
+    expect(screen.getByRole("link", { name: "Edit item" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Delete item" })).toBeVisible();
+  });
+
+  it("keeps deletion failures perceivable inside the confirmation dialog", async () => {
+    const user = userEvent.setup();
+    render(
+      <ItemDetails
+        collectionId={collectionId}
+        deleteAction={vi.fn(async () => ({
+          message: "Could not delete the Item. Try again.",
+          status: "error" as const,
+        }))}
+        fields={[]}
+        item={{
+          collectionId,
+          createdAt: "2026-10-30T00:00:00Z",
+          description: null,
+          id: "00000000-0000-4000-8000-000000000002",
+          imagePath: null,
+          title: "A memory",
+          updatedAt: "2026-10-30T00:00:00Z",
+          values: {},
+        }}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Delete item" }));
+    const dialog = screen.getByRole("alertdialog");
+    await user.click(
+      screen.getAllByRole("button", { name: "Delete item" }).at(-1)!,
+    );
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Could not delete",
+    );
+    expect(dialog).toBeVisible();
   });
 });

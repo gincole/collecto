@@ -255,6 +255,14 @@ export type Database = {
           scheduled_image_count: number;
         };
       };
+      delete_item_with_cleanup: {
+        Args: { p_collection_id: string; p_item_id: string };
+        Returns: {
+          cleanup_job_id: string | null;
+          id: string;
+          image_path: string | null;
+        };
+      };
       queue_item_image_cleanup: {
         Args: {
           p_collection_id: string;

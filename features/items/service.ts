@@ -5,6 +5,10 @@ import type { ItemFieldDefinition, ItemRecord } from "./types";
 type GatewayError = { code?: string; message?: string };
 type GatewayResult<T> = Promise<{ data: T | null; error: GatewayError | null }>;
 type ItemIdentity = { id: string };
+export type DeletedItem = ItemIdentity & {
+  cleanupJobId: string | null;
+  imagePath: string | null;
+};
 export type ItemGateway = {
   createOwned: (
     ownerId: string,
@@ -13,7 +17,7 @@ export type ItemGateway = {
   deleteOwned: (
     ownerId: string,
     ids: { collectionId: string; itemId: string },
-  ) => GatewayResult<ItemIdentity>;
+  ) => GatewayResult<DeletedItem>;
   getCollectionSchemaOwned: (
     ownerId: string,
     collectionId: string,
@@ -202,7 +206,7 @@ export async function updateItem(
 export async function deleteItem(
   input: unknown,
   gateway: ItemGateway,
-): Promise<ItemOperationResult<ItemIdentity>> {
+): Promise<ItemOperationResult<DeletedItem>> {
   const ids = parseItemIds(input);
   if (!ids.success) return { fieldErrors: {}, status: "validation_error" };
   const auth = await authenticate(gateway);

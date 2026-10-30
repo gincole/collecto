@@ -85,13 +85,20 @@ export function createItemGateway(
       return { data: data ? { id: data } : null, error };
     },
     async deleteOwned(_ownerId, ids) {
-      return client
-        .from("items")
-        .delete()
-        .eq("collection_id", ids.collectionId)
-        .eq("id", ids.itemId)
-        .select("id")
-        .maybeSingle();
+      const { data, error } = await client.rpc("delete_item_with_cleanup", {
+        p_collection_id: ids.collectionId,
+        p_item_id: ids.itemId,
+      });
+      return {
+        data: data
+          ? {
+              cleanupJobId: data.cleanup_job_id,
+              id: data.id,
+              imagePath: data.image_path,
+            }
+          : null,
+        error,
+      };
     },
     logError(operation, error) {
       const errorCode =
