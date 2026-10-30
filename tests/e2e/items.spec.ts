@@ -64,22 +64,51 @@ test.describe("Item create and edit journey", () => {
     await page.getByLabel("Genre").selectOption({ label: "Nonfiction" });
     await page.getByLabel("Status").selectOption({ label: "Finished" });
     await page.getByLabel("Rating").fill("5");
+    await page.getByLabel("Item image").setInputFiles({
+      buffer: Buffer.from(
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
+        "base64",
+      ),
+      mimeType: "image/png",
+      name: "private-original-name.png",
+    });
     await page.getByRole("button", { name: "Save item" }).click();
     await expect(
       page.getByText("Atomic Habits", { exact: true }),
     ).toBeVisible();
     const saved = await admin
       .from("items")
-      .select("id, title, values, collections!inner(owner_id)")
+      .select("id, image_path, title, values, collections!inner(owner_id)")
       .eq("collections.owner_id", userId)
       .single();
     expect(saved.error).toBeNull();
     expect(saved.data?.title).toBe("Atomic Habits");
+    expect(saved.data?.image_path).toMatch(
+      new RegExp(`^${userId}/[0-9a-f-]+/${saved.data?.id}/[0-9a-f-]+[.]png$`),
+    );
+    expect(saved.data?.image_path).not.toContain("private-original-name");
     expect(Object.values(saved.data?.values ?? {})).toContain(5);
     await page.getByRole("link", { name: "Edit Atomic Habits" }).click();
+    await expect(page.getByAltText("Item preview")).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "View full size" }),
+    ).toHaveAttribute("href", `/api/items/${saved.data?.id}/image`);
     await page.getByLabel("Title").fill("Atomic Habits Updated");
+    await page.getByRole("button", { name: "Remove" }).click();
     await page.getByRole("button", { name: "Save changes" }).click();
     await expect(page).toHaveURL(/\/collections\/[0-9a-f-]+$/);
+    await expect
+      .poll(
+        async () =>
+          (
+            await admin
+              .from("items")
+              .select("image_path")
+              .eq("id", saved.data!.id)
+              .single()
+          ).data?.image_path,
+      )
+      .toBeNull();
     await page.reload();
     await expect(
       page.getByText("Atomic Habits Updated", { exact: true }),

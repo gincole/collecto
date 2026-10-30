@@ -33,6 +33,14 @@ export function createStorageCleanupGateway(
         .eq("id", jobId);
       if (error) throw error;
     },
+    async isObjectReferenced(objectPath) {
+      const { count, error } = await client
+        .from("items")
+        .select("id", { count: "exact", head: true })
+        .eq("image_path", objectPath);
+      if (error) throw error;
+      return (count ?? 0) > 0;
+    },
     async markFailed(jobId, errorCode) {
       const { error } = await client
         .from("storage_cleanup_jobs")

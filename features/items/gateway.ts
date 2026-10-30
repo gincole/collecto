@@ -45,7 +45,7 @@ export function createItemGateway(
       const { data, error } = await client
         .from("items")
         .select(
-          "id, collection_id, title, description, values, created_at, updated_at, collections!inner(owner_id)",
+          "id, collection_id, title, description, values, image_path, created_at, updated_at, collections!inner(owner_id)",
         )
         .eq("collection_id", ids.collectionId)
         .eq("id", ids.itemId)
@@ -62,7 +62,7 @@ export function createItemGateway(
       const { data, error } = await client
         .from("items")
         .select(
-          "id, collection_id, title, description, values, created_at, updated_at, collections!inner(owner_id)",
+          "id, collection_id, title, description, values, image_path, created_at, updated_at, collections!inner(owner_id)",
         )
         .eq("collection_id", collectionId)
         .eq("collections.owner_id", ownerId)

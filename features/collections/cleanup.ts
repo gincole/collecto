@@ -8,6 +8,7 @@ export type StorageCleanupJob = {
 
 export type StorageCleanupGateway = {
   claimRetryable: (limit: number) => Promise<StorageCleanupJob[]>;
+  isObjectReferenced: (objectPath: string) => Promise<boolean>;
   markComplete: (jobId: string) => Promise<void>;
   markFailed: (jobId: string, errorCode: string) => Promise<void>;
   removeObject: (objectPath: string) => Promise<void>;
@@ -35,6 +36,11 @@ export async function retryStorageCleanupJobs(
 
   for (const job of jobs) {
     try {
+      if (await gateway.isObjectReferenced(job.objectPath)) {
+        await gateway.markComplete(job.id);
+        result.completed += 1;
+        continue;
+      }
       await gateway.removeObject(job.objectPath);
       await gateway.markComplete(job.id);
       result.completed += 1;

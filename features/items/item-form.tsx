@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useEffect, useRef } from "react";
+import { useActionState, useEffect, useRef, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input, Textarea } from "@/components/ui/form-control";
 import { DATABASE_LIMITS } from "@/lib/validation/limits";
 
 import type { ItemFieldDefinition, ItemRecord } from "./types";
+import { ImageUploader } from "./image-uploader";
 
 export type ItemFormState = {
   fieldErrors?: Record<string, string>;
@@ -109,6 +110,8 @@ export function ItemForm({
   const [state, formAction, pending] = useActionState(action, {
     status: "idle",
   });
+  const [transitionPending, startTransition] = useTransition();
+  const isPending = pending || transitionPending;
   const formRef = useRef<HTMLFormElement>(null);
   const submittedRef = useRef<FormData | undefined>(undefined);
   useEffect(() => {
@@ -131,76 +134,87 @@ export function ItemForm({
   }, [state]);
   return (
     <form
-      action={formAction}
-      className="mx-auto w-full max-w-3xl space-y-6 pb-24"
+      className="mx-auto w-full max-w-5xl space-y-6 pb-24"
       onSubmit={(event) => {
-        submittedRef.current = new FormData(event.currentTarget);
+        event.preventDefault();
+        const submitted = new FormData(event.currentTarget);
+        submittedRef.current = submitted;
+        startTransition(() => formAction(submitted));
       }}
       ref={formRef}
     >
       <input name="collectionId" type="hidden" value={collectionId} />
       {item ? <input name="itemId" type="hidden" value={item.id} /> : null}
-      <div className="space-y-2">
-        <label className="font-semibold" htmlFor="title">
-          Title<span aria-hidden="true"> *</span>
-        </label>
-        <Input
-          aria-describedby={
-            state.fieldErrors?.title ? "title-error" : undefined
-          }
-          aria-invalid={Boolean(state.fieldErrors?.title)}
-          aria-label="Title"
-          defaultValue={item?.title}
-          id="title"
-          maxLength={DATABASE_LIMITS.itemTitle}
-          name="title"
-          required
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:items-start">
+        <ImageUploader
+          error={state.fieldErrors?.image}
+          hasImage={Boolean(item?.imagePath)}
+          itemId={item?.id}
         />
-        {state.fieldErrors?.title ? (
-          <p className="text-error text-sm" id="title-error">
-            {state.fieldErrors.title}
-          </p>
-        ) : null}
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <label className="font-semibold" htmlFor="title">
+              Title<span aria-hidden="true"> *</span>
+            </label>
+            <Input
+              aria-describedby={
+                state.fieldErrors?.title ? "title-error" : undefined
+              }
+              aria-invalid={Boolean(state.fieldErrors?.title)}
+              aria-label="Title"
+              defaultValue={item?.title}
+              id="title"
+              maxLength={DATABASE_LIMITS.itemTitle}
+              name="title"
+              required
+            />
+            {state.fieldErrors?.title ? (
+              <p className="text-error text-sm" id="title-error">
+                {state.fieldErrors.title}
+              </p>
+            ) : null}
+          </div>
+          <div className="space-y-2">
+            <label className="font-semibold" htmlFor="description">
+              Description (optional)
+            </label>
+            <Textarea
+              aria-describedby={
+                state.fieldErrors?.description ? "description-error" : undefined
+              }
+              aria-invalid={Boolean(state.fieldErrors?.description)}
+              defaultValue={item?.description ?? ""}
+              id="description"
+              maxLength={DATABASE_LIMITS.itemDescription}
+              name="description"
+            />
+            {state.fieldErrors?.description ? (
+              <p className="text-error text-sm" id="description-error">
+                {state.fieldErrors.description}
+              </p>
+            ) : null}
+          </div>
+          {fields.map((field) => (
+            <DynamicField
+              error={state.fieldErrors?.[`values.${field.id}`]}
+              field={field}
+              initialValue={item?.values[field.id]}
+              key={field.id}
+            />
+          ))}
+          {state.message ? (
+            <p className="text-error" role="alert">
+              {state.message}
+            </p>
+          ) : null}
+        </div>
       </div>
-      <div className="space-y-2">
-        <label className="font-semibold" htmlFor="description">
-          Description (optional)
-        </label>
-        <Textarea
-          aria-describedby={
-            state.fieldErrors?.description ? "description-error" : undefined
-          }
-          aria-invalid={Boolean(state.fieldErrors?.description)}
-          defaultValue={item?.description ?? ""}
-          id="description"
-          maxLength={DATABASE_LIMITS.itemDescription}
-          name="description"
-        />
-        {state.fieldErrors?.description ? (
-          <p className="text-error text-sm" id="description-error">
-            {state.fieldErrors.description}
-          </p>
-        ) : null}
-      </div>
-      {fields.map((field) => (
-        <DynamicField
-          error={state.fieldErrors?.[`values.${field.id}`]}
-          field={field}
-          initialValue={item?.values[field.id]}
-          key={field.id}
-        />
-      ))}
-      {state.message ? (
-        <p className="text-error" role="alert">
-          {state.message}
-        </p>
-      ) : null}
       <div className="bg-background/95 border-border fixed inset-x-0 bottom-0 border-t px-4 py-3 backdrop-blur sm:static sm:flex sm:justify-end sm:gap-3 sm:border-0 sm:bg-transparent sm:px-0 sm:py-0">
         <Button asChild className="mr-3" variant="outline">
           <Link href={`/collections/${collectionId}`}>Cancel</Link>
         </Button>
-        <Button disabled={pending} type="submit">
-          {pending
+        <Button disabled={isPending} type="submit">
+          {isPending
             ? "Saving item…"
             : mode === "create"
               ? "Save item"

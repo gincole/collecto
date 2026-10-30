@@ -45,6 +45,10 @@ describe("Item form", () => {
   });
 
   it("preserves values and blocks duplicate submission during a recoverable failure", async () => {
+    Object.defineProperties(URL, {
+      createObjectURL: { configurable: true, value: vi.fn(() => "blob:test") },
+      revokeObjectURL: { configurable: true, value: vi.fn() },
+    });
     const user = userEvent.setup();
     let finish:
       ((value: { message: string; status: "error" }) => void) | undefined;
@@ -63,6 +67,10 @@ describe("Item form", () => {
       />,
     );
     await user.type(screen.getByLabelText("Title"), "Kept value");
+    const image = new File([new Uint8Array([1])], "kept.png", {
+      type: "image/png",
+    });
+    await user.upload(screen.getByLabelText("Item image"), image);
     await user.click(screen.getByRole("button", { name: "Save item" }));
     expect(screen.getByRole("button", { name: "Saving item…" })).toBeDisabled();
     expect(action).toHaveBeenCalledOnce();
@@ -74,5 +82,8 @@ describe("Item form", () => {
       "Could not save",
     );
     expect(screen.getByLabelText("Title")).toHaveValue("Kept value");
+    expect(
+      screen.getByLabelText<HTMLInputElement>("Item image").files?.[0],
+    ).toBe(image);
   });
 });

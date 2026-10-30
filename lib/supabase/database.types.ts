@@ -221,6 +221,10 @@ export type Database = {
           object_path: string;
         }[];
       };
+      complete_item_image_cleanup: {
+        Args: { p_job_id: string };
+        Returns: boolean;
+      };
       create_collection_with_schema: {
         Args: {
           p_description: string | null;
@@ -250,6 +254,23 @@ export type Database = {
           id: string;
           scheduled_image_count: number;
         };
+      };
+      queue_item_image_cleanup: {
+        Args: {
+          p_collection_id: string;
+          p_error_code: string;
+          p_item_id: string;
+          p_object_path: string;
+        };
+        Returns: string;
+      };
+      set_item_image_path: {
+        Args: {
+          p_collection_id: string;
+          p_image_path: string | null;
+          p_item_id: string;
+        };
+        Returns: { cleanup_job_id: string | null; old_path: string | null };
       };
       enforce_collection_field_limit: {
         Args: Record<PropertyKey, never>;

@@ -13,6 +13,7 @@ export type ItemRecord = {
   createdAt: string;
   description: string | null;
   id: string;
+  imagePath?: string | null;
   title: string;
   updatedAt: string;
   values: Record<string, ItemValue>;

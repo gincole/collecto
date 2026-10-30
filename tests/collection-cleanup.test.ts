@@ -22,6 +22,7 @@ function gateway(
 ): StorageCleanupGateway {
   return {
     claimRetryable: vi.fn(async () => [firstJob, secondJob]),
+    isObjectReferenced: vi.fn(async () => false),
     markComplete: vi.fn(async () => undefined),
     markFailed: vi.fn(async () => undefined),
     removeObject: vi.fn(async () => undefined),
@@ -30,6 +31,17 @@ function gateway(
 }
 
 describe("Collection image cleanup retry", () => {
+  it("keeps objects that became a committed Item image", async () => {
+    const store = gateway({ isObjectReferenced: vi.fn(async () => true) });
+
+    await expect(retryStorageCleanupJobs(store, 10)).resolves.toEqual({
+      completed: 2,
+      failed: 0,
+    });
+    expect(store.removeObject).not.toHaveBeenCalled();
+    expect(store.markComplete).toHaveBeenCalledTimes(2);
+  });
+
   it("sanitizes errors for structured logging", () => {
     expect(getSafeCleanupErrorCode({ code: "storage_unavailable" })).toBe(
       "storage_unavailable",
