@@ -23,7 +23,7 @@ function FieldRowBody({
 }: {
   field: Pick<Field, "name" | "type" | "required" | "options">;
   handle: ReactNode;
-  children: ReactNode;
+  children?: ReactNode;
 }) {
   return (
     <>
@@ -49,12 +49,14 @@ function FieldRowBody({
           </div>
         </div>
       </div>
-      <div
-        data-field-actions
-        className="flex min-w-0 shrink-0 flex-wrap items-center justify-end gap-1 sm:flex-nowrap"
-      >
-        {children}
-      </div>
+      {children ? (
+        <div
+          data-field-actions
+          className="flex min-w-0 shrink-0 flex-wrap items-center justify-end gap-1 sm:flex-nowrap"
+        >
+          {children}
+        </div>
+      ) : null}
     </>
   );
 }
@@ -155,32 +157,30 @@ export function FieldDragPreview({ field }: { field: Field }) {
 
 export function BuiltInFieldRow({ name }: { name: "Title" | "Description" }) {
   return (
-    <li className={rowClass}>
-      <FieldRowBody
-        field={{ name, type: "text", required: name === "Title", options: [] }}
-        handle={
-          <Button
-            disabled
-            aria-label={`${name} is a built-in field`}
-            size="icon"
-            type="button"
-            variant="ghost"
-          >
-            <LockKeyhole aria-hidden="true" />
-          </Button>
-        }
+    <li>
+      <div
+        role="group"
+        aria-label={`${name} built-in field`}
+        aria-disabled="true"
+        className={cn(
+          rowClass,
+          "bg-disabled-surface text-foreground-muted sm:grid-cols-1",
+        )}
       >
-        <ReorderButtons disabled label={name} />
-        <Button
-          disabled
-          aria-label={`Edit ${name}`}
-          type="button"
-          variant="outline"
-        >
-          Edit
-        </Button>
-        <DeleteButton disabled aria-label={`Delete ${name}`} />
-      </FieldRowBody>
+        <FieldRowBody
+          field={{
+            name,
+            type: "text",
+            required: name === "Title",
+            options: [],
+          }}
+          handle={
+            <span className="flex size-11 shrink-0 items-center justify-center">
+              <LockKeyhole aria-hidden="true" className="size-4" />
+            </span>
+          }
+        />
+      </div>
     </li>
   );
 }

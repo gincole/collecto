@@ -629,29 +629,18 @@ describe("Field manager", () => {
     const builtIn = screen.getByRole("region", { name: "Built-in fields" });
     expect(within(builtIn).getByText("Title")).toBeInTheDocument();
     expect(within(builtIn).getByText("Description")).toBeInTheDocument();
+    expect(within(builtIn).queryByRole("button")).toBeNull();
     for (const name of ["Title", "Description"]) {
-      expect(
-        within(builtIn).getByRole("button", {
-          name: `${name} is a built-in field`,
-        }),
-      ).toBeDisabled();
-      expect(
-        within(builtIn).getByRole("button", { name: `Move ${name} up` }),
-      ).toBeDisabled();
-      expect(
-        within(builtIn).getByRole("button", { name: `Move ${name} down` }),
-      ).toBeDisabled();
-      const edit = within(builtIn).getByRole("button", {
-        name: `Edit ${name}`,
+      const row = within(builtIn).getByRole("group", {
+        name: `${name} built-in field`,
       });
-      expect(edit).toBeDisabled();
-      expect(edit).toHaveTextContent(/^Edit$/);
-      expect(edit.closest("[data-field-actions]")).toContainElement(
-        within(builtIn).getByRole("button", { name: `Delete ${name}` }),
-      );
-      expect(
-        within(builtIn).getByRole("button", { name: `Delete ${name}` }),
-      ).toBeDisabled();
+      expect(row).toHaveAttribute("aria-disabled", "true");
+      expect(row).toHaveClass("bg-disabled-surface");
+      expect(row?.querySelector("[data-field-actions]")).toBeNull();
+      const lock = row?.querySelector(".lucide-lock-keyhole");
+      expect(lock).not.toBeNull();
+      expect(lock?.closest("button")).toBeNull();
+      expect(lock?.parentElement).not.toHaveClass("bg-disabled-surface");
     }
     expect(within(builtIn).getAllByText("Text")).toHaveLength(2);
     expect(

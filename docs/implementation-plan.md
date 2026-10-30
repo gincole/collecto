@@ -948,3 +948,21 @@ Number; shared row/editor/wizard use the same components. Update relevant
 component expectations, run the deployment gate, independent review and staged
 diff/secret checks. No browser checks at user request, dependencies or schema
 changes. One `fix(fields)` commit; no push.
+
+## M7-T02R: Disable built-in cards as a whole
+
+User clarification: built-in Title/Description cards should be disabled as whole
+cards, with no right-side buttons and no disabled background behind the lock.
+Depends on M7-T02Q and supersedes M7-T02P's disabled-control presentation.
+
+Retain the shared row body, but make its action slot optional. Style each built-in
+row with the disabled surface and readable muted text, expose aria-disabled,
+replace the lock button with a plain decorative icon in the same alignment slot,
+and omit arrows/Edit/Delete and their container entirely. Keep the field content
+available to assistive technology, with Title required, Description optional and
+shared Lucide type labels. Custom rows/overlay actions stay unchanged.
+
+Verification: update the built-in component/axe regression for disabled cards,
+no buttons/action container and plain lock; run the deployment gate, independent
+review and staged secret/diff checks. No browser checks, dependency/schema changes
+or push. One `fix(fields)` commit.

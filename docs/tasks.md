@@ -195,3 +195,16 @@ Reported by the user on 30 October 2026. The M7-T01 state audit and implementati
   truncation are covered. Independent review and staged diff/secret checks passed.
   No browser testing.
 - Commit: SELF (this commit).
+
+## M7-T02R: Disable built-in cards as a whole
+
+- Status: Complete; dependency M7-T02Q is complete.
+- Scope/acceptance: see M7-T02R in `docs/implementation-plan.md`.
+- Changes: disabled whole-card presentation for Title/Description; remove all
+  action buttons and use a plain lock icon without a separate background.
+- Verification: `corepack pnpm verify:deployment` passed formatting, lint,
+  strict TypeScript, all 359 tests across 54 files and the production build.
+  Built-in component/axe checks and independent review passed, including the
+  accessible disabled group, absence of actions and transparent lock slot.
+  Staged diff/secret inspection passed. No browser testing.
+- Commit: SELF (this commit).
