@@ -1,5 +1,5 @@
 import { chooseOption } from "./helpers/select-option";
-import { act, render, screen, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import axe from "axe-core";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -73,6 +73,149 @@ function createActions(
 }
 
 describe("Field manager", () => {
+  function visibleFieldOrder() {
+    const list = within(
+      screen.getByRole("region", { name: "Custom fields" }),
+    ).getByRole("list");
+    return within(list)
+      .getAllByRole("listitem")
+      .map(
+        (row) =>
+          within(row).getByRole("button", { name: /^Edit / }).textContent,
+      );
+  }
+
+  it("moves Fields immediately and bases the next arrow save on the displayed order", async () => {
+    const request = Promise.withResolvers<{ status: "success" }>();
+    const actions = createActions({
+      reorderFields: vi
+        .fn()
+        .mockReturnValueOnce(request.promise)
+        .mockResolvedValue({ status: "success" }),
+    });
+    const user = userEvent.setup();
+    render(
+      <FieldManager
+        collectionId={collectionId}
+        fields={fields}
+        actions={actions}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Move Genre down" }));
+    expect(visibleFieldOrder()).toEqual(["Edit Rating", "Edit Genre"]);
+    await act(() => request.resolve({ status: "success" }));
+    expect(visibleFieldOrder()).toEqual(["Edit Rating", "Edit Genre"]);
+    await user.click(screen.getByRole("button", { name: "Move Genre up" }));
+    expect(actions.reorderFields).toHaveBeenNthCalledWith(2, {
+      collectionId,
+      fieldIds: [genreId, ratingId],
+    });
+    expect(visibleFieldOrder()).toEqual(["Edit Genre", "Edit Rating"]);
+  });
+
+  it("restores Field order when a reorder fails", async () => {
+    const user = userEvent.setup();
+    render(
+      <FieldManager
+        collectionId={collectionId}
+        fields={fields}
+        actions={createActions({
+          reorderFields: vi.fn().mockResolvedValue({ status: "error" }),
+        })}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Move Genre down" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Could not save field order",
+    );
+    expect(visibleFieldOrder()).toEqual(["Edit Genre", "Edit Rating"]);
+  });
+
+  it("accepts refreshed server Fields after a successful local move", async () => {
+    const user = userEvent.setup();
+    const actions = createActions();
+    const view = render(
+      <FieldManager
+        collectionId={collectionId}
+        fields={fields}
+        actions={actions}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Move Genre down" }));
+    expect(visibleFieldOrder()).toEqual(["Edit Rating", "Edit Genre"]);
+    view.rerender(
+      <FieldManager
+        collectionId={collectionId}
+        fields={fields.map((field) => ({
+          ...field,
+          name: field.name === "Genre" ? "Updated genre" : field.name,
+        }))}
+        actions={actions}
+      />,
+    );
+    expect(visibleFieldOrder()).toEqual(["Edit Updated genre", "Edit Rating"]);
+    expect(actions.reorderFields).toHaveBeenCalledOnce();
+  });
+
+  it("persists a handle drag through the same reorder action and ignores external drops", async () => {
+    const actions = createActions();
+    render(
+      <FieldManager
+        collectionId={collectionId}
+        fields={fields}
+        actions={actions}
+      />,
+    );
+    const handle = screen.getByRole("button", {
+      name: "Drag Genre to reorder",
+    });
+    const target = screen
+      .getByRole("button", { name: "Edit Rating" })
+      .closest("li");
+    expect(target).not.toBeNull();
+    if (!target) throw new Error("Missing target Field");
+    fireEvent.drop(target);
+    expect(actions.reorderFields).not.toHaveBeenCalled();
+    fireEvent.dragStart(handle, {
+      dataTransfer: { setData: vi.fn(), effectAllowed: "" },
+    });
+    await act(async () => {
+      fireEvent.drop(target);
+    });
+    expect(actions.reorderFields).toHaveBeenCalledExactlyOnceWith({
+      collectionId,
+      fieldIds: [ratingId, genreId],
+    });
+    expect(visibleFieldOrder()).toEqual(["Edit Rating", "Edit Genre"]);
+  });
+
+  it("ignores cancelled and same-row drags without saving", () => {
+    const actions = createActions();
+    render(
+      <FieldManager
+        collectionId={collectionId}
+        fields={fields}
+        actions={actions}
+      />,
+    );
+    const handle = screen.getByRole("button", {
+      name: "Drag Genre to reorder",
+    });
+    const row = handle.closest("li");
+    const target = screen
+      .getByRole("button", { name: "Edit Rating" })
+      .closest("li");
+    if (!row || !target) throw new Error("Missing Field rows");
+    const dataTransfer = { setData: vi.fn(), effectAllowed: "" };
+    fireEvent.dragStart(handle, { dataTransfer });
+    fireEvent.drop(row);
+    fireEvent.dragStart(handle, { dataTransfer });
+    fireEvent.dragEnd(handle);
+    fireEvent.drop(target);
+    expect(actions.reorderFields).not.toHaveBeenCalled();
+    expect(visibleFieldOrder()).toEqual(["Edit Genre", "Edit Rating"]);
+  });
+
   it("announces a pending Field reorder until it completes", async () => {
     const request = Promise.withResolvers<{ status: "success" }>();
     const user = userEvent.setup();

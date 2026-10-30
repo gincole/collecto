@@ -782,3 +782,20 @@ Field creation. Reuse the creation form for standalone callers.
 Verification: focused Settings step, field UI and local-dialog component tests,
 then `corepack pnpm verify:deployment`, independent review and staged diff/secret
 inspection. Browser/device testing is omitted at the user's explicit request.
+
+## M7-T02K: Repair custom Field reordering
+
+User-reported defect (30 October 2026): Field arrows show a success toast but the
+visible list stays in place; the visible grip cannot be dragged. Depends on
+completed M5-T02 and M7-T02J. Keep this task limited to custom Field ordering.
+
+Use one save path for arrow and desktop handle moves, update the visible list
+immediately, prevent overlapping saves and restore the previous order on failure.
+Retain server-authorized writes and refresh, accept refreshed Field data, preserve
+stable IDs and the keyboard/touch arrow alternative. Ignore external, cancelled
+and same-row drops. Do not change Select-option editing or database contracts.
+
+Acceptance and verification: component regressions for immediate order, sequential
+moves, failed saves, refreshed props and real drag handlers; existing field UI
+and Settings tests; `corepack pnpm verify:deployment`; independent review and
+staged secret/diff checks. No browser testing, as requested by the user.

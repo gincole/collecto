@@ -106,3 +106,15 @@ Reported by the user on 30 October 2026. The M7-T01 state audit and implementati
   found no actionable defects. Staged diff and secret inspection passed.
   No browser testing, deployment or push.
 - Commit: SELF (this commit).
+
+## M7-T02K: Repair custom Field reordering
+
+- Status: Complete; dependencies M5-T02 and M7-T02J are complete.
+- Scope/acceptance: see M7-T02K in `docs/implementation-plan.md`.
+- Diagnosis: the list rendered only server props after a save, relying on route
+  refresh for movement; the displayed grip had no drag handlers.
+- Verification: `corepack pnpm verify:deployment` passed formatting, lint,
+  strict TypeScript, all 345 tests across 53 files and the production build.
+  Independent review found no actionable defects. Staged diff and secret checks
+  passed. No browser testing or hosted database writes.
+- Commit: SELF (this commit).

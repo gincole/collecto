@@ -2,7 +2,13 @@
 
 import { GripVertical, LockKeyhole, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useMemo, useState, useTransition, type RefObject } from "react";
+import {
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+  type RefObject,
+} from "react";
 import { Button } from "@/components/ui/button";
 import { useFlowBusy } from "@/components/shared/flow-modal";
 import { useFeedback } from "@/components/shared/feedback";
@@ -61,7 +67,7 @@ function BuiltInFields() {
 function FieldManager({
   actions: rawActions,
   collectionId,
-  fields,
+  fields: serverFields,
   onAddField,
   addFieldTriggerRef,
 }: {
@@ -79,19 +85,49 @@ function FieldManager({
   );
   const [message, setMessage] = useState<string>();
   const [pending, startTransition] = useTransition();
+  const [ordering, setOrdering] = useState({
+    source: serverFields,
+    fields: serverFields,
+  });
+  // Keep acknowledged local moves visible until refreshed server props arrive.
+  if (ordering.source !== serverFields) {
+    setOrdering({ source: serverFields, fields: serverFields });
+  }
+  const fields =
+    ordering.source === serverFields ? ordering.fields : serverFields;
+  const draggedId = useRef<string | null>(null);
   useFlowBusy(pending);
   const atLimit = fields.length >= DATABASE_LIMITS.collectionFields;
 
-  function reorder(index: number, direction: -1 | 1) {
+  function saveOrder(nextFields: CollectionRecord["fields"]) {
+    if (pending) return;
+    const previousFields = fields;
     setMessage(undefined);
+    setOrdering({ source: serverFields, fields: nextFields });
     startTransition(async () => {
       const result = await actions.reorderFields({
         collectionId,
-        fieldIds: move(fields, index, direction).map((field) => field.id),
+        fieldIds: nextFields.map((field) => field.id),
       });
       if (result.status === "success") router.refresh();
-      else setMessage(errorMessage(result, "Field order"));
+      else {
+        setOrdering({ source: serverFields, fields: previousFields });
+        setMessage(errorMessage(result, "Field order"));
+      }
     });
+  }
+
+  function dropField(targetId: string) {
+    const sourceId = draggedId.current;
+    draggedId.current = null;
+    if (pending || !sourceId || sourceId === targetId) return;
+    const source = fields.findIndex((field) => field.id === sourceId);
+    const target = fields.findIndex((field) => field.id === targetId);
+    const moved = fields[source];
+    if (!moved || target < 0) return;
+    const next = fields.filter((field) => field.id !== sourceId);
+    next.splice(target, 0, moved);
+    saveOrder(next);
   }
 
   return (
@@ -151,6 +187,16 @@ function FieldManager({
           <ol className="space-y-3">
             {fields.map((field, index) => (
               <li
+                onDragOver={(event) => {
+                  if (!pending && draggedId.current) {
+                    event.preventDefault();
+                    event.dataTransfer.dropEffect = "move";
+                  }
+                }}
+                onDrop={(event) => {
+                  event.preventDefault();
+                  dropField(field.id);
+                }}
                 className={cn(
                   "border-border rounded-control grid min-w-0 gap-3 border p-3",
                   "sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center",
@@ -158,10 +204,29 @@ function FieldManager({
                 key={field.id}
               >
                 <div className="flex min-w-0 items-start gap-2">
-                  <GripVertical
-                    aria-hidden="true"
-                    className="text-foreground-muted mt-0.5 hidden shrink-0 sm:block"
-                  />
+                  <Button
+                    aria-label={`Drag ${field.name} to reorder`}
+                    className="hidden shrink-0 cursor-grab active:cursor-grabbing sm:inline-flex"
+                    disabled={pending}
+                    draggable={!pending}
+                    onDragStart={(event) => {
+                      if (pending) {
+                        event.preventDefault();
+                        return;
+                      }
+                      draggedId.current = field.id;
+                      event.dataTransfer.effectAllowed = "move";
+                      event.dataTransfer.setData("text/plain", field.id);
+                    }}
+                    onDragEnd={() => {
+                      draggedId.current = null;
+                    }}
+                    size="icon"
+                    type="button"
+                    variant="ghost"
+                  >
+                    <GripVertical aria-hidden="true" />
+                  </Button>
                   <div className="min-w-0">
                     <p className="font-semibold break-words">{field.name}</p>
                     <p className="text-foreground-muted text-sm">
@@ -183,10 +248,14 @@ function FieldManager({
                     label={field.name}
                     onDown={
                       index < fields.length - 1
-                        ? () => reorder(index, 1)
+                        ? () => saveOrder(move(fields, index, 1))
                         : undefined
                     }
-                    onUp={index > 0 ? () => reorder(index, -1) : undefined}
+                    onUp={
+                      index > 0
+                        ? () => saveOrder(move(fields, index, -1))
+                        : undefined
+                    }
                   />
                   <EditFieldDialog
                     actions={actions}
