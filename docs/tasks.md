@@ -169,3 +169,16 @@ Reported by the user on 30 October 2026. The M7-T01 state audit and implementati
   reduced-motion regressions passed; independent review found no issues.
   Staged diff/secret inspection passed. No browser testing.
 - Commit: SELF (this commit).
+
+## M7-T02P: Align built-in rows with custom Fields
+
+- Status: Complete; dependency M7-T02O is complete.
+- Scope/acceptance: see M7-T02P in `docs/implementation-plan.md`.
+- Changes: remove the repeated Collection name; reuse Field rows for built-in
+  Title/Description with lock controls and disabled actions; retain emoji types.
+- Verification: `corepack pnpm verify:deployment` passed formatting, lint,
+  strict TypeScript, all 358 tests across 54 files and the production build.
+  Component/axe checks cover disabled built-in controls, shared emoji metadata
+  and subtitle removal; independent review and staged diff/secret checks passed.
+  No browser testing.
+- Commit: SELF (this commit).

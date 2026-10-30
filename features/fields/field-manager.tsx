@@ -1,6 +1,6 @@
 "use client";
 
-import { LockKeyhole, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useMemo, useState, type RefObject } from "react";
 import { createPortal } from "react-dom";
 import {
@@ -20,7 +20,11 @@ import {
   verticalListSortingStrategy,
   arrayMove,
 } from "@dnd-kit/sortable";
-import { SortableFieldRow, FieldDragPreview } from "./sortable-field-row";
+import {
+  SortableFieldRow,
+  FieldDragPreview,
+  BuiltInFieldRow,
+} from "./sortable-field-row";
 import { useFieldOrder } from "./use-field-order";
 import { useReducedMotion } from "@/lib/design/use-reduced-motion";
 import { Button } from "@/components/ui/button";
@@ -49,26 +53,13 @@ function BuiltInFields() {
           Built-in fields
         </h2>
         <p className="text-foreground-muted">
-          Every Item includes these properties. They cannot be reordered or
-          deleted.
+          Every Item includes these properties. They cannot be edited,
+          reordered, or deleted.
         </p>
       </div>
-      <ul className="grid gap-3 sm:grid-cols-2">
-        {[
-          ["Title", "Required"],
-          ["Description", "Optional"],
-        ].map(([name, detail]) => (
-          <li
-            className="border-border bg-surface-muted rounded-control flex min-w-0 items-center gap-3 border p-3"
-            key={name}
-          >
-            <LockKeyhole aria-hidden="true" className="shrink-0" />
-            <div className="min-w-0">
-              <p className="font-semibold">{name}</p>
-              <p className="text-foreground-muted text-sm">{detail}</p>
-            </div>
-          </li>
-        ))}
+      <ul className="space-y-3">
+        <BuiltInFieldRow name="Title" />
+        <BuiltInFieldRow name="Description" />
       </ul>
     </section>
   );

@@ -592,8 +592,33 @@ describe("Field manager", () => {
     const builtIn = screen.getByRole("region", { name: "Built-in fields" });
     expect(within(builtIn).getByText("Title")).toBeInTheDocument();
     expect(within(builtIn).getByText("Description")).toBeInTheDocument();
+    for (const name of ["Title", "Description"]) {
+      expect(
+        within(builtIn).getByRole("button", {
+          name: `${name} is a built-in field`,
+        }),
+      ).toBeDisabled();
+      expect(
+        within(builtIn).getByRole("button", { name: `Move ${name} up` }),
+      ).toBeDisabled();
+      expect(
+        within(builtIn).getByRole("button", { name: `Move ${name} down` }),
+      ).toBeDisabled();
+      const edit = within(builtIn).getByRole("button", {
+        name: `Edit ${name}`,
+      });
+      expect(edit).toBeDisabled();
+      expect(edit).toHaveTextContent(/^Edit$/);
+      expect(edit.closest("[data-field-actions]")).toContainElement(
+        within(builtIn).getByRole("button", { name: `Delete ${name}` }),
+      );
+      expect(
+        within(builtIn).getByRole("button", { name: `Delete ${name}` }),
+      ).toBeDisabled();
+    }
+    expect(within(builtIn).getAllByText("📝 Text")).toHaveLength(2);
     expect(
-      within(builtIn).queryByRole("button", { name: /delete/i }),
+      within(builtIn).queryByRole("button", { name: /^Drag / }),
     ).toBeNull();
 
     const custom = screen.getByRole("region", { name: "Custom fields" });

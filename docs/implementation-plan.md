@@ -905,3 +905,26 @@ Verification: focused layout/metadata and first-arrow animation regressions with
 mocked geometry, existing Field/wizard/dialog tests, full deployment gate,
 independent review and staged diff/secret inspection. No browser checks at user
 request. One `fix(fields)` commit; no push.
+
+## M7-T02P: Align built-in rows with custom Fields
+
+The user requests removing the collection-name subtitle under Collection Settings
+and rendering built-in Title/Description with the same component as custom Fields,
+with a lock in the drag position and disabled controls. Field type presentation
+uses emojis, as clarified by the user; retain the shared emoji labels from
+M7-T02O. Depends on completed M7-T02O.
+
+Reuse the existing row body, row geometry, type/Required metadata and action group
+for vertically stacked built-in rows. Title is required and Description optional;
+both show the shared text type. Render a disabled lock control, Move up/down,
+short Edit and Delete, without sortable registration or mutation handlers. Keep
+custom Field behavior and Built-in field semantics unchanged. Remove only the
+modal's repeated collection-name subtitle and resulting leading gap; preserve the
+editable name/description, page spacing and modal drafts.
+
+Acceptance/verification: built-in rows share the renderer and display emoji type
+labels; all ten built-in controls are disabled, with no drag handles; custom
+ordering/editing remains functional; duplicate subtitle is absent. Extend existing
+component regressions and accessibility checks, then run the deployment gate,
+independent review and staged diff/secret inspection. No browser checks at user
+request, no dependencies/schema changes. One `fix(fields)` commit; no push.

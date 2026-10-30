@@ -94,6 +94,7 @@ describe("ready local dialogs", () => {
       screen.getByRole("menuitem", { name: "Collection settings" }),
     );
     const dialog = screen.getByRole("dialog", { name: "Collection settings" });
+    expect(within(dialog).queryByText("Books", { selector: "p" })).toBeNull();
     for (const name of [
       "General",
       "Built-in fields",

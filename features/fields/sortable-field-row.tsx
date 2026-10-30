@@ -1,6 +1,6 @@
 "use client";
 
-import { GripVertical } from "lucide-react";
+import { GripVertical, LockKeyhole } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { ReactNode } from "react";
@@ -24,7 +24,7 @@ function FieldRowBody({
   handle,
   children,
 }: {
-  field: Field;
+  field: Pick<Field, "name" | "type" | "required" | "options">;
   handle: ReactNode;
   children: ReactNode;
 }) {
@@ -151,5 +151,37 @@ export function FieldDragPreview({ field }: { field: Field }) {
         <DeleteButton disabled />
       </FieldRowBody>
     </div>
+  );
+}
+
+export function BuiltInFieldRow({ name }: { name: "Title" | "Description" }) {
+  return (
+    <li className={rowClass}>
+      <FieldRowBody
+        field={{ name, type: "text", required: name === "Title", options: [] }}
+        handle={
+          <Button
+            disabled
+            aria-label={`${name} is a built-in field`}
+            size="icon"
+            type="button"
+            variant="ghost"
+          >
+            <LockKeyhole aria-hidden="true" />
+          </Button>
+        }
+      >
+        <ReorderButtons disabled label={name} />
+        <Button
+          disabled
+          aria-label={`Edit ${name}`}
+          type="button"
+          variant="outline"
+        >
+          Edit
+        </Button>
+        <DeleteButton disabled aria-label={`Delete ${name}`} />
+      </FieldRowBody>
+    </li>
   );
 }

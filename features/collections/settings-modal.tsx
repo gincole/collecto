@@ -49,7 +49,6 @@ export function SettingsModal({
       returnFocus={returnFocus}
     >
       <div hidden={step !== "settings"}>
-        <p className="text-foreground-muted">{collection.name}</p>
         <CollectionSettings
           active={step === "settings"}
           collection={collection}

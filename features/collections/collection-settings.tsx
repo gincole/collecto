@@ -119,7 +119,7 @@ export function CollectionSettings({
   }
 
   return (
-    <div className="space-y-6 pt-6">
+    <div className={dismissFlow ? "space-y-6" : "space-y-6 pt-6"}>
       <section
         data-form-panel
         aria-labelledby="collection-general-heading"
