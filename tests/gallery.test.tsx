@@ -216,6 +216,13 @@ describe("responsive gallery", () => {
         items={[imageItem]}
       />,
     );
+    const media = screen.getByTestId("gallery-image");
+    expect(media).not.toHaveClass("rounded-card");
+    expect(media.closest("article")).toHaveClass(
+      "rounded-card",
+      "overflow-hidden",
+    );
+    expect(screen.getByRole("list")).toHaveClass("gap-3");
     expect(document.querySelector("img")).toHaveClass(
       "object-cover",
       "absolute",

@@ -27,7 +27,7 @@ const presetArtwork = {
 
 type PresetKey = keyof typeof presetArtwork;
 type PresetArtworkSize = "sm" | "md" | "lg";
-type PresetArtworkVariant = "icon" | "tile";
+type PresetArtworkVariant = "icon" | "tile" | "cover";
 
 const sizeStyles: Record<
   PresetArtworkSize,
@@ -59,8 +59,9 @@ function PresetArtwork({
       className={cn(
         "text-foreground inline-flex shrink-0 items-center justify-center",
         color,
-        sizeStyles[size].container,
-        variant === "tile" ? "rounded-artwork" : "rounded-pill",
+        variant === "cover" ? "size-full" : sizeStyles[size].container,
+        variant !== "cover" &&
+          (variant === "tile" ? "rounded-artwork" : "rounded-pill"),
         className,
       )}
       data-preset={presetKey}

@@ -175,7 +175,7 @@ export function AuthForm({ action, mode, returnTo }: AuthFormProps) {
       </Button>
 
       <p className="text-foreground-muted text-center text-sm">
-        {registering ? "Already have an account? " : "New to little things? "}
+        {registering ? "Already have an account? " : "New to Collecto? "}
         <Link
           className="text-foreground font-semibold underline-offset-4 hover:underline"
           href={alternateHref}

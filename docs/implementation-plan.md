@@ -1,4 +1,4 @@
-# little things MVP Implementation Plan
+# Collecto MVP Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: use the repository's approved task-execution workflow and complete this plan one task at a time. Every task ends in one verified Conventional Commit, a `docs/tasks.md` update, a commit-hash report, and an approval stop.
 
@@ -1251,3 +1251,22 @@ editing, immutable-after-create types, preset drafts and option behavior.
 Verify existing draft/validation/accessibility checks and deployment checks; inspect
 the responsive CSS and staged diff/secrets. No browser tests, dependencies or schema
 changes. One Conventional Commit with tracker update, no push.
+
+## M7-T02AG: Unify Collection and folder cards and tighten gallery spacing
+
+Explicit user request after M7-T02AF (complete); M7-T02AD remains queued.
+Restore full-width preset backgrounds at every card width; position existing
+Collection actions at top right. Reuse one navigation card for Library Collections
+and Browse virtual folders, without folder actions. Reduce card padding and grid
+gaps, including live/preview Item galleries. Clip Item images at the outer card
+boundary with square image/detail seams. Preserve navigation, names, counts,
+Rename/Delete, image ratios/fit and saved gallery behavior. Additional dropdown
+request was explicitly withdrawn. No new dependencies or data changes.
+
+Verify component regressions, accessibility/navigation/menu tests and deployment
+checks; independent review and staged diff/secret scan. No browser testing. One
+Conventional Commit with tracker update, no push.
+
+User follow-up in this task: capitalize visible branding as Collecto (header, auth
+pages and metadata), replace remaining old-name copy and fixture domains, and
+confirm no former branding remains in repository-owned text.

@@ -22,7 +22,7 @@ const notoSansThai = Noto_Sans_Thai({
 
 export const metadata: Metadata = {
   description: "A private personal collection and memory library.",
-  title: "collecto",
+  title: "Collecto",
 };
 
 export const viewport: Viewport = { viewportFit: "cover" };

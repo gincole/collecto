@@ -1,8 +1,7 @@
 "use client";
-import { DisplayName } from "@/components/shared/display-name";
+import { NavigationCard } from "@/components/shared/navigation-card";
 import { useRef } from "react";
 import { Ellipsis, PackageOpen, Pencil, Trash2 } from "lucide-react";
-import Link from "@/components/shared/navigation-link";
 
 import { EmptyState, PresetArtwork } from "@/components/shared";
 import { Button } from "@/components/ui/button";
@@ -12,8 +11,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { cardHoverMotion } from "@/lib/design/card-motion";
-import { cn } from "@/lib/utils/cn";
 
 import type { CollectionRecord } from "./models";
 
@@ -26,10 +23,6 @@ type LibraryViewProps = {
     trigger: HTMLElement | null,
   ) => void;
 };
-
-function itemCountLabel(count: number) {
-  return `${count} ${count === 1 ? "item" : "items"}`;
-}
 
 export function LibraryView({
   collections,
@@ -52,44 +45,28 @@ export function LibraryView({
   }
 
   return (
-    <ul className="grid min-w-0 grid-cols-1 gap-4 min-[360px]:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
+    <ul className="grid min-w-0 grid-cols-1 gap-3 min-[360px]:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
       {collections.map((collection) => (
-        <li key={collection.id}>
-          <article
-            className={cn(
-              "border-border bg-surface rounded-card relative h-full border",
-              cardHoverMotion,
-            )}
-          >
-            <Link
-              aria-label={`Open ${collection.name}`}
-              className="focus-ring rounded-card block h-full"
-              href={`/collections/${collection.id}`}
-            >
+        <li className="min-w-0" key={collection.id}>
+          <NavigationCard
+            name={collection.name}
+            count={collection.itemCount}
+            label={`Open ${collection.name}`}
+            href={`/collections/${collection.id}`}
+            artwork={
               <PresetArtwork
-                className="rounded-t-card h-28 w-full rounded-b-none sm:h-36"
                 presetKey={collection.presetKey ?? "blank"}
                 size="lg"
+                variant="cover"
               />
-              <div className="sm:p-panel space-y-2 p-4 pr-12 sm:pr-14">
-                <DisplayName
-                  as="h2"
-                  className="text-card-title-mobile sm:text-card-title"
-                >
-                  {collection.name}
-                </DisplayName>
-                <p className="text-foreground-muted text-sm">
-                  {itemCountLabel(collection.itemCount)}
-                </p>
-              </div>
-            </Link>
-            <div className="absolute right-3 bottom-3">
+            }
+            actions={
               <LibraryCollectionMenu
                 collection={collection}
                 onSettings={onSettings}
               />
-            </div>
-          </article>
+            }
+          />
         </li>
       ))}
     </ul>

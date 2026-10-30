@@ -76,11 +76,11 @@ describe("authentication redirects", () => {
 
   it("builds a login URL with the intended protected location", () => {
     const requestUrl = new URL(
-      "https://little-things.example/collections/abc?view=compact",
+      "https://collecto.example/collections/abc?view=compact",
     );
 
     expect(createLoginUrl(requestUrl).toString()).toBe(
-      "https://little-things.example/login?returnTo=%2Fcollections%2Fabc%3Fview%3Dcompact",
+      "https://collecto.example/login?returnTo=%2Fcollections%2Fabc%3Fview%3Dcompact",
     );
   });
 });
@@ -153,14 +153,14 @@ describe("session refresh proxy", () => {
       },
     }));
     const request = new NextRequest(
-      "https://little-things.example/collections/abc?view=compact",
+      "https://collecto.example/collections/abc?view=compact",
     );
 
     const response = await updateSession(request);
 
     expect(response.status).toBe(307);
     expect(response.headers.get("location")).toBe(
-      "https://little-things.example/login?returnTo=%2Fcollections%2Fabc%3Fview%3Dcompact",
+      "https://collecto.example/login?returnTo=%2Fcollections%2Fabc%3Fview%3Dcompact",
     );
     expect(response.cookies.get("sb-session")?.value).toBe("refreshed");
   });
@@ -174,7 +174,7 @@ describe("session refresh proxy", () => {
         }),
       },
     });
-    const request = new NextRequest("https://little-things.example/library");
+    const request = new NextRequest("https://collecto.example/library");
 
     const response = await updateSession(request);
 

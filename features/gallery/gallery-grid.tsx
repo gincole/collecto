@@ -51,10 +51,10 @@ function GalleryCard({
   return (
     <article
       className={cn(
-        "border-border bg-surface rounded-card duration-gallery ease-standard h-full border transition-[transform,border-color] motion-safe:hover:-translate-y-0.5",
+        "border-border bg-surface rounded-card duration-gallery ease-standard h-full overflow-hidden border transition-[transform,border-color] motion-safe:hover:-translate-y-0.5",
         horizontal
-          ? "grid grid-cols-[minmax(6rem,35%)_minmax(0,1fr)] items-center gap-4"
-          : "@max-[20.5rem]:grid @max-[20.5rem]:grid-cols-[minmax(6rem,35%)_minmax(0,1fr)] @max-[20.5rem]:items-center @max-[20.5rem]:gap-4",
+          ? "grid grid-cols-[minmax(6rem,35%)_minmax(0,1fr)] items-center gap-3"
+          : "@max-[20.5rem]:grid @max-[20.5rem]:grid-cols-[minmax(6rem,35%)_minmax(0,1fr)] @max-[20.5rem]:items-center @max-[20.5rem]:gap-3",
       )}
       data-layout={horizontal ? "horizontal" : "vertical"}
     >
@@ -66,10 +66,7 @@ function GalleryCard({
       />
       {displayValues.length ? (
         <div
-          className={cn(
-            "sm:p-panel min-w-0 space-y-2 p-4",
-            horizontal && "pl-0 sm:pl-0",
-          )}
+          className={cn("min-w-0 space-y-1 p-3", horizontal && "pl-0 sm:pl-0")}
         >
           {displayValues.map((value, index) => (
             <DisplayName
@@ -123,11 +120,11 @@ export function GalleryGrid({
                 previewColumns[config.columns],
               )
             : cn("grid", columnClasses[config.columns]),
-          config.spacing === "tight" ? "gap-2" : "gap-4 sm:gap-5",
+          config.spacing === "tight" ? "gap-2" : "gap-3",
           preview &&
             (config.spacing === "tight"
               ? "[--preview-gap:0.5rem]"
-              : "[--preview-gap:1rem] sm:[--preview-gap:1.25rem]"),
+              : "[--preview-gap:0.75rem]"),
         )}
       >
         {(preview ? sortedItems.slice(0, 5) : sortedItems).map((item) => (

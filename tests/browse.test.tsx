@@ -109,7 +109,16 @@ describe("Browse URL and membership", () => {
     const collectionCard = screen
       .getByRole("link", { name: "Open Memories" })
       .closest("article");
-    const folderCard = screen.getByRole("link", { name: "Open Kept, 1 item" });
+    const folderCard = screen
+      .getByRole("link", { name: "Open Kept, 1 item" })
+      .closest("article");
+    expect(folderCard?.className).toBe(collectionCard?.className);
+    expect(folderCard?.querySelector("button")).toBeNull();
+    const actions = screen.getByRole("button", {
+      name: "Collection actions for Memories",
+    });
+    expect(actions.closest("a")).toBeNull();
+    expect(actions.parentElement).toHaveClass("top-2", "right-2");
     for (const card of [collectionCard, folderCard]) {
       expect(card).toHaveClass(
         "transition-[translate,border-color]",

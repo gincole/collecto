@@ -30,7 +30,7 @@ export function GalleryImage({
   return (
     <div
       className={cn(
-        "bg-surface-muted text-foreground-muted rounded-card relative flex w-full items-center justify-center overflow-hidden",
+        "bg-surface-muted text-foreground-muted relative flex w-full items-center justify-center overflow-hidden",
         ratioClasses[aspectRatio],
       )}
       data-testid="gallery-image"

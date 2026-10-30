@@ -396,3 +396,18 @@ verify:deployment` passed formatting, lint, strict TypeScript, all 364 tests
   the 28 rem card-width query and 2:1 grid tracks. Diff/secret checks passed.
   No browser testing.
 - Commit: SELF (this commit).
+
+## M7-T02AG: Unify Collection and folder cards and tighten gallery spacing
+
+- Status: Complete; dependency M7-T02AF is complete; M7-T02AD remains queued.
+- Scope/acceptance: see M7-T02AG in `docs/implementation-plan.md`.
+- Changes: shared Library/Browse card, full-cover artwork, top-right existing
+  Collection menu, compact card/grid spacing and square Item image/detail seams.
+  Extra dropdown request withdrawn by the user. User follow-up also standardizes
+  visible branding as Collecto and removes former-brand copy/fixture URLs.
+- Verification: route types, formatting, lint, strict TypeScript, all 387 tests
+  across 56 files (two workers) and production build passed. Focused auth branding
+  checks also pass (36 tests). Independent review and staged diff/secret checks
+  passed; repository source search found no remaining former-brand references.
+  No browser testing; device-rendered visual acceptance remains open.
+- Commit: SELF (this commit).

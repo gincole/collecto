@@ -147,7 +147,7 @@ describe("authentication UI", () => {
     const user = userEvent.setup();
     render(<AppHeader email="person@example.com" logoutAction={vi.fn()} />);
 
-    expect(screen.getByRole("link", { name: "collecto" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Collecto" })).toHaveAttribute(
       "href",
       "/library",
     );

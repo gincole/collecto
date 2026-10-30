@@ -97,6 +97,17 @@ describe("shared components", () => {
     );
   });
 
+  it("fills a card cover without responsive square sizing", () => {
+    render(<PresetArtwork presetKey="book" size="lg" variant="cover" />);
+    const artwork = screen.getByTestId("preset-artwork");
+    expect(artwork).toHaveClass("size-full");
+    expect(artwork).not.toHaveClass(
+      "sm:size-24",
+      "rounded-artwork",
+      "rounded-pill",
+    );
+  });
+
   it("announces loading without exposing decorative skeleton blocks", () => {
     render(<LoadingSkeleton label="Loading collections" lines={3} />);
 

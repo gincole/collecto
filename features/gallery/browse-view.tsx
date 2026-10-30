@@ -9,7 +9,7 @@ import { useOptimistic, useTransition, type MouseEvent } from "react";
 import type { CollectionRecord } from "@/features/collections/models";
 import type { ItemRecord } from "@/features/items/types";
 import { cn } from "@/lib/utils/cn";
-import { cardHoverMotion } from "@/lib/design/card-motion";
+import { NavigationCard } from "@/components/shared/navigation-card";
 import {
   browseHref,
   getBrowseFolders,
@@ -110,40 +110,30 @@ export function BrowseView({
           >
             {`Browse by ${field.name}`}
           </DisplayName>
-          <ul className="grid min-w-0 grid-cols-1 gap-4 min-[360px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <ul className="grid min-w-0 grid-cols-1 gap-3 min-[360px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {getBrowseFolders(field, items).map((folder) => (
               <li className="min-w-0" key={folder.id}>
-                <Link
+                <NavigationCard
+                  name={folder.label}
+                  count={folder.count}
+                  heading="h3"
+                  label={`Open ${folder.label}, ${folder.count} ${folder.count === 1 ? "item" : "items"}`}
+                  artwork={
+                    <FolderOpen
+                      aria-hidden="true"
+                      className="size-7 sm:size-10"
+                    />
+                  }
                   onClick={(event) =>
                     navigate(event, { fieldId: field.id, optionId: folder.id })
                   }
-                  aria-label={`Open ${folder.label}, ${folder.count} ${folder.count === 1 ? "item" : "items"}`}
-                  className={cn(
-                    "focus-ring border-border bg-surface rounded-card block h-full border",
-                    cardHoverMotion,
-                  )}
                   href={
                     browseHref(collection.id, {
                       fieldId: field.id,
                       optionId: folder.id,
                     }) as Route
                   }
-                >
-                  <div className="bg-surface-muted rounded-t-card text-foreground flex h-28 items-center justify-center">
-                    <FolderOpen aria-hidden="true" className="size-10" />
-                  </div>
-                  <div className="sm:p-panel space-y-2 p-4">
-                    <DisplayName
-                      as="h3"
-                      className="text-card-title-mobile sm:text-card-title font-semibold"
-                    >
-                      {folder.label}
-                    </DisplayName>
-                    <p className="text-foreground-muted text-sm">
-                      {folder.count} {folder.count === 1 ? "item" : "items"}
-                    </p>
-                  </div>
-                </Link>
+                />
               </li>
             ))}
           </ul>

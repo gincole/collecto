@@ -37,7 +37,7 @@ export function AppHeader({ email, logoutAction }: AppHeaderProps) {
     <header className="bg-surface sticky top-0 z-20 pt-[env(safe-area-inset-top)]">
       <div className="max-w-page page-insets mx-auto flex h-16 items-center justify-between gap-4">
         <Link className="text-card-title font-semibold" href="/library">
-          collecto
+          Collecto
         </Link>
         <nav aria-label="Primary" className="flex items-center gap-1 sm:gap-3">
           <DropdownMenu>

@@ -9,7 +9,7 @@ const { createClientMock, redirectMock } = vi.hoisted(() => ({
 
 vi.mock("@/lib/supabase/server", () => ({ createClient: createClientMock }));
 vi.mock("@/lib/env/server", () => ({
-  serverEnv: { NEXT_PUBLIC_SITE_URL: "https://little-things.example" },
+  serverEnv: { NEXT_PUBLIC_SITE_URL: "https://collecto.example" },
 }));
 vi.mock("next/navigation", () => ({ redirect: redirectMock }));
 
@@ -77,7 +77,7 @@ describe("authentication server actions", () => {
       email: "person@example.com",
       options: {
         emailRedirectTo:
-          "https://little-things.example/auth/callback?next=%2Flibrary",
+          "https://collecto.example/auth/callback?next=%2Flibrary",
       },
       password: "Example-pass-42!",
     });

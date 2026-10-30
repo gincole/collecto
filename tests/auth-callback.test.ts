@@ -14,14 +14,14 @@ describe("authentication callback", () => {
     const exchangeCodeForSession = vi.fn().mockResolvedValue({ error: null });
     createClientMock.mockResolvedValue({ auth: { exchangeCodeForSession } });
     const request = new NextRequest(
-      "https://little-things.example/auth/callback?code=confirmation-code&next=%2Fcollections%2Fabc",
+      "https://collecto.example/auth/callback?code=confirmation-code&next=%2Fcollections%2Fabc",
     );
 
     const response = await GET(request);
 
     expect(exchangeCodeForSession).toHaveBeenCalledWith("confirmation-code");
     expect(response.headers.get("location")).toBe(
-      "https://little-things.example/collections/abc",
+      "https://collecto.example/collections/abc",
     );
   });
 
@@ -34,13 +34,13 @@ describe("authentication callback", () => {
       },
     });
     const request = new NextRequest(
-      "https://little-things.example/auth/callback?code=expired",
+      "https://collecto.example/auth/callback?code=expired",
     );
 
     const response = await GET(request);
 
     expect(response.headers.get("location")).toBe(
-      "https://little-things.example/login?error=confirmation",
+      "https://collecto.example/login?error=confirmation",
     );
   });
 
@@ -54,13 +54,13 @@ describe("authentication callback", () => {
       },
     });
     const request = new NextRequest(
-      "https://little-things.example/auth/callback?code=private-token",
+      "https://collecto.example/auth/callback?code=private-token",
     );
 
     const response = await GET(request);
 
     expect(response.headers.get("location")).toBe(
-      "https://little-things.example/login?error=confirmation",
+      "https://collecto.example/login?error=confirmation",
     );
     expect(log).toHaveBeenCalledWith("Authentication confirmation failed", {
       operation: "auth.exchange-code",
