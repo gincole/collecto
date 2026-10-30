@@ -714,3 +714,11 @@ These require new product design and security review:
 ## Plan approval gate
 
 No task may begin until this plan, `docs/tasks.md`, `docs/design-system.md`, `docs/database-design.md`, and `.env.example` are approved. After approval, execute only the first authorized atomic task. Report its commit hash and stop.
+
+## Approved follow-up M7-T02E: Modal navigation and shared controls
+
+User-requested continuation of M7-T02D. Implement the modal form factors, fixed
+footers, Back controls, shared dropdowns and skeleton palette described in
+[modal-consistency.md](modal-consistency.md). This explicitly overrides the original
+page/sheet form factors for the four named flows. Dependencies M7-T02A through
+M7-T02D are complete. One `fix(ui)` commit; browser verification remains excluded.

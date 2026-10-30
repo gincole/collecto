@@ -39,7 +39,10 @@ export default async function CollectionPage({
 
   return (
     <PageContainer as="main" className="space-y-6">
-      <CollectionHeader collection={collection} />
+      <CollectionHeader
+        collection={collection}
+        items={items.status === "success" ? items.data : []}
+      />
       {items.status === "success" ? (
         <BrowseView collection={collection} items={items.data} state={browse} />
       ) : (

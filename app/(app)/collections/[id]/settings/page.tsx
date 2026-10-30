@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { PageContainer } from "@/components/shared";
-import { BackLink } from "@/components/shared/back-link";
+import { FlowModal } from "@/components/shared/flow-modal";
 import { PageLoadError } from "@/components/shared/page-load-error";
 import {
   deleteCollectionFromSettingsAction,
@@ -63,9 +63,8 @@ export default async function CollectionSettingsPage({
   const deleteAction = deleteCollectionFromSettingsAction.bind(null, id);
 
   return (
-    <PageContainer as="main" width="form">
+    <FlowModal page title="Collection settings" returnTo={`/collections/${id}`}>
       <header className="space-y-2">
-        <BackLink href={`/collections/${id}`}>Back to Collection</BackLink>
         <p className="text-foreground-muted text-sm font-semibold">Settings</p>
         <h1 className="text-page-title-mobile sm:text-page-title break-words">
           {result.data.name}
@@ -82,6 +81,6 @@ export default async function CollectionSettingsPage({
           fields={result.data.fields}
         />
       </CollectionSettings>
-    </PageContainer>
+    </FlowModal>
   );
 }

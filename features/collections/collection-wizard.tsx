@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
   useTransition,
+  useId,
 } from "react";
 
 import { ConfirmDialog, PresetArtwork } from "@/components/shared";
@@ -15,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { FeedbackMessage } from "@/components/shared/feedback-message";
 import { useFeedback } from "@/components/shared/feedback";
 import { Input, Textarea } from "@/components/ui/form-control";
+import { ModalActions, useFlowExit } from "@/components/shared/flow-modal";
 import { cn } from "@/lib/utils/cn";
 
 import {
@@ -37,6 +39,7 @@ const initialState: CollectionWizardState = { status: "idle" };
 type CollectionWizardProps = { createAction: CollectionWizardAction };
 
 export function CollectionWizard({ createAction }: CollectionWizardProps) {
+  const formId = useId();
   const notify = useFeedback();
   const router = useRouter();
   const [state, formAction, saving] = useActionState(
@@ -62,6 +65,11 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
   const preset = presetKey ? getCollectionPreset(presetKey) : null;
   const dirty =
     presetKey !== null || name.trim() !== "" || description.trim() !== "";
+
+  const dismissFlow = useFlowExit(() => {
+    if (step === 2) setStep(1);
+    else cancel();
+  }, pending);
 
   useEffect(() => {
     if (state.fieldErrors?.name) nameInputRef.current?.focus();
@@ -107,7 +115,8 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
 
   function leave() {
     startLeaving(async () => {
-      await router.push("/library");
+      if (dismissFlow) dismissFlow();
+      else await router.push("/library");
     });
   }
 
@@ -195,7 +204,7 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
               })}
             </div>
 
-            <div className="border-border bg-background flex gap-3 border-t py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+            <ModalActions>
               <Button
                 className="ml-auto w-full sm:w-auto"
                 disabled={pending || !presetKey}
@@ -205,10 +214,11 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
               >
                 Continue
               </Button>
-            </div>
+            </ModalActions>
           </section>
         ) : preset ? (
           <form
+            id={formId}
             action={formAction}
             className="space-y-7"
             noValidate
@@ -362,7 +372,7 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
               <FeedbackMessage kind="error">{state.message}</FeedbackMessage>
             ) : null}
 
-            <div className="border-border bg-background flex flex-col-reverse gap-3 border-t py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:flex-row sm:justify-between">
+            <ModalActions className="flex flex-wrap items-center justify-between gap-3">
               <Button
                 disabled={pending}
                 onClick={() => setStep(1)}
@@ -372,10 +382,15 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
                 <ArrowLeft aria-hidden="true" />
                 Back
               </Button>
-              <Button disabled={pending || !requestId} size="lg" type="submit">
+              <Button
+                form={formId}
+                disabled={pending || !requestId}
+                size="lg"
+                type="submit"
+              >
                 {saving ? "Creating collection…" : "Create collection"}
               </Button>
-            </div>
+            </ModalActions>
           </form>
         ) : null}
       </div>

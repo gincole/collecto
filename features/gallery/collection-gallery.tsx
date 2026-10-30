@@ -1,21 +1,26 @@
-import { Ellipsis } from "lucide-react";
 import type { Route } from "next";
 import Link from "@/components/shared/navigation-link";
 
 import { EmptyState, PresetArtwork } from "@/components/shared";
 import { Button } from "@/components/ui/button";
-import { DeleteMenuLink } from "@/components/shared/delete-button";
+import { CollectionMenu } from "./collection-menu";
+import { BackLink } from "@/components/shared/back-link";
 import type { CollectionRecord } from "@/features/collections/models";
 import type { ItemRecord } from "@/features/items/types";
 import { GalleryGrid } from "./gallery-grid";
 
 export function CollectionHeader({
   collection,
+  items = [],
 }: {
   collection: CollectionRecord;
+  items?: ItemRecord[];
 }) {
   return (
     <header className="flex flex-wrap items-center gap-4 py-3 sm:gap-6 sm:py-6">
+      <div className="w-full">
+        <BackLink href="/library">Back</BackLink>
+      </div>
       <PresetArtwork presetKey={collection.presetKey ?? "blank"} size="lg" />
       <div className="min-w-0 flex-1 space-y-1">
         <h1 className="text-page-title-mobile sm:text-page-title break-words">
@@ -36,28 +41,7 @@ export function CollectionHeader({
             Add item
           </Link>
         </Button>
-        <details className="relative">
-          <summary
-            aria-label={`Collection actions for ${collection.name}`}
-            className="touch-target focus-ring border-control-border bg-surface hover:bg-surface-muted rounded-control flex cursor-pointer list-none items-center justify-center border [&::-webkit-details-marker]:hidden"
-          >
-            <Ellipsis aria-hidden="true" className="size-5" />
-          </summary>
-          <div className="border-border bg-surface shadow-sheet rounded-control absolute right-0 z-20 mt-1 w-48 border p-1">
-            <Link
-              className="touch-target hover:bg-surface-muted focus-ring rounded-control flex items-center px-3 text-sm"
-              href={`/collections/${collection.id}/settings` as Route}
-            >
-              Collection settings
-            </Link>
-            <DeleteMenuLink
-              aria-label="Delete collection"
-              href={
-                `/collections/${collection.id}/settings#delete-collection` as Route
-              }
-            />
-          </div>
-        </details>
+        <CollectionMenu collection={collection} items={items} />
       </div>
     </header>
   );

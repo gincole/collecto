@@ -17,8 +17,6 @@ import {
   type BrowseState,
 } from "./browse";
 import { CollectionGallery } from "./collection-gallery";
-import { GallerySettings } from "./gallery-settings";
-import { saveGalleryConfigAction } from "./actions";
 
 export function BrowseView({
   collection,
@@ -97,13 +95,6 @@ export function BrowseView({
             ))}
           </div>
         </nav>
-        <div className="shrink-0">
-          <GallerySettings
-            collection={collection}
-            items={items}
-            saveAction={saveGalleryConfigAction}
-          />
-        </div>
       </div>
       {pending ? (
         <p role="status" aria-label="Updating view" className="sr-only">

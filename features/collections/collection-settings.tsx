@@ -5,6 +5,7 @@ import {
   useEffect,
   useRef,
   useState,
+  useId,
   type ReactNode,
 } from "react";
 
@@ -21,6 +22,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input, Textarea } from "@/components/ui/form-control";
+import { ModalActions, useFlowExit } from "@/components/shared/flow-modal";
 import { DATABASE_LIMITS } from "@/lib/validation/limits";
 
 import type { CollectionSettingsState } from "./actions";
@@ -46,6 +48,7 @@ export function CollectionSettings({
   deleteAction,
   updateAction,
 }: CollectionSettingsProps) {
+  const formId = useId();
   const notify = useFeedback();
   const [name, setName] = useState(collection.name);
   const [description, setDescription] = useState(collection.description ?? "");
@@ -60,6 +63,7 @@ export function CollectionSettings({
     initialState,
   );
   const nameRef = useRef<HTMLInputElement>(null);
+  useFlowExit(undefined, updatePending || deletePending);
 
   const savedIdentity = updateState.savedIdentity ?? {
     description: collection.description ?? "",
@@ -117,7 +121,12 @@ export function CollectionSettings({
             Update the name and description shown in your Library.
           </p>
         </div>
-        <form noValidate action={updateFormAction} className="space-y-5">
+        <form
+          id={formId}
+          noValidate
+          action={updateFormAction}
+          className="space-y-5"
+        >
           <div className="space-y-2">
             <label className="text-label block" htmlFor="collection-name">
               Collection name
@@ -184,15 +193,16 @@ export function CollectionSettings({
               Review the highlighted fields and try again.
             </FeedbackMessage>
           ) : null}
-          <div className="flex justify-end">
+          <ModalActions>
             <Button
+              form={formId}
               aria-busy={updatePending}
               disabled={!dirty || updatePending}
               type="submit"
             >
               {updatePending ? "Saving…" : "Save changes"}
             </Button>
-          </div>
+          </ModalActions>
         </form>
       </section>
 

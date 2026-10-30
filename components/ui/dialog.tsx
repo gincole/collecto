@@ -1,7 +1,7 @@
 "use client";
 
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { X } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import type { ComponentProps } from "react";
 
 import { cn } from "@/lib/utils/cn";
@@ -30,16 +30,17 @@ function DialogContent({
         )}
         {...props}
       >
-        {children}
         {showCloseButton ? (
           <DialogPrimitive.Close
             data-dialog-close
-            aria-label="Close dialog"
-            className="touch-target text-foreground-muted hover:bg-surface-muted focus-ring rounded-control absolute top-3 right-3 inline-flex items-center justify-center"
+            aria-label="Back"
+            className="touch-target text-foreground-muted hover:bg-surface-muted focus-ring rounded-control inline-flex w-fit items-center justify-center gap-2 px-3 text-sm"
           >
-            <X aria-hidden="true" />
+            <ArrowLeft aria-hidden="true" className="size-4" />
+            Back
           </DialogPrimitive.Close>
         ) : null}
+        {children}
       </DialogPrimitive.Content>
     </DialogPrimitive.Portal>
   );

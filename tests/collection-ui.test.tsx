@@ -218,7 +218,8 @@ describe("Library view", () => {
     expect(screen.queryByRole("searchbox")).not.toBeInTheDocument();
   });
 
-  it("renders navigable Collection cards, item counts, and contextual actions", () => {
+  it("renders navigable Collection cards, item counts, and contextual actions", async () => {
+    const user = userEvent.setup();
     render(<LibraryView collections={[collection]} />);
 
     expect(screen.getByRole("link", { name: "Open My Books" })).toHaveAttribute(
@@ -229,11 +230,12 @@ describe("Library view", () => {
     expect(
       screen.getByLabelText("Collection actions for My Books"),
     ).toBeInTheDocument();
+    await user.click(screen.getByLabelText("Collection actions for My Books"));
     expect(
-      screen.getByRole("link", { name: "Rename My Books" }),
+      screen.getByRole("menuitem", { name: "Rename My Books" }),
     ).toHaveAttribute("href", `/collections/${collection.id}/settings`);
     expect(
-      screen.getByRole("link", { name: "Delete My Books" }),
+      screen.getByRole("menuitem", { name: "Delete My Books" }),
     ).toHaveAttribute(
       "href",
       `/collections/${collection.id}/settings#delete-collection`,

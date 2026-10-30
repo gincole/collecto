@@ -5,12 +5,14 @@ import { Button } from "@/components/ui/button";
 import { LibraryError } from "@/features/collections/library-error";
 import { LibraryView } from "@/features/collections/library-view";
 import { listCollectionsQuery } from "@/features/collections/queries";
+import { HistoryBack } from "@/components/shared/history-back";
 
 export default async function LibraryPage() {
   const result = await listCollectionsQuery();
 
   return (
     <PageContainer as="main">
+      <HistoryBack />
       <header className="flex flex-col gap-5 py-2 sm:flex-row sm:items-end sm:justify-between sm:py-4">
         <div className="space-y-2">
           <p className="text-foreground-muted text-sm">

@@ -1,3 +1,4 @@
+import { chooseOption } from "./helpers/select-option";
 import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
@@ -45,9 +46,9 @@ describe("Collection schema draft wizard", () => {
     expect(
       screen.getByRole("heading", { name: "Custom fields", level: 2 }),
     ).toBeInTheDocument();
-    await user.selectOptions(screen.getByLabelText("Field 2 type"), "text");
+    await chooseOption(user, screen.getByLabelText("Field 2 type"), "text");
     expect(screen.queryByDisplayValue("Fiction")).not.toBeInTheDocument();
-    await user.selectOptions(screen.getByLabelText("Field 2 type"), "select");
+    await chooseOption(user, screen.getByLabelText("Field 2 type"), "select");
     expect(screen.getByDisplayValue("Fiction")).toBeInTheDocument();
     await user.clear(screen.getByLabelText("Field 1 name"));
     await user.type(screen.getByLabelText("Field 1 name"), "Writer");
@@ -73,7 +74,7 @@ describe("Collection schema draft wizard", () => {
     await user.type(screen.getByLabelText("Collection name"), "My books");
     await user.clear(screen.getByLabelText("Field 1 name"));
     await user.type(screen.getByLabelText("Field 1 name"), "Creator");
-    await user.selectOptions(screen.getByLabelText("Field 1 type"), "url");
+    await chooseOption(user, screen.getByLabelText("Field 1 type"), "url");
     await user.click(screen.getByLabelText("Required field 1"));
     await user.click(
       screen.getByRole("button", { name: "Remove field Rating" }),
@@ -141,7 +142,7 @@ describe("Collection schema draft wizard", () => {
     expect(screen.getByLabelText("Field 1 name")).toHaveFocus();
     expect(action).not.toHaveBeenCalled();
     await user.type(screen.getByLabelText("Field 1 name"), "Category");
-    await user.selectOptions(screen.getByLabelText("Field 1 type"), "select");
+    await chooseOption(user, screen.getByLabelText("Field 1 type"), "select");
     await user.click(
       screen.getByRole("button", { name: "Add option to field 1" }),
     );

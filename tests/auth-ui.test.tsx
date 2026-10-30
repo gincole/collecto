@@ -143,21 +143,21 @@ describe("authentication UI", () => {
     expect(pendingAction).toHaveBeenCalledOnce();
   });
 
-  it("shows only the email and current-session logout in the account menu", () => {
+  it("shows only the email and current-session logout in the account menu", async () => {
+    const user = userEvent.setup();
     render(<AppHeader email="person@example.com" logoutAction={vi.fn()} />);
 
     expect(
       screen.getByRole("link", { name: "little things." }),
     ).toHaveAttribute("href", "/library");
-    expect(screen.getByRole("link", { name: "My Library" })).toHaveAttribute(
-      "href",
-      "/library",
-    );
-    expect(screen.getByRole("link", { name: "My Library" })).not.toHaveClass(
-      "hidden",
-    );
+    expect(
+      screen.queryByRole("link", { name: "My Library" }),
+    ).not.toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Account menu" }));
     expect(screen.getByText("person@example.com")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Log out" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("menuitem", { name: "Log out" }),
+    ).toBeInTheDocument();
     expect(
       screen.queryByText(/profile|display name|avatar/i),
     ).not.toBeInTheDocument();

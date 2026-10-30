@@ -1,10 +1,15 @@
-import { Ellipsis, PackageOpen } from "lucide-react";
+import { Ellipsis, PackageOpen, Pencil, Trash2 } from "lucide-react";
 import type { Route } from "next";
 import Link from "@/components/shared/navigation-link";
 
 import { EmptyState, PresetArtwork } from "@/components/shared";
 import { Button } from "@/components/ui/button";
-import { DeleteMenuLink } from "@/components/shared/delete-button";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 import { cardHoverMotion } from "@/lib/design/card-motion";
 import { cn } from "@/lib/utils/cn";
 
@@ -61,29 +66,44 @@ export function LibraryView({ collections }: LibraryViewProps) {
                 </p>
               </div>
             </Link>
-            <details className="group absolute right-3 bottom-3">
-              <summary
-                aria-label={`Collection actions for ${collection.name}`}
-                className="touch-target focus-ring hover:bg-surface-muted rounded-control flex cursor-pointer list-none items-center justify-center [&::-webkit-details-marker]:hidden"
-              >
-                <Ellipsis aria-hidden="true" className="size-5" />
-              </summary>
-              <div className="border-border bg-surface shadow-sheet rounded-control absolute right-0 bottom-full z-10 mb-1 w-40 border p-1">
-                <Link
-                  aria-label={`Rename ${collection.name}`}
-                  className="touch-target hover:bg-surface-muted focus-ring rounded-control flex w-full items-center px-3 text-left text-sm"
-                  href={`/collections/${collection.id}/settings` as Route}
-                >
-                  Rename
-                </Link>
-                <DeleteMenuLink
-                  aria-label={`Delete ${collection.name}`}
-                  href={
-                    `/collections/${collection.id}/settings#delete-collection` as Route
-                  }
-                />
-              </div>
-            </details>
+            <div className="absolute right-3 bottom-3">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="ghost"
+                    aria-label={`Collection actions for ${collection.name}`}
+                    className="touch-target focus-ring hover:bg-surface-muted rounded-control flex cursor-pointer list-none items-center justify-center [&::-webkit-details-marker]:hidden"
+                  >
+                    <Ellipsis aria-hidden="true" className="size-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      aria-label={`Rename ${collection.name}`}
+                      className="touch-target hover:bg-surface-muted focus-ring rounded-control flex w-full items-center px-3 text-left text-sm"
+                      href={`/collections/${collection.id}/settings` as Route}
+                    >
+                      <Pencil aria-hidden="true" />
+                      Rename
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild className="text-destructive">
+                    <Link
+                      aria-label={`Delete ${collection.name}`}
+                      href={
+                        `/collections/${collection.id}/settings#delete-collection` as Route
+                      }
+                    >
+                      <Trash2 aria-hidden="true" />
+                      Delete
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </article>
         </li>
       ))}

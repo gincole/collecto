@@ -1,3 +1,4 @@
+import { chooseOption } from "./helpers/select-option";
 import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import axe from "axe-core";
@@ -182,7 +183,8 @@ describe("Field manager", () => {
     const editor = screen.getByRole("dialog", { name: "Add custom field" });
     expect(editor).toHaveClass("max-sm:h-dvh");
     await user.type(within(editor).getByLabelText("Field name"), "Mood");
-    await user.selectOptions(
+    await chooseOption(
+      user,
       within(editor).getByLabelText("Field type"),
       "select",
     );
@@ -379,7 +381,7 @@ describe("Field manager", () => {
 
     await user.click(screen.getByRole("button", { name: "Add field" }));
     await user.type(screen.getByLabelText("Field name"), "Mood");
-    await user.selectOptions(screen.getByLabelText("Field type"), "select");
+    await chooseOption(user, screen.getByLabelText("Field type"), "select");
     await user.type(screen.getByLabelText("Option 1"), "Happy");
     await user.click(screen.getByRole("button", { name: "Add option" }));
     await user.type(screen.getByLabelText("Option 2"), "Quiet");

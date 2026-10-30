@@ -1,18 +1,16 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useId, useRef, useState, useTransition, type RefObject } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { FeedbackMessage } from "@/components/shared/feedback-message";
 import { useFeedback } from "@/components/shared/feedback";
 import { Select } from "@/components/ui/form-control";
 import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  FlowModal,
+  FlowGuard,
+  ModalActions,
+} from "@/components/shared/flow-modal";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import type { CollectionRecord } from "@/features/collections/models";
 import {
@@ -29,6 +27,9 @@ type Props = {
   collection: CollectionRecord;
   items: ItemRecord[];
   saveAction: (input: GallerySaveInput) => Promise<GallerySaveResult>;
+  returnFocus?: RefObject<HTMLButtonElement | null>;
+  open?: boolean;
+  setOpen?: (open: boolean) => void;
 };
 
 function Choice({
@@ -42,24 +43,39 @@ function Choice({
   options: readonly string[];
   onChange: (value: string) => void;
 }) {
+  const id = useId();
   return (
-    <label className="text-label grid min-w-0 gap-2">
-      {label}
-      <Select onChange={(event) => onChange(event.target.value)} value={value}>
+    <div className="text-label grid min-w-0 gap-2">
+      <label htmlFor={id}>{label}</label>
+      <Select
+        id={id}
+        onChange={(event) => onChange(event.target.value)}
+        value={value}
+      >
         {options.map((option) => (
           <option key={option} value={option}>
             {option}
           </option>
         ))}
       </Select>
-    </label>
+    </div>
   );
 }
 
-export function GallerySettings({ collection, items, saveAction }: Props) {
+export function GallerySettings({
+  collection,
+  items,
+  saveAction,
+  returnFocus,
+  open: externalOpen,
+  setOpen: externalSetOpen,
+}: Props) {
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const notify = useFeedback();
   const router = useRouter();
-  const [open, setOpen] = useState(false);
+  const [localOpen, setLocalOpen] = useState(false);
+  const open = externalOpen ?? localOpen;
+  const setOpen = externalSetOpen ?? setLocalOpen;
   const [discardOpen, setDiscardOpen] = useState(false);
   const [draft, setDraft] = useState(collection.viewConfig);
   const [baseline, setBaseline] = useState(collection.viewConfig);
@@ -162,35 +178,31 @@ export function GallerySettings({ collection, items, saveAction }: Props) {
 
   return (
     <>
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogTrigger asChild>
-          <Button type="button" variant="outline">
-            Gallery settings
-          </Button>
-        </DialogTrigger>
-        <DialogContent
-          className="sm:rounded-l-card sm:p-panel safe-area-panel top-0 right-0 left-auto grid h-dvh max-h-dvh w-screen max-w-none translate-x-0 translate-y-0 grid-rows-[auto_minmax(0,1fr)_auto] gap-4 rounded-none border-0 p-4 sm:w-full sm:max-w-md sm:border-l"
-          showCloseButton={!pending}
-          onEscapeKeyDown={(event) => {
-            if (pending) event.preventDefault();
-          }}
-          onInteractOutside={(event) => {
-            if (pending) event.preventDefault();
-          }}
+      {externalOpen === undefined ? (
+        <Button
+          ref={triggerRef}
+          type="button"
+          variant="outline"
+          onClick={() => onOpenChange(true)}
         >
-          <div className="space-y-2 pr-10">
-            <DialogTitle className="text-section-title-mobile sm:text-section-title">
-              Gallery settings
-            </DialogTitle>
-            <DialogDescription className="text-foreground-muted">
-              Preview changes before saving. These settings apply to every view
-              in this Collection.
-            </DialogDescription>
-          </div>
-          <div className="min-h-0 space-y-6 overflow-y-auto overscroll-contain px-1 pb-2">
+          Gallery settings
+        </Button>
+      ) : null}
+      {open ? (
+        <FlowModal
+          title="Gallery settings"
+          returnFocus={returnFocus ?? triggerRef}
+          returnTo={`/collections/${collection.id}`}
+        >
+          <FlowGuard onBack={() => onOpenChange(false)} busy={pending} />
+          <p className="text-foreground-muted mb-5">
+            Preview changes before saving. These settings apply to every view in
+            this Collection.
+          </p>
+          <div className="space-y-6">
             <fieldset className="space-y-5" disabled={pending}>
               <legend className="sr-only">Gallery appearance</legend>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-4">
                 <Choice
                   label="Columns"
                   value={String(safeDraft.columns)}
@@ -363,7 +375,7 @@ export function GallerySettings({ collection, items, saveAction }: Props) {
               <FeedbackMessage kind="error">{message}</FeedbackMessage>
             ) : null}
           </div>
-          <div className="flex flex-wrap justify-end gap-3 pb-[env(safe-area-inset-bottom)]">
+          <ModalActions>
             <Button
               disabled={pending}
               onClick={() => onOpenChange(false)}
@@ -380,7 +392,7 @@ export function GallerySettings({ collection, items, saveAction }: Props) {
             >
               {pending ? "Saving…" : "Save changes"}
             </Button>
-          </div>
+          </ModalActions>
           <ConfirmDialog
             open={discardOpen}
             onOpenChange={setDiscardOpen}
@@ -393,8 +405,8 @@ export function GallerySettings({ collection, items, saveAction }: Props) {
               setOpen(false);
             }}
           />
-        </DialogContent>
-      </Dialog>
+        </FlowModal>
+      ) : null}
     </>
   );
 }

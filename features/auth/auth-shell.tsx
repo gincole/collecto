@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { HistoryBack } from "@/components/shared/history-back";
 
 type AuthShellProps = { children: ReactNode };
 
@@ -10,6 +11,7 @@ export function AuthShell({ children }: AuthShellProps) {
       className="page-insets flex min-h-dvh items-center justify-center py-8 sm:py-12"
     >
       <div className="w-full max-w-[27.5rem]">
+        <HistoryBack />
         <section className="border-border bg-surface rounded-card sm:p-panel border p-5">
           {children}
         </section>

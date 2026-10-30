@@ -1,3 +1,4 @@
+import { chooseOption } from "./helpers/select-option";
 import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -146,7 +147,7 @@ describe("Gallery Settings draft", () => {
     );
     await user.click(screen.getByRole("button", { name: "Gallery settings" }));
     const dialog = screen.getByRole("dialog");
-    expect(dialog).toHaveClass("max-h-dvh", "safe-area-panel");
+    expect(dialog).toHaveClass("max-h-[90dvh]", "flow-modal");
     const results = await axe.run(dialog, {
       runOnly: {
         type: "tag",
@@ -187,13 +188,13 @@ describe("Gallery Settings draft", () => {
       />,
     );
     await user.click(screen.getByRole("button", { name: "Gallery settings" }));
-    await user.selectOptions(screen.getByLabelText("Sort order"), "title:asc");
+    await chooseOption(user, screen.getByLabelText("Sort order"), "title:asc");
     const preview = screen.getByRole("region", { name: "Gallery preview" });
     expect(within(preview).getAllByRole("article")[0]).toHaveTextContent(
       "Apple",
     );
     expect(within(preview).queryByRole("link")).not.toBeInTheDocument();
-    await user.selectOptions(screen.getByLabelText("Spacing"), "tight");
+    await chooseOption(user, screen.getByLabelText("Spacing"), "tight");
     expect(within(preview).getByRole("list")).toHaveClass("gap-2");
   });
   it("caps selection at three and removes deleted Fields from an open draft", async () => {
@@ -237,13 +238,13 @@ describe("Gallery Settings draft", () => {
       <GallerySettings collection={collection} items={[]} saveAction={save} />,
     );
     await user.click(screen.getByRole("button", { name: "Gallery settings" }));
-    await user.selectOptions(screen.getByLabelText("Image ratio"), "16:9");
+    await chooseOption(user, screen.getByLabelText("Image ratio"), "16:9");
     await user.keyboard("{Escape}");
     expect(
       screen.getByRole("alertdialog", { name: "Discard gallery changes?" }),
     ).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Keep editing" }));
-    expect(screen.getByLabelText("Image ratio")).toHaveValue("16:9");
+    expect(screen.getByLabelText("Image ratio")).toHaveTextContent("16:9");
     expect(save).not.toHaveBeenCalled();
   });
   it("previews locally and persists only Save, preserving selections with details OFF", async () => {
@@ -255,7 +256,7 @@ describe("Gallery Settings draft", () => {
     await user.click(screen.getByRole("button", { name: "Gallery settings" }));
     const dialog = screen.getByRole("dialog", { name: "Gallery settings" });
     expect(within(dialog).getByText("Sample item")).toBeInTheDocument();
-    await user.selectOptions(screen.getByLabelText("Columns"), "5");
+    await chooseOption(user, screen.getByLabelText("Columns"), "5");
     await user.click(screen.getByLabelText("Description"));
     await user.click(screen.getByLabelText("Show details"));
     expect(within(dialog).queryByText("Sample item")).not.toBeInTheDocument();
@@ -281,7 +282,7 @@ describe("Gallery Settings draft", () => {
     );
     const trigger = screen.getByRole("button", { name: "Gallery settings" });
     await user.click(trigger);
-    await user.selectOptions(screen.getByLabelText("Columns"), "1");
+    await chooseOption(user, screen.getByLabelText("Columns"), "1");
     await user.click(screen.getByRole("button", { name: "Cancel" }));
     expect(
       screen.getByRole("alertdialog", { name: "Discard gallery changes?" }),
@@ -289,7 +290,7 @@ describe("Gallery Settings draft", () => {
     await user.click(screen.getByRole("button", { name: "Discard changes" }));
     expect(trigger).toHaveFocus();
     await user.click(trigger);
-    expect(screen.getByLabelText("Columns")).toHaveValue("3");
+    expect(screen.getByLabelText("Columns")).toHaveTextContent("3");
     expect(save).not.toHaveBeenCalled();
   });
   it("enforces the field cap, supports keyboard ordering, and preserves a failed draft", async () => {

@@ -184,11 +184,14 @@ describe("shared components", () => {
     const cancel = screen.getByRole("button", { name: "Cancel" });
     const confirm = screen.getByRole("button", { name: "Delete permanently" });
 
+    const back = screen.getByRole("button", { name: "Back" });
+    expect(back).toHaveFocus();
+    await user.tab();
     expect(cancel).toHaveFocus();
     await user.tab();
     expect(confirm).toHaveFocus();
     await user.tab();
-    expect(cancel).toHaveFocus();
+    expect(back).toHaveFocus();
 
     await user.keyboard("{Escape}");
     expect(trigger).toHaveFocus();

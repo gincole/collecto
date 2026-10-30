@@ -1,4 +1,4 @@
-import { FormLoading } from "@/components/shared/form-loading";
+import { ModalLoading } from "@/components/shared/modal-loading";
 export default function Loading() {
-  return <FormLoading label="Loading Collection setup" />;
+  return <ModalLoading title="New collection" returnTo="/library" />;
 }

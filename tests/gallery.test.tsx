@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { chooseOption } from "./helpers/select-option";
 import axe from "axe-core";
 import { describe, expect, it, vi } from "vitest";
 
@@ -103,6 +104,37 @@ const collection: CollectionRecord = {
   updatedAt: "2026-01-01T00:00:00.000Z",
   viewConfig: baseConfig,
 };
+
+describe("Collection settings overflow", () => {
+  it("discards a gallery draft and starts again from saved settings", async () => {
+    const user = userEvent.setup();
+    render(<CollectionHeader collection={collection} />);
+    const opener = screen.getByRole("button", { name: /Collection actions/ });
+    expect(
+      screen.queryByRole("button", { name: "Gallery settings" }),
+    ).toBeNull();
+    await user.click(opener);
+    for (const label of ["Collection settings", "Gallery settings", "Delete"]) {
+      expect(
+        screen.getByRole("menuitem", { name: label }).querySelector("svg"),
+      ).not.toBeNull();
+    }
+    await user.click(
+      screen.getByRole("menuitem", { name: "Gallery settings" }),
+    );
+    await chooseOption(user, screen.getByLabelText("Columns"), "1");
+    await user.click(screen.getByRole("button", { name: "Back" }));
+    await user.click(screen.getByRole("button", { name: "Discard changes" }));
+    expect(opener).toHaveFocus();
+    await user.click(opener);
+    await user.click(
+      screen.getByRole("menuitem", { name: "Gallery settings" }),
+    );
+    expect(screen.getByLabelText("Columns")).toHaveTextContent(
+      String(collection.viewConfig.columns),
+    );
+  });
+});
 
 describe("gallery sorting", () => {
   it("sorts newest and oldest with deterministic ID tie-breakers", () => {
@@ -351,7 +383,8 @@ describe("gallery configuration validation", () => {
 });
 
 describe("Collection gallery states", () => {
-  it("renders Collection identity, item count, Add Item, and contextual actions", () => {
+  it("renders Collection identity, item count, Add Item, and contextual actions", async () => {
+    const user = userEvent.setup();
     render(<CollectionHeader collection={collection} />);
 
     expect(
@@ -363,12 +396,11 @@ describe("Collection gallery states", () => {
       "href",
       `/collections/${collectionId}/items/new`,
     );
+    await user.click(screen.getByLabelText("Collection actions for My Books"));
     expect(
-      screen.getByRole("link", { name: "Collection settings" }),
+      screen.getByRole("menuitem", { name: "Collection settings" }),
     ).toHaveAttribute("href", `/collections/${collectionId}/settings`);
-    expect(
-      screen.getByRole("link", { name: "Delete collection" }),
-    ).toHaveAttribute(
+    expect(screen.getByRole("menuitem", { name: "Delete" })).toHaveAttribute(
       "href",
       `/collections/${collectionId}/settings#delete-collection`,
     );

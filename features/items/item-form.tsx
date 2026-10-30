@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
   useTransition,
+  useId,
 } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ import type { ItemFieldDefinition, ItemRecord } from "./types";
 import { ImageUploader } from "./image-uploader";
 import { FeedbackMessage } from "@/components/shared/feedback-message";
 import { useFeedback } from "@/components/shared/feedback";
+import { ModalActions, useFlowExit } from "@/components/shared/flow-modal";
 
 export type ItemFormState = {
   fieldErrors?: Record<string, string>;
@@ -105,13 +107,16 @@ export function ItemForm({
   fields,
   item,
   mode,
+  modal = false,
 }: {
   action: ItemFormAction;
   collectionId: string;
   fields: ItemFieldDefinition[];
   item?: ItemRecord;
   mode: "create" | "edit";
+  modal?: boolean;
 }) {
+  const formId = useId();
   const [serverState, formAction, pending] = useActionState(action, {
     status: "idle",
   });
@@ -120,6 +125,7 @@ export function ItemForm({
   const notify = useFeedback();
   const [transitionPending, startTransition] = useTransition();
   const isPending = pending || transitionPending;
+  const dismissFlow = useFlowExit(undefined, isPending);
   const formRef = useRef<HTMLFormElement>(null);
   const submittedRef = useRef<FormData | undefined>(undefined);
   useEffect(() => {
@@ -144,10 +150,17 @@ export function ItemForm({
       ? Object.keys(state.fieldErrors)[0]
       : undefined;
     const target = first ? formRef.current?.elements.namedItem(first) : null;
-    if (target instanceof HTMLElement) target.focus();
+    if (target instanceof HTMLInputElement && target.type === "hidden") {
+      const trigger = Array.from(
+        formRef.current?.querySelectorAll<HTMLElement>("[data-field-name]") ??
+          [],
+      ).find((control) => control.dataset.fieldName === first);
+      trigger?.focus();
+    } else if (target instanceof HTMLElement) target.focus();
   }, [state, notify, clientState, isPending]);
   return (
     <form
+      id={formId}
       noValidate
       className="w-full min-w-0 space-y-6"
       onSubmit={(event) => {
@@ -179,7 +192,13 @@ export function ItemForm({
     >
       <input name="collectionId" type="hidden" value={collectionId} />
       {item ? <input name="itemId" type="hidden" value={item.id} /> : null}
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:items-start">
+      <div
+        className={
+          modal
+            ? "grid gap-6"
+            : "grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:items-start"
+        }
+      >
         <ImageUploader
           error={state.fieldErrors?.image}
           hasImage={Boolean(item?.imagePath)}
@@ -243,12 +262,16 @@ export function ItemForm({
           ) : null}
         </div>
       </div>
-      <div className="border-border flex flex-wrap justify-end gap-3 border-t py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:border-0 sm:p-0">
+      <ModalActions>
         <Button asChild variant="outline">
           <Link
             aria-disabled={isPending}
             onClick={(event) => {
               if (isPending) event.preventDefault();
+              else if (dismissFlow) {
+                event.preventDefault();
+                dismissFlow();
+              }
             }}
             href={
               item
@@ -259,14 +282,19 @@ export function ItemForm({
             Cancel
           </Link>
         </Button>
-        <Button aria-busy={isPending} disabled={isPending} type="submit">
+        <Button
+          form={formId}
+          aria-busy={isPending}
+          disabled={isPending}
+          type="submit"
+        >
           {isPending
             ? "Saving item…"
             : mode === "create"
               ? "Save item"
               : "Save changes"}
         </Button>
-      </div>
+      </ModalActions>
     </form>
   );
 }
