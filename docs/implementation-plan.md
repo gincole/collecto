@@ -840,3 +840,37 @@ wizard/local-dialog tests and `corepack pnpm verify:deployment`; inspect the
 source/compiled style contract, request independent review and inspect staged
 changes for secrets. No browser checks at user request. One `fix(collections)`
 commit; no push.
+
+## M7-T02N: Smooth, continuously editable custom Field ordering
+
+The user requests animated arrow moves, full-row dragging, and reorder controls
+that remain available while saves run. Depends on M7-T02K and M7-T02M. Keep this
+one task limited to custom Field ordering and its persistence coordination.
+
+Use immediate local order and a serial, coalescing save queue: at most one write
+in flight, retain the latest intent, ignore obsolete failures, and restore the
+last confirmed order if the final save fails. Refresh once the queue drains;
+ignore intermediate revalidated orders. Remove visible progress text/layout jumps
+and per-move success toasts; retain screen-reader progress and actionable errors.
+Only impossible boundary arrow moves are disabled. Keep modal pending-exit guards.
+
+Replace native handle-only dragging with the established dnd-kit sortable APIs:
+full-row viewport overlay, sortable neighbour transforms, layout-change animation
+for arrows, pointer activation threshold, automatic scroll, touch and keyboard
+sensors, cancelled-drag safety and reduced-motion preference support. The overlay
+is inert/hidden to accessibility and portalled above the scroll container. Pin
+core 6.3.1, sortable 10.0.0 and utilities 3.2.2; this dependency is justified by
+collision, overlay, keyboard and scrolling behavior rather than bespoke sensors.
+No unrelated package upgrades, schema changes or Select-option changes.
+
+Research: official [sortable guide](https://dndkit.com/legacy/presets/sortable/overview/)
+and [drag overlay guide](https://dndkit.com/legacy/api-documentation/draggable/drag-overlay/)
+recommend sortable transforms and an overlay for scrollable lists, with separate
+presentational content. Keep the overlay mounted for drop animations.
+
+Acceptance/verification: real pointer and keyboard sensor component tests with
+mocked layout; full-row preview and cancel; rapid/sequential/coalesced moves;
+obsolete/latest failures and rollback; stale props while saving; preference
+subscription/cleanup; existing Field/Settings tests; full deployment gate,
+dependency audit, independent review and staged secret/diff inspection. No browser
+checks at user request. One `fix(fields)` commit, no push.

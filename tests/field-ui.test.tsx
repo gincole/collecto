@@ -1,8 +1,15 @@
 import { chooseOption } from "./helpers/select-option";
-import { act, fireEvent, render, screen, within } from "@testing-library/react";
+import {
+  act,
+  render,
+  renderHook,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import axe from "axe-core";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const { refreshMock } = vi.hoisted(() => ({ refreshMock: vi.fn() }));
 
@@ -15,6 +22,7 @@ import {
   type FieldManagerActions,
 } from "@/features/fields/field-manager";
 import type { CollectionRecord } from "@/features/collections/models";
+import { useFieldOrder } from "@/features/fields/use-field-order";
 
 const collectionId = "00000000-0000-4000-8000-000000000001";
 const genreId = "00000000-0000-4000-8000-000000000010";
@@ -73,6 +81,131 @@ function createActions(
 }
 
 describe("Field manager", () => {
+  it("keeps a successful drop when a previous refresh arrived during the drag", async () => {
+    const request = Promise.withResolvers<{ status: "success" }>();
+    const actions = createActions({ reorderFields: () => request.promise });
+    const hook = renderHook(
+      ({ server, dragging }) =>
+        useFieldOrder(server, collectionId, actions, dragging),
+      { initialProps: { server: fields, dragging: true } },
+    );
+    const stale = [...fields];
+    hook.rerender({ server: stale, dragging: true });
+    const dropped = [fields[1], fields[0]];
+    act(() => hook.result.current.saveOrder(dropped));
+    hook.rerender({ server: stale, dragging: false });
+    await act(async () => {
+      request.resolve({ status: "success" });
+    });
+    expect(hook.result.current.fields.map((field) => field.id)).toEqual([
+      ratingId,
+      genreId,
+    ]);
+  });
+  afterEach(() => vi.restoreAllMocks());
+  function mockRowRects() {
+    vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(
+      function (this: HTMLElement) {
+        const index = this.parentElement
+          ? Array.from(this.parentElement.children).indexOf(this)
+          : 0;
+        return new DOMRect(
+          0,
+          this.hasAttribute("data-field-id") ? index * 100 : 0,
+          600,
+          80,
+        );
+      },
+    );
+  }
+  it("moves a full-row overlay with the pointer and saves after dropping", async () => {
+    mockRowRects();
+    const actions = createActions(),
+      user = userEvent.setup();
+    render(
+      <FieldManager
+        fields={fields}
+        collectionId={collectionId}
+        actions={actions}
+      />,
+    );
+    const handle = screen.getByRole("button", {
+      name: "Drag Genre to reorder",
+    });
+    await user.pointer([
+      { target: handle, keys: "[MouseLeft>]", coords: { x: 20, y: 20 } },
+      { coords: { x: 20, y: 35 } },
+      { coords: { x: 20, y: 140 } },
+    ]);
+    expect(
+      document.querySelector("[data-field-drag-preview]"),
+    ).toHaveTextContent("Edit Genre");
+    expect(actions.reorderFields).not.toHaveBeenCalled();
+    await user.pointer({ keys: "[/MouseLeft]" });
+    await waitFor(() =>
+      expect(actions.reorderFields).toHaveBeenCalledExactlyOnceWith({
+        collectionId,
+        fieldIds: [ratingId, genreId],
+      }),
+    );
+    expect(visibleFieldOrder()).toEqual(["Edit Rating", "Edit Genre"]);
+    await waitFor(() =>
+      expect(document.querySelector("[data-field-drag-preview]")).toBeNull(),
+    );
+  });
+  it("sorts with the keyboard sensor and persists the dropped row", async () => {
+    mockRowRects();
+    const actions = createActions(),
+      user = userEvent.setup();
+    render(
+      <FieldManager
+        fields={fields}
+        collectionId={collectionId}
+        actions={actions}
+      />,
+    );
+    screen.getByRole("button", { name: "Drag Genre to reorder" }).focus();
+    await user.keyboard(" ");
+    await user.keyboard("{ArrowDown}");
+    await user.keyboard(" ");
+    await waitFor(() =>
+      expect(actions.reorderFields).toHaveBeenCalledExactlyOnceWith({
+        collectionId,
+        fieldIds: [ratingId, genreId],
+      }),
+    );
+    expect(visibleFieldOrder()).toEqual(["Edit Rating", "Edit Genre"]);
+    await waitFor(() =>
+      expect(document.querySelector("[data-field-drag-preview]")).toBeNull(),
+    );
+  });
+  it("lifts the complete row during keyboard dragging and cancels without a save", async () => {
+    mockRowRects();
+    const actions = createActions(),
+      user = userEvent.setup();
+    render(
+      <FieldManager
+        fields={fields}
+        collectionId={collectionId}
+        actions={actions}
+      />,
+    );
+    screen.getByRole("button", { name: "Drag Genre to reorder" }).focus();
+    await user.keyboard(" ");
+    const preview = document.querySelector("[data-field-drag-preview]");
+    expect(preview).toHaveTextContent("Genre");
+    expect(preview).toHaveTextContent("Edit Genre");
+    expect(preview).toHaveTextContent("Delete");
+    expect(preview).toHaveAttribute("aria-hidden", "true");
+    expect(screen.getByRole("status")).toHaveTextContent("Genre");
+    expect(screen.getByRole("status")).not.toHaveTextContent(genreId);
+    await user.keyboard("{Escape}");
+    expect(actions.reorderFields).not.toHaveBeenCalled();
+    await waitFor(() =>
+      expect(document.querySelector("[data-field-drag-preview]")).toBeNull(),
+    );
+  });
+
   function visibleFieldOrder() {
     const list = within(
       screen.getByRole("region", { name: "Custom fields" }),
@@ -103,7 +236,9 @@ describe("Field manager", () => {
     );
     await user.click(screen.getByRole("button", { name: "Move Genre down" }));
     expect(visibleFieldOrder()).toEqual(["Edit Rating", "Edit Genre"]);
-    await act(() => request.resolve({ status: "success" }));
+    await act(async () => {
+      request.resolve({ status: "success" });
+    });
     expect(visibleFieldOrder()).toEqual(["Edit Rating", "Edit Genre"]);
     await user.click(screen.getByRole("button", { name: "Move Genre up" }));
     expect(actions.reorderFields).toHaveBeenNthCalledWith(2, {
@@ -129,6 +264,132 @@ describe("Field manager", () => {
       "Could not save field order",
     );
     expect(visibleFieldOrder()).toEqual(["Edit Genre", "Edit Rating"]);
+  });
+
+  it("queues the latest order while a save is in flight without disabling reordering", async () => {
+    const first = Promise.withResolvers<{ status: "success" }>();
+    const last = Promise.withResolvers<{ status: "success" }>();
+    const actions = createActions({
+      reorderFields: vi
+        .fn()
+        .mockReturnValueOnce(first.promise)
+        .mockReturnValueOnce(last.promise),
+    });
+    const user = userEvent.setup();
+    render(
+      <FieldManager
+        collectionId={collectionId}
+        fields={fields}
+        actions={actions}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Move Genre down" }));
+    await user.click(screen.getByRole("button", { name: "Move Genre up" }));
+    expect(visibleFieldOrder()).toEqual(["Edit Genre", "Edit Rating"]);
+    expect(actions.reorderFields).toHaveBeenCalledOnce();
+    await act(async () => {
+      first.resolve({ status: "success" });
+    });
+    expect(actions.reorderFields).toHaveBeenNthCalledWith(2, {
+      collectionId,
+      fieldIds: [genreId, ratingId],
+    });
+    expect(
+      screen.getByRole("button", { name: "Drag Genre to reorder" }),
+    ).not.toBeDisabled();
+    await act(async () => {
+      last.resolve({ status: "success" });
+    });
+    expect(visibleFieldOrder()).toEqual(["Edit Genre", "Edit Rating"]);
+    expect(refreshMock).toHaveBeenCalledOnce();
+  });
+
+  it("ignores an outdated save failure when a newer order is queued", async () => {
+    const first = Promise.withResolvers<{ status: "error" }>();
+    const actions = createActions({
+      reorderFields: vi
+        .fn()
+        .mockReturnValueOnce(first.promise)
+        .mockResolvedValue({ status: "success" }),
+    });
+    const user = userEvent.setup();
+    render(
+      <FieldManager
+        fields={fields}
+        collectionId={collectionId}
+        actions={actions}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Move Genre down" }));
+    await user.click(screen.getByRole("button", { name: "Move Genre up" }));
+    await act(async () => {
+      first.resolve({ status: "error" });
+    });
+    expect(visibleFieldOrder()).toEqual(["Edit Genre", "Edit Rating"]);
+    expect(screen.queryByRole("alert")).toBeNull();
+    // The desired order already matches the last confirmed order, so no second write.
+    expect(actions.reorderFields).toHaveBeenCalledOnce();
+  });
+
+  it("rolls a failed final queued move back to the last successful order", async () => {
+    const first = Promise.withResolvers<{ status: "success" }>();
+    const actions = createActions({
+      reorderFields: vi
+        .fn()
+        .mockReturnValueOnce(first.promise)
+        .mockRejectedValue(new Error("network")),
+    });
+    const user = userEvent.setup();
+    render(
+      <FieldManager
+        fields={fields}
+        collectionId={collectionId}
+        actions={actions}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Move Genre down" }));
+    await user.click(screen.getByRole("button", { name: "Move Genre up" }));
+    await act(async () => {
+      first.resolve({ status: "success" });
+    });
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Could not save field order",
+    );
+    expect(visibleFieldOrder()).toEqual(["Edit Rating", "Edit Genre"]);
+    expect(
+      screen.getByRole("button", { name: "Move Genre up" }),
+    ).not.toBeDisabled();
+  });
+
+  it("coalesces intermediate moves and ignores stale revalidated order during a save", async () => {
+    const first = Promise.withResolvers<{ status: "success" }>();
+    const actions = createActions({
+      reorderFields: vi.fn().mockReturnValueOnce(first.promise),
+    });
+    const user = userEvent.setup();
+    const view = render(
+      <FieldManager
+        fields={fields}
+        collectionId={collectionId}
+        actions={actions}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Move Genre down" }));
+    await user.click(screen.getByRole("button", { name: "Move Genre up" }));
+    await user.click(screen.getByRole("button", { name: "Move Genre down" }));
+    view.rerender(
+      <FieldManager
+        fields={[...fields]}
+        collectionId={collectionId}
+        actions={actions}
+      />,
+    );
+    expect(visibleFieldOrder()).toEqual(["Edit Rating", "Edit Genre"]);
+    await act(async () => {
+      first.resolve({ status: "success" });
+    });
+    expect(actions.reorderFields).toHaveBeenCalledOnce();
+    expect(visibleFieldOrder()).toEqual(["Edit Rating", "Edit Genre"]);
   });
 
   it("accepts refreshed server Fields after a successful local move", async () => {
@@ -157,66 +418,7 @@ describe("Field manager", () => {
     expect(actions.reorderFields).toHaveBeenCalledOnce();
   });
 
-  it("persists a handle drag through the same reorder action and ignores external drops", async () => {
-    const actions = createActions();
-    render(
-      <FieldManager
-        collectionId={collectionId}
-        fields={fields}
-        actions={actions}
-      />,
-    );
-    const handle = screen.getByRole("button", {
-      name: "Drag Genre to reorder",
-    });
-    const target = screen
-      .getByRole("button", { name: "Edit Rating" })
-      .closest("li");
-    expect(target).not.toBeNull();
-    if (!target) throw new Error("Missing target Field");
-    fireEvent.drop(target);
-    expect(actions.reorderFields).not.toHaveBeenCalled();
-    fireEvent.dragStart(handle, {
-      dataTransfer: { setData: vi.fn(), effectAllowed: "" },
-    });
-    await act(async () => {
-      fireEvent.drop(target);
-    });
-    expect(actions.reorderFields).toHaveBeenCalledExactlyOnceWith({
-      collectionId,
-      fieldIds: [ratingId, genreId],
-    });
-    expect(visibleFieldOrder()).toEqual(["Edit Rating", "Edit Genre"]);
-  });
-
-  it("ignores cancelled and same-row drags without saving", () => {
-    const actions = createActions();
-    render(
-      <FieldManager
-        collectionId={collectionId}
-        fields={fields}
-        actions={actions}
-      />,
-    );
-    const handle = screen.getByRole("button", {
-      name: "Drag Genre to reorder",
-    });
-    const row = handle.closest("li");
-    const target = screen
-      .getByRole("button", { name: "Edit Rating" })
-      .closest("li");
-    if (!row || !target) throw new Error("Missing Field rows");
-    const dataTransfer = { setData: vi.fn(), effectAllowed: "" };
-    fireEvent.dragStart(handle, { dataTransfer });
-    fireEvent.drop(row);
-    fireEvent.dragStart(handle, { dataTransfer });
-    fireEvent.dragEnd(handle);
-    fireEvent.drop(target);
-    expect(actions.reorderFields).not.toHaveBeenCalled();
-    expect(visibleFieldOrder()).toEqual(["Edit Genre", "Edit Rating"]);
-  });
-
-  it("announces a pending Field reorder until it completes", async () => {
+  it("keeps reorder controls usable with quiet progress while saving", async () => {
     const request = Promise.withResolvers<{ status: "success" }>();
     const user = userEvent.setup();
     render(
@@ -229,14 +431,24 @@ describe("Field manager", () => {
       />,
     );
     await user.click(screen.getByRole("button", { name: "Move Genre down" }));
-    expect(screen.getByRole("status")).toHaveTextContent(
-      "Updating field order…",
+    expect(screen.getByText("Updating field order…")).toHaveAttribute(
+      "role",
+      "status",
     );
     expect(
       screen.getByRole("button", { name: "Move Genre down" }),
     ).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "Move Genre up" }),
+    ).not.toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "Drag Genre to reorder" }),
+    ).not.toBeDisabled();
+    expect(screen.getByText("Updating field order…")).toHaveClass("sr-only");
     await act(async () => request.resolve({ status: "success" }));
-    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/Updating (?:field order|options)…/),
+    ).not.toBeInTheDocument();
   });
   it("announces pending Option updates instead of only disabling controls", async () => {
     const request = Promise.withResolvers<{ status: "success" }>();
@@ -252,9 +464,12 @@ describe("Field manager", () => {
     );
     await user.click(screen.getByRole("button", { name: "Edit Genre" }));
     await user.click(screen.getByRole("button", { name: "Save Finished" }));
-    expect(screen.getByRole("status")).toHaveTextContent("Updating options…");
+    expect(screen.getByText("Updating options…")).toHaveAttribute(
+      "role",
+      "status",
+    );
     await act(async () => request.resolve({ status: "success" }));
-    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    expect(screen.queryByText("Updating options…")).not.toBeInTheDocument();
   });
   it("lets the user retry a failed destructive-impact check", async () => {
     const user = userEvent.setup();

@@ -1,32 +1,37 @@
 "use client";
 
-import { GripVertical, LockKeyhole, Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { LockKeyhole, Plus } from "lucide-react";
+import { useMemo, useState, type RefObject } from "react";
+import { createPortal } from "react-dom";
 import {
-  useMemo,
-  useRef,
-  useState,
-  useTransition,
-  type RefObject,
-} from "react";
+  DndContext,
+  DragOverlay,
+  PointerSensor,
+  KeyboardSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+  type UniqueIdentifier,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import { SortableFieldRow, FieldDragPreview } from "./sortable-field-row";
+import { useFieldOrder } from "./use-field-order";
+import { useReducedMotion } from "@/lib/design/use-reduced-motion";
 import { Button } from "@/components/ui/button";
 import { useFlowBusy } from "@/components/shared/flow-modal";
 import { useFeedback } from "@/components/shared/feedback";
 import { fieldActionsWithFeedback } from "./feedback-actions";
 
 import type { CollectionRecord } from "@/features/collections/models";
-import { cn } from "@/lib/utils/cn";
 import { DATABASE_LIMITS } from "@/lib/validation/limits";
 
-import { DeleteFieldDialog } from "./field-delete-dialogs";
-import { AddFieldDialog, EditFieldDialog } from "./field-editors";
-import {
-  errorMessage,
-  fieldTypeLabels,
-  move,
-  type FieldManagerActions,
-} from "./field-manager-contract";
-import { ReorderButtons } from "./reorder-buttons";
+import { AddFieldDialog } from "./field-editors";
+import { move, type FieldManagerActions } from "./field-manager-contract";
 
 function BuiltInFields() {
   return (
@@ -81,66 +86,38 @@ function FieldManager({
   collectionId: string;
   fields: CollectionRecord["fields"];
 }) {
-  const router = useRouter();
   const notify = useFeedback();
   const actions = useMemo(
     () => fieldActionsWithFeedback(rawActions, notify),
     [rawActions, notify],
   );
-  const [message, setMessage] = useState<string>();
-  const [pending, startTransition] = useTransition();
-  const [ordering, setOrdering] = useState({
-    source: serverFields,
-    fields: serverFields,
-  });
-  // Keep acknowledged local moves visible until refreshed server props arrive.
-  if (ordering.source !== serverFields) {
-    setOrdering({ source: serverFields, fields: serverFields });
-  }
-  const fields =
-    ordering.source === serverFields ? ordering.fields : serverFields;
-  const draggedId = useRef<string | null>(null);
-  useFlowBusy(pending);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const reducedMotion = useReducedMotion();
+  const {
+    fields,
+    saving: pending,
+    message,
+    saveOrder,
+  } = useFieldOrder(serverFields, collectionId, rawActions, activeId !== null);
+  useFlowBusy(pending || activeId !== null);
   const atLimit = fields.length >= DATABASE_LIMITS.collectionFields;
-
-  function saveOrder(nextFields: CollectionRecord["fields"]) {
-    if (pending) return;
-    const previousFields = fields;
-    setMessage(undefined);
-    setOrdering({ source: serverFields, fields: nextFields });
-    startTransition(async () => {
-      const result = await actions.reorderFields({
-        collectionId,
-        fieldIds: nextFields.map((field) => field.id),
-      });
-      if (result.status === "success") router.refresh();
-      else {
-        setOrdering({ source: serverFields, fields: previousFields });
-        setMessage(errorMessage(result, "Field order"));
-      }
-    });
-  }
-
-  function dropField(targetId: string) {
-    const sourceId = draggedId.current;
-    draggedId.current = null;
-    if (pending || !sourceId || sourceId === targetId) return;
-    const source = fields.findIndex((field) => field.id === sourceId);
-    const target = fields.findIndex((field) => field.id === targetId);
-    const moved = fields[source];
-    if (!moved || target < 0) return;
-    const next = fields.filter((field) => field.id !== sourceId);
-    next.splice(target, 0, moved);
-    saveOrder(next);
-  }
-
+  const activeField = fields.find((field) => field.id === activeId);
+  const fieldName = (id: UniqueIdentifier) =>
+    fields.find((field) => field.id === id)?.name ?? "Field";
+  const position = (id: UniqueIdentifier) =>
+    fields.findIndex((field) => field.id === id) + 1;
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
   return (
     <div className="space-y-8">
       <BuiltInFields />
       <section
         data-form-panel
         aria-label="Custom fields"
-        aria-busy={pending}
         className="border-border bg-surface rounded-card sm:p-panel border p-4"
       >
         <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -174,7 +151,7 @@ function FieldManager({
           )}
         </div>
         {pending ? (
-          <p className="text-foreground-muted mb-4 text-sm" role="status">
+          <p className="sr-only" role="status">
             Updating field order…
           </p>
         ) : null}
@@ -192,93 +169,79 @@ function FieldManager({
             </p>
           </div>
         ) : (
-          <ol className="space-y-3">
-            {fields.map((field, index) => (
-              <li
-                onDragOver={(event) => {
-                  if (!pending && draggedId.current) {
-                    event.preventDefault();
-                    event.dataTransfer.dropEffect = "move";
-                  }
-                }}
-                onDrop={(event) => {
-                  event.preventDefault();
-                  dropField(field.id);
-                }}
-                className={cn(
-                  "border-border rounded-control grid min-w-0 gap-3 border p-3",
-                  "sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center",
-                )}
-                key={field.id}
-              >
-                <div className="flex min-w-0 items-start gap-2">
-                  <Button
-                    aria-label={`Drag ${field.name} to reorder`}
-                    className="hidden shrink-0 cursor-grab active:cursor-grabbing sm:inline-flex"
-                    disabled={pending}
-                    draggable={!pending}
-                    onDragStart={(event) => {
-                      if (pending) {
-                        event.preventDefault();
-                        return;
-                      }
-                      draggedId.current = field.id;
-                      event.dataTransfer.effectAllowed = "move";
-                      event.dataTransfer.setData("text/plain", field.id);
-                    }}
-                    onDragEnd={() => {
-                      draggedId.current = null;
-                    }}
-                    size="icon"
-                    type="button"
-                    variant="ghost"
-                  >
-                    <GripVertical aria-hidden="true" />
-                  </Button>
-                  <div className="min-w-0">
-                    <p className="font-semibold break-words">{field.name}</p>
-                    <p className="text-foreground-muted text-sm">
-                      {fieldTypeLabels[field.type]}
-                      {field.type === "select"
-                        ? ` · ${field.options.length} ${field.options.length === 1 ? "option" : "options"}`
-                        : ""}
-                    </p>
-                    {field.required ? (
-                      <span className="bg-surface-muted border-border rounded-badge mt-2 inline-flex border px-2 py-0.5 text-xs font-semibold">
-                        Required
-                      </span>
-                    ) : null}
-                  </div>
-                </div>
-                <div className="flex flex-wrap items-center justify-end gap-1">
-                  <ReorderButtons
-                    disabled={pending}
-                    label={field.name}
-                    onDown={
-                      index < fields.length - 1
-                        ? () => saveOrder(move(fields, index, 1))
-                        : undefined
-                    }
+          <DndContext
+            accessibility={{
+              screenReaderInstructions: {
+                draggable:
+                  "Press Space or Enter to pick up a field, arrow keys to move, Space or Enter to drop, and Escape to cancel.",
+              },
+              announcements: {
+                onDragStart: ({ active }) =>
+                  `Picked up ${fieldName(active.id)}.`,
+                onDragOver: ({ active, over }) =>
+                  over
+                    ? `${fieldName(active.id)} moving to position ${position(over.id)} of ${fields.length}.`
+                    : "Outside the field list. Drop to cancel.",
+                onDragEnd: ({ active, over }) =>
+                  over
+                    ? `${fieldName(active.id)} dropped at position ${position(over.id)} of ${fields.length}.`
+                    : `${fieldName(active.id)} movement cancelled.`,
+                onDragCancel: ({ active }) =>
+                  `${fieldName(active.id)} movement cancelled.`,
+              },
+            }}
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragStart={({ active }) => setActiveId(String(active.id))}
+            onDragCancel={() => setActiveId(null)}
+            onDragEnd={({ active, over }) => {
+              setActiveId(null);
+              if (!over || active.id === over.id) return;
+              const from = fields.findIndex((field) => field.id === active.id),
+                to = fields.findIndex((field) => field.id === over.id);
+              if (from >= 0 && to >= 0) saveOrder(arrayMove(fields, from, to));
+            }}
+          >
+            <SortableContext
+              items={fields.map((field) => field.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <ol className="space-y-3">
+                {fields.map((field, index) => (
+                  <SortableFieldRow
+                    reducedMotion={reducedMotion}
+                    key={field.id}
+                    field={field}
+                    actions={actions}
+                    collectionId={collectionId}
                     onUp={
                       index > 0
                         ? () => saveOrder(move(fields, index, -1))
                         : undefined
                     }
+                    onDown={
+                      index < fields.length - 1
+                        ? () => saveOrder(move(fields, index, 1))
+                        : undefined
+                    }
                   />
-                  <EditFieldDialog
-                    actions={actions}
-                    collectionId={collectionId}
-                    field={field}
-                  />
-                  <DeleteFieldDialog
-                    actions={actions}
-                    collectionId={collectionId}
-                    field={field}
-                  />
-                </div>
-              </li>
-            ))}
-          </ol>
+                ))}
+              </ol>
+            </SortableContext>
+            {typeof document !== "undefined"
+              ? createPortal(
+                  <DragOverlay
+                    dropAnimation={reducedMotion ? null : undefined}
+                    transition={reducedMotion ? "none" : undefined}
+                  >
+                    {activeField ? (
+                      <FieldDragPreview field={activeField} />
+                    ) : null}
+                  </DragOverlay>,
+                  document.body,
+                )
+              : null}
+          </DndContext>
         )}
         {message ? (
           <p className="text-error mt-4" role="alert">

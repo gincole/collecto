@@ -142,3 +142,17 @@ Reported by the user on 30 October 2026. The M7-T01 state audit and implementati
   and the production build. Source/style inspection and independent review passed.
   Staged diff/secret checks passed. No browser testing.
 - Commit: SELF (this commit).
+
+## M7-T02N: Smooth, continuously editable custom Field ordering
+
+- Status: Complete; dependencies M7-T02K and M7-T02M are complete.
+- Scope/acceptance/research: see M7-T02N in `docs/implementation-plan.md`.
+- Changes: sortable full-row overlay and movement transitions; serial/coalescing
+  background saves preserve usable reorder controls and the latest intended order.
+- Verification: `corepack pnpm verify:deployment` passed formatting, lint,
+  strict TypeScript, all 355 tests across 54 files and the production build.
+  Pointer/keyboard sensors, queue races/rollback, deferred refresh during drag
+  and reduced-motion changes are covered. Production dependency audit is clean;
+  independent review passed after fixing the deferred-refresh race and naming
+  drag announcements. Staged diff/secret checks passed. No browser testing.
+- Commit: SELF (this commit).
