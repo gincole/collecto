@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
+import { feedbackHref } from "@/components/shared/feedback-messages";
 
 import { createCollectionGateway } from "./gateway";
 import type { CollectionCreateInput, CollectionUpdateInput } from "./schemas";
@@ -36,7 +37,9 @@ export async function createCollectionFromWizardAction(
 
   if (result.status === "success") {
     revalidatePath("/library");
-    redirect(`/collections/${result.data.id}`);
+    redirect(
+      feedbackHref(`/collections/${result.data.id}`, "collection-created"),
+    );
   }
 
   if (result.status === "validation_error") {
@@ -147,7 +150,7 @@ export async function deleteCollectionFromSettingsAction(
   );
   if (result.status === "success") {
     revalidatePath("/library");
-    redirect("/library");
+    redirect(feedbackHref("/library", "collection-deleted"));
   }
   if (result.status === "validation_error") {
     return {

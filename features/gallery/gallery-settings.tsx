@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { FeedbackMessage } from "@/components/shared/feedback-message";
 import { Select } from "@/components/ui/form-control";
 import {
   Dialog,
@@ -41,7 +42,7 @@ function Choice({
   onChange: (value: string) => void;
 }) {
   return (
-    <label className="grid min-w-0 gap-2 font-semibold">
+    <label className="text-label grid min-w-0 gap-2">
       {label}
       <Select onChange={(event) => onChange(event.target.value)} value={value}>
         {options.map((option) => (
@@ -357,9 +358,7 @@ export function GallerySettings({ collection, items, saveAction }: Props) {
               />
             </section>
             {message ? (
-              <p role="alert" className="text-error">
-                {message}
-              </p>
+              <FeedbackMessage kind="error">{message}</FeedbackMessage>
             ) : null}
           </div>
           <div className="flex flex-wrap justify-end gap-3 pb-[env(safe-area-inset-bottom)]">
@@ -395,9 +394,7 @@ export function GallerySettings({ collection, items, saveAction }: Props) {
         </DialogContent>
       </Dialog>
       {saved ? (
-        <p className="text-success text-sm" role="status">
-          Gallery settings saved.
-        </p>
+        <FeedbackMessage>Gallery settings saved.</FeedbackMessage>
       ) : null}
     </>
   );

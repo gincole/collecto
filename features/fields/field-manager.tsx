@@ -2,7 +2,9 @@
 
 import { GripVertical, LockKeyhole } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
+import { useFeedback } from "@/components/shared/feedback";
+import { fieldActionsWithFeedback } from "./feedback-actions";
 
 import type { CollectionRecord } from "@/features/collections/models";
 import { cn } from "@/lib/utils/cn";
@@ -55,7 +57,7 @@ function BuiltInFields() {
 }
 
 function FieldManager({
-  actions,
+  actions: rawActions,
   collectionId,
   fields,
 }: {
@@ -64,6 +66,11 @@ function FieldManager({
   fields: CollectionRecord["fields"];
 }) {
   const router = useRouter();
+  const notify = useFeedback();
+  const actions = useMemo(
+    () => fieldActionsWithFeedback(rawActions, notify),
+    [rawActions, notify],
+  );
   const [message, setMessage] = useState<string>();
   const [pending, startTransition] = useTransition();
   const atLimit = fields.length >= DATABASE_LIMITS.collectionFields;

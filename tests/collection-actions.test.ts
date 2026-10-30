@@ -111,7 +111,9 @@ describe("Collection Server Actions", () => {
       createCollectionFromWizardAction({ status: "idle" }, formData),
     ).rejects.toThrow("NEXT_REDIRECT");
     expect(revalidatePathMock).toHaveBeenCalledWith("/library");
-    expect(redirectMock).toHaveBeenCalledWith(`/collections/${createdId}`);
+    expect(redirectMock).toHaveBeenCalledWith(
+      `/collections/${createdId}?feedback=collection-created`,
+    );
   });
 
   it("updates Collection identity and revalidates its routes", async () => {
@@ -210,6 +212,8 @@ describe("Collection Server Actions", () => {
       p_confirmation_name: "",
     });
     expect(revalidatePathMock).toHaveBeenCalledWith("/library");
-    expect(redirectMock).toHaveBeenCalledWith("/library");
+    expect(redirectMock).toHaveBeenCalledWith(
+      "/library?feedback=collection-deleted",
+    );
   });
 });

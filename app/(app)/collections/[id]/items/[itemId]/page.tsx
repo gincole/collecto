@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { PageContainer } from "@/components/shared";
-import { Button } from "@/components/ui/button";
+import { BackLink } from "@/components/shared/back-link";
+import { PageLoadError } from "@/components/shared/page-load-error";
 import { getCollectionQuery } from "@/features/collections/queries";
 import { deleteItemFromDetailsAction } from "@/features/items/actions";
 import { ItemDetails } from "@/features/items/item-details";
@@ -27,19 +27,13 @@ export default async function ItemDetailsPage({
   if (collection.status !== "success" || item.status !== "success")
     return (
       <PageContainer as="main">
-        <p className="text-error" role="alert">
-          Could not load this Item. Try again.
-        </p>
+        <PageLoadError title="Could not load this Item" />
       </PageContainer>
     );
   return (
-    <PageContainer as="main">
-      <header className="flex items-center gap-3 py-4 sm:py-8">
-        <Button asChild size="sm" variant="ghost">
-          <Link href={`/collections/${id}`}>
-            Back to {collection.data.name}
-          </Link>
-        </Button>
+    <PageContainer as="main" width="form">
+      <header className="pb-6">
+        <BackLink href={`/collections/${id}`}>Back to Collection</BackLink>
       </header>
       <ItemDetails
         collectionId={id}

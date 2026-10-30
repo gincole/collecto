@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
@@ -90,6 +90,35 @@ describe("Item form", () => {
 });
 
 describe("Item details", () => {
+  it("distinguishes image load failure from missing images and offers a fresh retry", async () => {
+    const user = userEvent.setup();
+    render(
+      <ItemDetails
+        collectionId={collectionId}
+        fields={[]}
+        item={{
+          id: "00000000-0000-4000-8000-000000000002",
+          collectionId,
+          title: "Retry memory",
+          description: null,
+          imagePath: "private/image.jpg",
+          values: {},
+          createdAt: "2026-01-01",
+          updatedAt: "2026-01-01",
+        }}
+      />,
+    );
+    fireEvent.error(screen.getByRole("img", { name: "Retry memory" }));
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "Image could not be loaded",
+    );
+    expect(screen.queryByText("No image")).not.toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Try image again" }));
+    expect(screen.getByRole("img", { name: "Retry memory" })).toHaveAttribute(
+      "src",
+      expect.stringContaining("?retry=1"),
+    );
+  });
   it("shows a neutral no-image state and secondary edit/delete actions", () => {
     render(
       <ItemDetails

@@ -53,7 +53,7 @@ describe("authentication server actions", () => {
       "NEXT_REDIRECT",
     );
 
-    expect(redirectMock).toHaveBeenCalledWith("/library");
+    expect(redirectMock).toHaveBeenCalledWith("/library?feedback=logged-in");
   });
 
   it("returns confirmation instead of promising a session when signup needs email confirmation", async () => {
@@ -91,7 +91,7 @@ describe("authentication server actions", () => {
     await expect(logoutAction()).rejects.toThrow("NEXT_REDIRECT");
 
     expect(signOut).toHaveBeenCalledWith({ scope: "local" });
-    expect(redirectMock).toHaveBeenCalledWith("/login");
+    expect(redirectMock).toHaveBeenCalledWith("/login?feedback=logged-out");
   });
 
   it("returns a safe inline error when logout fails", async () => {

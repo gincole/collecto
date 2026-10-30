@@ -6,6 +6,7 @@ import { useActionState, useRef, useState } from "react";
 
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { Button } from "@/components/ui/button";
+import { FeedbackMessage } from "@/components/shared/feedback-message";
 
 import type { ItemFieldDefinition, ItemRecord } from "./types";
 
@@ -61,21 +62,43 @@ export function getItemDetailRows(
 
 function ImagePanel({ item }: { item: ItemRecord }) {
   const [failed, setFailed] = useState(false);
-  if (!item.imagePath || failed)
+  const [attempt, setAttempt] = useState(0);
+  if (!item.imagePath)
     return (
-      <div className="border-border bg-muted/30 text-foreground-muted flex aspect-[4/3] items-center justify-center rounded-xl border border-dashed">
+      <div className="border-border bg-surface-muted text-foreground-muted rounded-control flex aspect-[4/3] items-center justify-center border border-dashed">
         <ImageOff aria-hidden="true" className="mr-2 size-5" /> No image
+      </div>
+    );
+  if (failed)
+    return (
+      <div className="space-y-3">
+        <div className="bg-surface-muted rounded-control flex aspect-[4/3] items-center justify-center">
+          <ImageOff aria-hidden="true" />
+        </div>
+        <FeedbackMessage kind="error">
+          Image could not be loaded.
+        </FeedbackMessage>
+        <Button
+          variant="outline"
+          type="button"
+          onClick={() => {
+            setAttempt((value) => value + 1);
+            setFailed(false);
+          }}
+        >
+          Try image again
+        </Button>
       </div>
     );
   return (
     <div className="space-y-3">
-      <div className="border-border bg-muted/30 overflow-hidden rounded-xl border">
+      <div className="border-border bg-surface-muted rounded-control overflow-hidden border">
         {/* eslint-disable-next-line @next/next/no-img-element -- authenticated private image route */}
         <img
           alt={item.title}
           className="aspect-[4/3] w-full object-contain"
           onError={() => setFailed(true)}
-          src={`/api/items/${item.id}/image`}
+          src={`/api/items/${item.id}/image${attempt ? `?retry=${attempt}` : ""}`}
         />
       </div>
       <Button asChild variant="outline">

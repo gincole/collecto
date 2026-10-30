@@ -525,6 +525,14 @@ These values implement the approved non-blocking assumptions and may be changed 
 
 **Verification:** state-matrix component tests and targeted Playwright failure simulations.
 
+### M7-T01A Customize preset Fields before final Create
+
+- **Depends on:** M7-T01
+- **Scope:** User-requested preset customization before creating a Collection, recorded from the manual test on 30 October 2026.
+- **Expected commit:** `feat(collections)`
+
+Add a local schema draft to the existing wizard for Field name/type/required/order and Select options. Validate the entire submitted draft on the server, create Collection/Fields/Options atomically, preserve idempotency and cancellation behavior, and make no pre-submit writes. Keep persisted Field types immutable. Verify preset and Blank drafts, validation, persistence, failures, and ownership using focused tests. This is a separate implementation task, not part of the M7-T01 state audit.
+
 ### M7-T02 Run accessibility and responsive conformance fixes
 
 - **Critical path:** Yes

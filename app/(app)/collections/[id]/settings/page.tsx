@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 
 import { PageContainer } from "@/components/shared";
+import { BackLink } from "@/components/shared/back-link";
+import { PageLoadError } from "@/components/shared/page-load-error";
 import {
   deleteCollectionFromSettingsAction,
   updateCollectionFromSettingsAction,
@@ -52,10 +54,7 @@ export default async function CollectionSettingsPage({
   if (result.status !== "success") {
     return (
       <PageContainer as="main">
-        <p className="text-error" role="alert">
-          Could not load Collection settings. Return to My Library and try
-          again.
-        </p>
+        <PageLoadError title="Could not load Collection settings" />
       </PageContainer>
     );
   }
@@ -64,8 +63,9 @@ export default async function CollectionSettingsPage({
   const deleteAction = deleteCollectionFromSettingsAction.bind(null, id);
 
   return (
-    <PageContainer as="main" width="default">
-      <header className="space-y-1 pt-4 sm:pt-8">
+    <PageContainer as="main" width="form">
+      <header className="space-y-2">
+        <BackLink href={`/collections/${id}`}>Back to Collection</BackLink>
         <p className="text-foreground-muted text-sm font-semibold">Settings</p>
         <h1 className="text-page-title-mobile sm:text-page-title break-words">
           {result.data.name}

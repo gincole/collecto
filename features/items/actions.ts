@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { Route } from "next";
 import { createClient } from "@/lib/supabase/server";
+import { feedbackHref } from "@/components/shared/feedback-messages";
 import { createItemGateway } from "./gateway";
 import { createItemImageGateway } from "./image-gateway";
 import {
@@ -111,7 +112,7 @@ export async function createItemFromFormAction(
     }
   }
   revalidatePath(`/collections/${collectionId}`);
-  redirect(`/collections/${collectionId}`);
+  redirect(feedbackHref(`/collections/${collectionId}`, "item-created"));
 }
 
 export async function deleteItemFromDetailsAction(
@@ -146,7 +147,7 @@ export async function deleteItemFromDetailsAction(
     }
   }
   revalidatePath(`/collections/${collectionId}`);
-  redirect(`/collections/${collectionId}`);
+  redirect(feedbackHref(`/collections/${collectionId}`, "item-deleted"));
 }
 export async function updateItemFromFormAction(
   _previous: ItemFormState,
@@ -181,5 +182,10 @@ export async function updateItemFromFormAction(
       );
   }
   revalidatePath(`/collections/${collectionId}`);
-  redirect(`/collections/${collectionId}/items/${itemId}` as Route);
+  redirect(
+    feedbackHref(
+      `/collections/${collectionId}/items/${itemId}`,
+      "item-updated",
+    ) as Route,
+  );
 }

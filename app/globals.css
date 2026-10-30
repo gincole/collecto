@@ -65,6 +65,7 @@
   --spacing-page-desktop: 2rem;
   --container-page: 80rem;
   --container-narrow: 48rem;
+  --container-form: 64rem;
   --radius-control: 0.75rem;
   --radius-card: 1rem;
   --radius-dialog: 1.5rem;
@@ -149,13 +150,6 @@ body {
 :where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
-}
-
-button,
-input,
-textarea,
-select {
-  font: inherit;
 }
 
 @utility touch-target {

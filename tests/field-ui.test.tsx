@@ -72,6 +72,28 @@ function createActions(
 }
 
 describe("Field manager", () => {
+  it("lets the user retry a failed destructive-impact check", async () => {
+    const user = userEvent.setup();
+    const actions = createActions({
+      getFieldImpact: vi
+        .fn()
+        .mockResolvedValueOnce({ status: "error" })
+        .mockResolvedValueOnce({
+          status: "success",
+          data: { affectedItemCount: 2 },
+        }),
+    });
+    render(
+      <FieldManager
+        actions={actions}
+        collectionId={collectionId}
+        fields={fields}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Delete Genre" }));
+    await user.click(await screen.findByRole("button", { name: "Try again" }));
+    expect(await screen.findByText(/2 items have a value/)).toBeVisible();
+  });
   beforeEach(() => vi.clearAllMocks());
 
   it("distinguishes built-in properties from ordered custom Fields", async () => {
@@ -326,10 +348,11 @@ describe("Field manager", () => {
     expect(await screen.findByRole("alert")).toHaveTextContent(
       "Field was created",
     );
-    expect(
-      screen.getByRole("button", { name: "Finish options" }),
-    ).toBeEnabled();
-    await user.click(screen.getByRole("button", { name: "Finish options" }));
+    const finishOptions = await screen.findByRole("button", {
+      name: "Finish options",
+    });
+    expect(finishOptions).toBeEnabled();
+    await user.click(finishOptions);
 
     expect(actions.createField).toHaveBeenCalledOnce();
     expect(actions.createOption).toHaveBeenCalledTimes(3);

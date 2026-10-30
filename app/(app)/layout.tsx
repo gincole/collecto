@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { AppHeader } from "@/components/shared/app-header";
+import { FeedbackRegion } from "@/components/shared/feedback";
 import { logoutAction } from "@/features/auth/actions";
 import { createClient } from "@/lib/supabase/server";
 
@@ -20,6 +21,7 @@ export default async function ProtectedLayout({
   return (
     <>
       <AppHeader email={data.user.email} logoutAction={logoutAction} />
+      <FeedbackRegion />
       {children}
     </>
   );

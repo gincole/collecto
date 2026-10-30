@@ -9,6 +9,7 @@ import { DATABASE_LIMITS } from "@/lib/validation/limits";
 
 import type { ItemFieldDefinition, ItemRecord } from "./types";
 import { ImageUploader } from "./image-uploader";
+import { FeedbackMessage } from "@/components/shared/feedback-message";
 
 export type ItemFormState = {
   fieldErrors?: Record<string, string>;
@@ -80,7 +81,7 @@ function DynamicField({
     );
   return (
     <div className="space-y-2">
-      <label className="font-semibold" htmlFor={id}>
+      <label className="text-label block" htmlFor={id}>
         {field.name}
         {field.required ? <span aria-hidden="true"> *</span> : null}
       </label>
@@ -134,7 +135,7 @@ export function ItemForm({
   }, [state]);
   return (
     <form
-      className="mx-auto w-full max-w-5xl space-y-6 pb-24"
+      className="w-full min-w-0 space-y-6 pb-28 sm:pb-0"
       onSubmit={(event) => {
         event.preventDefault();
         const submitted = new FormData(event.currentTarget);
@@ -151,9 +152,9 @@ export function ItemForm({
           hasImage={Boolean(item?.imagePath)}
           itemId={item?.id}
         />
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-6">
           <div className="space-y-2">
-            <label className="font-semibold" htmlFor="title">
+            <label className="text-label block" htmlFor="title">
               Title<span aria-hidden="true"> *</span>
             </label>
             <Input
@@ -175,7 +176,7 @@ export function ItemForm({
             ) : null}
           </div>
           <div className="space-y-2">
-            <label className="font-semibold" htmlFor="description">
+            <label className="text-label block" htmlFor="description">
               Description (optional)
             </label>
             <Textarea
@@ -202,18 +203,30 @@ export function ItemForm({
               key={field.id}
             />
           ))}
-          {state.message ? (
-            <p className="text-error" role="alert">
-              {state.message}
-            </p>
+          {state.status === "error" ? (
+            <FeedbackMessage kind="error">
+              {state.message ?? "Review the highlighted fields and try again."}
+            </FeedbackMessage>
           ) : null}
         </div>
       </div>
-      <div className="bg-background/95 border-border fixed inset-x-0 bottom-0 border-t px-4 py-3 backdrop-blur sm:static sm:flex sm:justify-end sm:gap-3 sm:border-0 sm:bg-transparent sm:px-0 sm:py-0">
-        <Button asChild className="mr-3" variant="outline">
-          <Link href={`/collections/${collectionId}`}>Cancel</Link>
+      <div className="bg-background/95 border-border fixed inset-x-0 bottom-0 flex flex-wrap justify-end gap-3 border-t px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur sm:static sm:border-0 sm:bg-transparent sm:p-0">
+        <Button asChild variant="outline">
+          <Link
+            aria-disabled={isPending}
+            onClick={(event) => {
+              if (isPending) event.preventDefault();
+            }}
+            href={
+              item
+                ? `/collections/${collectionId}/items/${item.id}`
+                : `/collections/${collectionId}`
+            }
+          >
+            Cancel
+          </Link>
         </Button>
-        <Button disabled={isPending} type="submit">
+        <Button aria-busy={isPending} disabled={isPending} type="submit">
           {isPending
             ? "Saving item…"
             : mode === "create"

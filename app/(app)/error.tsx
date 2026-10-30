@@ -6,7 +6,7 @@ export default function AppError({ reset }: { reset: () => void }) {
   return (
     <PageContainer as="main">
       <ErrorState
-        description="Your library could not be loaded. Try again."
+        description="This page could not be loaded. Try again. Your saved data has not changed."
         onRetry={reset}
         title="Something went wrong"
       />

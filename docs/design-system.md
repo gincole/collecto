@@ -126,6 +126,7 @@ Test 320, 375, 640, 768, 1024, and 1440 px. Never allow a saved column preferenc
 
 - Applies approved padding and max-width behavior.
 - Never forces horizontal scrolling at 320 px.
+- Use the 80 rem `page` token for Library/gallery, the 64 rem `form` token for Collection setup, Settings, and Item forms/details, and the existing 27.5 rem Auth card. Keep form headings aligned with their content; different content roles need not share one width.
 
 ### PresetArtwork
 

@@ -4,7 +4,7 @@ import { CollectionWizard } from "@/features/collections/collection-wizard";
 
 export default function NewCollectionPage() {
   return (
-    <PageContainer as="main" width="default">
+    <PageContainer as="main" width="form">
       <CollectionWizard createAction={createCollectionFromWizardAction} />
     </PageContainer>
   );

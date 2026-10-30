@@ -199,7 +199,10 @@ function OptionEditor({
       </ul>
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
         <div className="min-w-0 flex-1 space-y-2">
-          <label className="font-semibold" htmlFor={`new-option-${field.id}`}>
+          <label
+            className="text-label block"
+            htmlFor={`new-option-${field.id}`}
+          >
             New option label
           </label>
           <Input
@@ -319,7 +322,10 @@ export function EditFieldDialog({
         </div>
         <div className="space-y-5">
           <div className="space-y-2">
-            <label className="font-semibold" htmlFor={`field-name-${field.id}`}>
+            <label
+              className="text-label block"
+              htmlFor={`field-name-${field.id}`}
+            >
               Field name
             </label>
             <Input
@@ -500,7 +506,7 @@ export function AddFieldDialog({
         </div>
         <div className="space-y-5">
           <div className="space-y-2">
-            <label className="font-semibold" htmlFor="new-field-name">
+            <label className="text-label block" htmlFor="new-field-name">
               Field name
             </label>
             <Input
@@ -513,7 +519,7 @@ export function AddFieldDialog({
             />
           </div>
           <div className="space-y-2">
-            <label className="font-semibold" htmlFor="new-field-type">
+            <label className="text-label block" htmlFor="new-field-type">
               Field type
             </label>
             <Select

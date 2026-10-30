@@ -36,12 +36,14 @@ function DeleteSchemaDialog({ target }: { target: DeleteTarget }) {
   const [pending, startTransition] = useTransition();
 
   function handleOpenChange(nextOpen: boolean) {
+    if (pending) return;
     setOpen(nextOpen);
     if (!nextOpen) {
       setImpact(undefined);
       setMessage(undefined);
       return;
     }
+    setMessage(undefined);
     startTransition(async () => {
       const result = await target.getImpact();
       if (result.status === "success")
@@ -73,7 +75,16 @@ function DeleteSchemaDialog({ target }: { target: DeleteTarget }) {
           <Trash2 aria-hidden="true" />
         </Button>
       </DialogTrigger>
-      <DialogContent role="alertdialog" showCloseButton={false}>
+      <DialogContent
+        role="alertdialog"
+        showCloseButton={false}
+        onEscapeKeyDown={(event) => {
+          if (pending) event.preventDefault();
+        }}
+        onInteractOutside={(event) => {
+          if (pending) event.preventDefault();
+        }}
+      >
         <div className="space-y-2">
           <DialogTitle className="text-xl font-semibold">
             Delete {target.name}?
@@ -87,6 +98,16 @@ function DeleteSchemaDialog({ target }: { target: DeleteTarget }) {
             <p className="text-error text-sm" role="alert">
               {message}
             </p>
+          ) : null}
+          {message && impact === undefined ? (
+            <Button
+              onClick={() => handleOpenChange(true)}
+              type="button"
+              variant="outline"
+              disabled={pending}
+            >
+              Try again
+            </Button>
           ) : null}
         </div>
         <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
@@ -102,7 +123,11 @@ function DeleteSchemaDialog({ target }: { target: DeleteTarget }) {
             type="button"
             variant="destructive"
           >
-            {pending ? "Deleting…" : `Delete ${subjectLabel}`}
+            {pending
+              ? impact === undefined
+                ? "Checking…"
+                : "Deleting…"
+              : `Delete ${subjectLabel}`}
           </Button>
         </div>
       </DialogContent>

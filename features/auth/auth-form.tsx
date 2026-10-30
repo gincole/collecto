@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useActionState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { FeedbackMessage } from "@/components/shared/feedback-message";
 
 export type AuthActionState = {
   fieldErrors?: Partial<
@@ -125,16 +126,9 @@ export function AuthForm({ action, mode, returnTo }: AuthFormProps) {
       ) : null}
 
       {state.message ? (
-        <p
-          className={
-            state.status === "error"
-              ? "text-error text-sm"
-              : "text-success text-sm"
-          }
-          role={state.status === "error" ? "alert" : "status"}
-        >
+        <FeedbackMessage kind={state.status === "error" ? "error" : "success"}>
           {state.message}
-        </p>
+        </FeedbackMessage>
       ) : null}
 
       <Button className="w-full" disabled={pending} size="lg" type="submit">

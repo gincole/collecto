@@ -10,6 +10,7 @@ import {
 } from "react";
 
 import { Button } from "@/components/ui/button";
+import { FeedbackMessage } from "@/components/shared/feedback-message";
 import {
   Dialog,
   DialogClose,
@@ -76,18 +77,22 @@ export function CollectionSettings({
   }, [updateState]);
 
   function handleDeleteOpenChange(open: boolean) {
+    if (deletePending) return;
     setDeleteOpen(open);
     if (!open) setConfirmationName("");
   }
 
   return (
-    <div className="space-y-8 py-4 sm:py-8">
+    <div className="space-y-6 pt-6">
       <section
         aria-labelledby="collection-general-heading"
         className="border-border bg-surface rounded-card border p-4 sm:p-6"
       >
         <div className="mb-6 space-y-1">
-          <h2 className="text-section-title" id="collection-general-heading">
+          <h2
+            className="text-section-title-mobile sm:text-section-title"
+            id="collection-general-heading"
+          >
             General
           </h2>
           <p className="text-foreground-muted">
@@ -96,7 +101,7 @@ export function CollectionSettings({
         </div>
         <form action={updateFormAction} className="space-y-5">
           <div className="space-y-2">
-            <label className="font-semibold" htmlFor="collection-name">
+            <label className="text-label block" htmlFor="collection-name">
               Collection name
             </label>
             <Input
@@ -121,7 +126,10 @@ export function CollectionSettings({
             ) : null}
           </div>
           <div className="space-y-2">
-            <label className="font-semibold" htmlFor="collection-description">
+            <label
+              className="text-label block"
+              htmlFor="collection-description"
+            >
               Description (optional)
             </label>
             <Textarea
@@ -147,14 +155,16 @@ export function CollectionSettings({
             ) : null}
           </div>
           {updateState.message ? (
-            <p
-              className={
-                updateState.status === "success" ? "text-success" : "text-error"
-              }
-              role={updateState.status === "error" ? "alert" : "status"}
+            <FeedbackMessage
+              kind={updateState.status === "error" ? "error" : "success"}
             >
               {updateState.message}
-            </p>
+            </FeedbackMessage>
+          ) : null}
+          {updateState.status === "error" && !updateState.message ? (
+            <FeedbackMessage kind="error">
+              Review the highlighted fields and try again.
+            </FeedbackMessage>
           ) : null}
           <div className="flex justify-end">
             <Button
@@ -176,8 +186,11 @@ export function CollectionSettings({
         id="delete-collection"
       >
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="space-y-1">
-            <h2 className="text-section-title" id="delete-collection-heading">
+          <div className="min-w-0 space-y-1">
+            <h2
+              className="text-section-title-mobile sm:text-section-title"
+              id="delete-collection-heading"
+            >
               Delete collection
             </h2>
             <p className="text-foreground-muted">
@@ -192,7 +205,16 @@ export function CollectionSettings({
                 Delete collection
               </Button>
             </DialogTrigger>
-            <DialogContent role="alertdialog" showCloseButton={false}>
+            <DialogContent
+              role="alertdialog"
+              showCloseButton={false}
+              onEscapeKeyDown={(event) => {
+                if (deletePending) event.preventDefault();
+              }}
+              onInteractOutside={(event) => {
+                if (deletePending) event.preventDefault();
+              }}
+            >
               <div className="space-y-2">
                 <DialogTitle className="text-xl font-semibold">
                   Permanently delete {collection.name}?

@@ -6,6 +6,7 @@ import { useActionState, useEffect, useRef, useState } from "react";
 
 import { ConfirmDialog, PresetArtwork } from "@/components/shared";
 import { Button } from "@/components/ui/button";
+import { FeedbackMessage } from "@/components/shared/feedback-message";
 import { Input, Textarea } from "@/components/ui/form-control";
 import { cn } from "@/lib/utils/cn";
 
@@ -70,6 +71,7 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
               </button>
             ) : null}
             <button
+              disabled={pending}
               className="touch-target focus-ring rounded-control text-foreground-muted hover:bg-surface-muted px-3 text-sm font-semibold"
               onClick={cancel}
               type="button"
@@ -154,13 +156,15 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
                   Set up your collection
                 </h1>
                 <p className="text-foreground-muted">
-                  Name this collection and review the fields it starts with.
+                  Name this Collection and review its starting Fields. Customize
+                  Fields in Collection settings after creating it.
                 </p>
               </div>
 
               <div className="bg-art-lavender rounded-card flex items-center justify-between gap-3 px-4 py-3">
                 <span className="font-semibold">{preset.label}</span>
                 <button
+                  disabled={pending}
                   className="touch-target focus-ring rounded-control px-3 text-sm font-semibold underline underline-offset-4"
                   onClick={() => setStep(1)}
                   type="button"
@@ -278,9 +282,7 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
             </section>
 
             {state.status === "error" && state.message ? (
-              <p className="text-error" role="alert">
-                {state.message}
-              </p>
+              <FeedbackMessage kind="error">{state.message}</FeedbackMessage>
             ) : null}
 
             <div className="border-border bg-background sticky bottom-0 flex flex-col-reverse gap-3 border-t py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:flex-row sm:justify-between">

@@ -15,6 +15,7 @@ import {
 } from "@/features/auth/service";
 import { createClient } from "@/lib/supabase/server";
 import { serverEnv } from "@/lib/env/server";
+import { feedbackHref } from "@/components/shared/feedback-messages";
 
 function firstFieldErrors(error: {
   flatten: () => { fieldErrors: Record<string, string[] | undefined> };
@@ -52,7 +53,12 @@ export async function loginAction(
   }
 
   const returnTo = formData.get("returnTo");
-  redirect(getSafeReturnPath(typeof returnTo === "string" ? returnTo : null));
+  redirect(
+    feedbackHref(
+      getSafeReturnPath(typeof returnTo === "string" ? returnTo : null),
+      "logged-in",
+    ),
+  );
 }
 
 export async function registerAction(
@@ -92,7 +98,12 @@ export async function registerAction(
     return result;
   }
 
-  redirect(getSafeReturnPath(typeof returnTo === "string" ? returnTo : null));
+  redirect(
+    feedbackHref(
+      getSafeReturnPath(typeof returnTo === "string" ? returnTo : null),
+      "logged-in",
+    ),
+  );
 }
 
 export async function logoutAction(): Promise<AuthActionState> {
@@ -103,5 +114,5 @@ export async function logoutAction(): Promise<AuthActionState> {
     return result;
   }
 
-  redirect("/login");
+  redirect(feedbackHref("/login", "logged-out"));
 }

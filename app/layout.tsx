@@ -3,6 +3,7 @@ import { Noto_Sans_Thai, Plus_Jakarta_Sans } from "next/font/google";
 import type { ReactNode } from "react";
 
 import "./globals.css";
+import { FeedbackProvider } from "@/components/shared/feedback";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   display: "swap",
@@ -32,7 +33,9 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
       lang="en"
     >
-      <body className="font-sans">{children}</body>
+      <body className="font-sans">
+        <FeedbackProvider>{children}</FeedbackProvider>
+      </body>
     </html>
   );
 }

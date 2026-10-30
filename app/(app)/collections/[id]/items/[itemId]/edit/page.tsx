@@ -4,6 +4,8 @@ import { getCollectionQuery } from "@/features/collections/queries";
 import { updateItemFromFormAction } from "@/features/items/actions";
 import { ItemForm } from "@/features/items/item-form";
 import { getItemQuery } from "@/features/items/queries";
+import { BackLink } from "@/components/shared/back-link";
+import { PageLoadError } from "@/components/shared/page-load-error";
 export default async function EditItemPage({
   params,
 }: {
@@ -23,14 +25,15 @@ export default async function EditItemPage({
   if (collection.status !== "success" || item.status !== "success")
     return (
       <PageContainer as="main">
-        <p className="text-error" role="alert">
-          Could not load this Item. Try again.
-        </p>
+        <PageLoadError title="Could not load this Item" />
       </PageContainer>
     );
   return (
-    <PageContainer as="main">
-      <header className="py-4 sm:py-8">
+    <PageContainer as="main" width="form">
+      <header className="space-y-2 pb-6">
+        <BackLink href={`/collections/${id}/items/${itemId}`}>
+          Back to Item
+        </BackLink>
         <p className="text-foreground-muted text-sm">{collection.data.name}</p>
         <h1 className="text-page-title-mobile sm:text-page-title">Edit item</h1>
       </header>
