@@ -236,6 +236,19 @@ export type Database = {
         };
         Returns: string;
       };
+      create_field: {
+        Args: {
+          p_collection_id: string;
+          p_name: string;
+          p_required: boolean;
+          p_type: Database["public"]["Enums"]["field_type"];
+        };
+        Returns: { id: string };
+      };
+      create_field_option: {
+        Args: { p_collection_id: string; p_field_id: string; p_label: string };
+        Returns: { id: string };
+      };
       create_item_with_values: {
         Args: {
           p_collection_id: string;
@@ -263,6 +276,18 @@ export type Database = {
           image_path: string | null;
         };
       };
+      delete_field_with_cleanup: {
+        Args: { p_collection_id: string; p_field_id: string };
+        Returns: { affected_item_count: number; id: string };
+      };
+      delete_option_with_cleanup: {
+        Args: {
+          p_collection_id: string;
+          p_field_id: string;
+          p_option_id: string;
+        };
+        Returns: { affected_item_count: number; id: string };
+      };
       queue_item_image_cleanup: {
         Args: {
           p_collection_id: string;
@@ -288,9 +313,33 @@ export type Database = {
         Args: Record<PropertyKey, never>;
         Returns: unknown;
       };
+      get_field_delete_impact: {
+        Args: { p_collection_id: string; p_field_id: string };
+        Returns: { affected_item_count: number };
+      };
+      get_option_delete_impact: {
+        Args: {
+          p_collection_id: string;
+          p_field_id: string;
+          p_option_id: string;
+        };
+        Returns: { affected_item_count: number };
+      };
       set_updated_at: {
         Args: Record<PropertyKey, never>;
         Returns: unknown;
+      };
+      reorder_field_options: {
+        Args: {
+          p_collection_id: string;
+          p_field_id: string;
+          p_option_ids: string[];
+        };
+        Returns: { id: string };
+      };
+      reorder_fields: {
+        Args: { p_collection_id: string; p_field_ids: string[] };
+        Returns: { id: string };
       };
       update_item_with_values: {
         Args: {
@@ -301,6 +350,24 @@ export type Database = {
           p_values: Json;
         };
         Returns: string;
+      };
+      update_field: {
+        Args: {
+          p_collection_id: string;
+          p_field_id: string;
+          p_name: string | null;
+          p_required: boolean | null;
+        };
+        Returns: { id: string };
+      };
+      update_field_option: {
+        Args: {
+          p_collection_id: string;
+          p_field_id: string;
+          p_label: string;
+          p_option_id: string;
+        };
+        Returns: { id: string };
       };
     };
     Enums: {
