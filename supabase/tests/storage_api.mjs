@@ -1,37 +1,9 @@
 import assert from "node:assert/strict";
-import { execFileSync, execSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
 
 import { createClient } from "@supabase/supabase-js";
 
-function getLocalSupabaseStatus() {
-  if (
-    process.env.LOCAL_SUPABASE_URL &&
-    process.env.LOCAL_SUPABASE_PUBLISHABLE_KEY &&
-    process.env.LOCAL_SUPABASE_SECRET_KEY
-  ) {
-    return {
-      API_URL: process.env.LOCAL_SUPABASE_URL,
-      PUBLISHABLE_KEY: process.env.LOCAL_SUPABASE_PUBLISHABLE_KEY,
-      SECRET_KEY: process.env.LOCAL_SUPABASE_SECRET_KEY,
-    };
-  }
-
-  const options = {
-    encoding: "utf8",
-    stdio: ["ignore", "pipe", "inherit"],
-  };
-  const output =
-    process.platform === "win32"
-      ? execSync("corepack pnpm dlx supabase status -o json", options)
-      : execFileSync(
-          "corepack",
-          ["pnpm", "dlx", "supabase", "status", "-o", "json"],
-          options,
-        );
-
-  return JSON.parse(output);
-}
+import { getLocalSupabaseStatus } from "./local-status.mjs";
 
 const localStatus = getLocalSupabaseStatus();
 const apiUrl = localStatus.API_URL;

@@ -19,7 +19,9 @@
     "test:auth:ssr": "node supabase/tests/auth_ssr.mjs",
     "test:storage": "node supabase/tests/storage_api.mjs",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:security:sessions": "node supabase/tests/security_sessions.mjs",
+    "test:database": "node supabase/tests/database.mjs"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "1.1.15",

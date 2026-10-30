@@ -31,6 +31,46 @@ function gateway(overrides: Partial<ItemImageGateway> = {}): ItemImageGateway {
 }
 
 describe("Item image lifecycle", () => {
+  it("reports failure and preserves possibly referenced bytes when both reconciliation and its queue are unavailable", async () => {
+    const store = gateway({
+      setImagePath: vi.fn(async () => {
+        throw new Error("commit response unavailable");
+      }),
+      getImagePath: vi.fn(async () => {
+        throw new Error("database unavailable");
+      }),
+      queueCleanup: vi.fn(async () => {
+        throw new Error("queue unavailable");
+      }),
+    });
+    await expect(
+      attachItemImage(
+        scope,
+        { bytes: new Uint8Array([1]), mimeType: "image/png" },
+        store,
+      ),
+    ).resolves.toEqual({ status: "error" });
+    expect(store.removeObject).not.toHaveBeenCalled();
+    expect(store.queueCleanup).toHaveBeenCalledWith(
+      scope,
+      newPath,
+      "AMBIGUOUS_COMMIT_STATE",
+    );
+  });
+  it("leaves cleanup retryable when object deletion succeeded but queue acknowledgement failed", async () => {
+    const store = gateway({
+      completeCleanup: vi.fn(async () => {
+        throw new Error("ack lost");
+      }),
+    });
+    await expect(removeItemImage(scope, store)).resolves.toEqual({
+      status: "success",
+      warning: "cleanup_pending",
+    });
+    expect(store.clearImagePath).toHaveBeenCalledOnce();
+    expect(store.removeObject).toHaveBeenCalledWith(oldPath);
+    expect(store.completeCleanup).toHaveBeenCalledWith("job-1");
+  });
   it("uploads and attaches a new private image", async () => {
     const store = gateway();
     await expect(

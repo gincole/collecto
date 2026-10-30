@@ -605,6 +605,8 @@ Use shared deletion triggers/menu links and permanent-confirmation styling while
 
 **Verification:** full integration and security suite with a recorded result in `docs/tasks.md`.
 
+**Execution mapping:** `docs/security-verification.md` maps each acceptance criterion to existing and new executable evidence. Use local rollback-only `test:database`, disposable-user `test:auth:ssr`, `test:storage`, and `test:security:sessions`, then the full unit suite and toolchain checks. New coverage targets concurrent idempotency, shared last-write-wins/stale recovery/logout isolation, failure-output privacy and reconciliation outages. API fixtures reject nonlocal URLs. No browser tests, hosted writes, policy changes, resets or migrations are needed; the seeded demo and its disclosure remain M8-T01.
+
 ## Milestone M8 Demo delivery and deployment
 
 ### M8-T01 Add fictional seed data and protected reset workflow
