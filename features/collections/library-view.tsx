@@ -1,4 +1,5 @@
 "use client";
+import { DisplayName } from "@/components/shared/display-name";
 import { useRef } from "react";
 import { Ellipsis, PackageOpen, Pencil, Trash2 } from "lucide-react";
 import Link from "@/components/shared/navigation-link";
@@ -71,9 +72,12 @@ export function LibraryView({
                 size="lg"
               />
               <div className="sm:p-panel space-y-2 p-4 pr-12 sm:pr-14">
-                <h2 className="text-card-title-mobile sm:text-card-title line-clamp-2">
+                <DisplayName
+                  as="h2"
+                  className="text-card-title-mobile sm:text-card-title"
+                >
                   {collection.name}
-                </h2>
+                </DisplayName>
                 <p className="text-foreground-muted text-sm">
                   {itemCountLabel(collection.itemCount)}
                 </p>

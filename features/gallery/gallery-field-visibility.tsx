@@ -88,7 +88,9 @@ function FieldRow({
         >
           <GripVertical aria-hidden="true" />
         </Button>
-        <span className="min-w-0 flex-1 truncate">{field.name}</span>
+        <span className="min-w-0 flex-1 truncate" title={field.name}>
+          {field.name}
+        </span>
       </div>
       {visible ? (
         <div
@@ -289,7 +291,9 @@ export function GalleryFieldVisibility({
                 <Button disabled size="icon" variant="ghost">
                   <GripVertical aria-hidden="true" />
                 </Button>
-                <span className="min-w-0 truncate">{active.name}</span>
+                <span className="min-w-0 truncate" title={active.name}>
+                  {active.name}
+                </span>
               </div>
               {value.includes(active.id) ? (
                 <div data-field-actions className="flex justify-end">

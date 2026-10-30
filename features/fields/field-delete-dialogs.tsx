@@ -95,7 +95,10 @@ function DeleteSchemaDialog({
         }}
       >
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold">
+          <DialogTitle
+            title={`Delete ${target.name}?`}
+            className="text-modal-title font-semibold"
+          >
             Delete {target.name}?
           </DialogTitle>
         </DialogHeader>

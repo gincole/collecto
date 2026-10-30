@@ -65,7 +65,7 @@ export function DropdownMenuItem({
   return (
     <Menu.Item
       className={cn(
-        "touch-target rounded-control focus:bg-surface-muted data-[highlighted]:bg-surface-muted flex cursor-default items-center gap-2 px-3 text-sm outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0",
+        "touch-target rounded-control focus:bg-surface-muted data-[highlighted]:bg-surface-muted text-ui flex cursor-default items-center gap-2 px-3 outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0",
         className,
       )}
       {...props}

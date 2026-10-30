@@ -1,4 +1,5 @@
 "use client";
+import { DisplayName } from "@/components/shared/display-name";
 
 import { useSyncExternalStore } from "react";
 import type { Route } from "next";
@@ -71,9 +72,10 @@ function GalleryCard({
           )}
         >
           {displayValues.map((value, index) => (
-            <p
+            <DisplayName
+              as="p"
               className={cn(
-                "line-clamp-2 break-words",
+                "truncate",
                 index === 0
                   ? "text-card-title-mobile sm:text-card-title font-semibold"
                   : "text-foreground-muted text-sm",
@@ -81,7 +83,7 @@ function GalleryCard({
               key={`${index}-${value}`}
             >
               {value}
-            </p>
+            </DisplayName>
           ))}
         </div>
       ) : null}

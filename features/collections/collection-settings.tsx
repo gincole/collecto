@@ -252,7 +252,10 @@ export function CollectionSettings({
               }}
             >
               <DialogHeader>
-                <DialogTitle className="text-xl font-semibold">
+                <DialogTitle
+                  title={`Permanently delete ${collection.name}?`}
+                  className="text-modal-title font-semibold"
+                >
                   Permanently delete {collection.name}?
                 </DialogTitle>
               </DialogHeader>
@@ -275,7 +278,8 @@ export function CollectionSettings({
                   {populated ? (
                     <div className="space-y-2">
                       <label
-                        className="font-semibold"
+                        className="block min-w-0 font-semibold break-words"
+                        title={`Type ${requiredConfirmationName} to confirm`}
                         htmlFor="delete-confirmation-name"
                       >
                         Type {requiredConfirmationName} to confirm

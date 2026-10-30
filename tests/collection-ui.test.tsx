@@ -313,6 +313,12 @@ describe("Collection settings", () => {
       "My Books",
     );
     expect(confirm).toBeEnabled();
+    expect(screen.getByText("Type My Books to confirm")).toHaveClass(
+      "break-words",
+    );
+    expect(screen.getByText("Type My Books to confirm")).not.toHaveClass(
+      "truncate",
+    );
     await user.click(screen.getByRole("button", { name: "Close" }));
     expect(trigger).toHaveFocus();
   });

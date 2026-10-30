@@ -41,12 +41,16 @@ function EmptyState({
     >
       <div
         aria-hidden="true"
-        className="bg-surface-muted text-foreground-muted rounded-card flex size-12 items-center justify-center [&_svg]:size-6"
+        className="bg-surface-muted text-foreground-muted rounded-control flex size-12 items-center justify-center [&_svg]:size-6"
       >
         {icon}
       </div>
-      <div className="max-w-md space-y-2">
-        <Heading className="text-card-title text-foreground" id={titleId}>
+      <div className="w-full max-w-md min-w-0 space-y-2">
+        <Heading
+          className="text-card-title text-foreground min-w-0 truncate"
+          title={typeof title === "string" ? title : undefined}
+          id={titleId}
+        >
           {title}
         </Heading>
         <p className="text-foreground-muted text-base leading-6">

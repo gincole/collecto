@@ -84,6 +84,14 @@ function expectNoNavigation(url: string) {
 }
 
 describe("ready local dialogs", () => {
+  it("truncates long collection headings while keeping the full accessible name", () => {
+    const name = "Long collection name ".repeat(8);
+    render(<CollectionHeader collection={{ ...collection, name }} />);
+    const heading = screen.getByRole("heading", { level: 1 });
+    expect(heading).toHaveClass("truncate");
+    expect(heading).toHaveAttribute("title", name);
+    expect(heading.textContent).toBe(name);
+  });
   it("uses the shared dialog hierarchy for every Settings section without removing field controls", async () => {
     const user = userEvent.setup();
     render(<CollectionHeader collection={collection} />);

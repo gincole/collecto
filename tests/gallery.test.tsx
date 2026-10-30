@@ -341,7 +341,7 @@ describe("responsive gallery", () => {
       "Open apple",
     );
     expect(screen.getAllByText("No image")).toHaveLength(3);
-    expect(screen.getByText("apple")).toHaveClass("line-clamp-2");
+    expect(screen.getByText("apple")).toHaveClass("truncate");
   });
 
   it("has no detectable unit-level WCAG A or AA violations", async () => {

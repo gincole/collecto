@@ -1,3 +1,4 @@
+import { DisplayName } from "@/components/shared/display-name";
 import { notFound } from "next/navigation";
 import { PageContainer } from "@/components/shared";
 import { getCollectionQuery } from "@/features/collections/queries";
@@ -34,7 +35,9 @@ export default async function EditItemPage({
         <BackLink href={`/collections/${id}/items/${itemId}`}>
           Back to Item
         </BackLink>
-        <p className="text-foreground-muted text-sm">{collection.data.name}</p>
+        <DisplayName as="p" className="text-foreground-muted text-sm">
+          {collection.data.name}
+        </DisplayName>
         <h1 className="text-page-title-mobile sm:text-page-title">Edit item</h1>
       </header>
       <ItemForm

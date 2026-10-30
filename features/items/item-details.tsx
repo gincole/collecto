@@ -1,4 +1,5 @@
 "use client";
+import { DisplayName } from "@/components/shared/display-name";
 import { LoadingImage } from "@/components/shared/loading-image";
 
 import { ImageOff, Star } from "lucide-react";
@@ -143,9 +144,12 @@ export function ItemDetails({
       <ImagePanel item={item} />
       <div className="min-w-0 space-y-6">
         <div className="space-y-2">
-          <h1 className="text-page-title-mobile sm:text-page-title break-words">
+          <DisplayName
+            as="h1"
+            className="text-page-title-mobile sm:text-page-title"
+          >
             {item.title}
-          </h1>
+          </DisplayName>
           {item.description ? (
             <p className="text-foreground-muted break-words whitespace-pre-wrap">
               {item.description}
@@ -159,10 +163,13 @@ export function ItemDetails({
                 className="grid gap-1 py-4 sm:grid-cols-[10rem_1fr]"
                 key={row.label}
               >
-                <dt className="text-foreground-muted font-medium">
+                <DisplayName
+                  as="dt"
+                  className="text-foreground-muted font-medium"
+                >
                   {row.label}
-                </dt>
-                <dd className="min-w-0 break-words">
+                </DisplayName>
+                <dd className="min-w-0 truncate" title={String(row.value)}>
                   {row.kind === "rating" ? (
                     <span
                       aria-label={`${row.value} out of 5`}

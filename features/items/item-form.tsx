@@ -1,4 +1,5 @@
 "use client";
+import { DisplayName } from "@/components/shared/display-name";
 
 import { useRouter } from "next/navigation";
 import Link from "@/components/shared/navigation-link";
@@ -87,9 +88,12 @@ function DynamicField({
       />
     );
   return (
-    <div className="space-y-2">
-      <label className="text-label block" htmlFor={id}>
-        {field.name}
+    <div className="min-w-0 space-y-2">
+      <label
+        className="text-label flex min-w-0 items-center gap-1"
+        htmlFor={id}
+      >
+        <DisplayName className="flex-1">{field.name}</DisplayName>
         {field.required ? <span aria-hidden="true"> *</span> : null}
       </label>
       {control}

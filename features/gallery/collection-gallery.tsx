@@ -1,3 +1,4 @@
+import { DisplayName } from "@/components/shared/display-name";
 import { EmptyState, PresetArtwork } from "@/components/shared";
 import { AddItemButton } from "@/features/items/add-item-button";
 import { CollectionMenu } from "./collection-menu";
@@ -20,9 +21,12 @@ export function CollectionHeader({
       </div>
       <PresetArtwork presetKey={collection.presetKey ?? "blank"} size="lg" />
       <div className="min-w-0 flex-1 space-y-1">
-        <h1 className="text-page-title-mobile sm:text-page-title break-words">
+        <DisplayName
+          as="h1"
+          className="text-page-title-mobile sm:text-page-title"
+        >
           {collection.name}
-        </h1>
+        </DisplayName>
         {collection.description ? (
           <p className="text-foreground-muted break-words">
             {collection.description}

@@ -62,7 +62,7 @@ function ConfirmDialog({
         }}
       >
         <DialogHeader>
-          <DialogTitle className="pr-0 text-xl font-semibold">
+          <DialogTitle className="text-modal-title pr-0 font-semibold">
             {title}
           </DialogTitle>
         </DialogHeader>

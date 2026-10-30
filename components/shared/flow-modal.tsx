@@ -169,7 +169,7 @@ export function FlowModal({
         >
           <DialogTitle
             data-form-heading="primary"
-            className={showTitle ? "text-section-title-mobile pr-0" : "sr-only"}
+            className={showTitle ? "text-modal-title pr-0" : "sr-only"}
           >
             {title}
           </DialogTitle>

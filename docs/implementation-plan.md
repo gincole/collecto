@@ -1217,3 +1217,24 @@ one-column horizontal cards, safe wrapping, image-ratio configuration and detail
 settings. Verify saved settings and preview count classes, narrow-screen overflow
 constraints and existing gallery behavior. One separate Conventional Commit;
 implementation waits until the current modal task is committed and approved.
+
+## M7-T02AE: Audit and tighten shared presentation across pages and mobile
+
+Explicitly approved by the user's latest request; dependency M7-T02AC is complete.
+This presentation audit takes priority over queued M7-T02AD, which remains a
+separate behavior task. Audit all route/feature/shared presentation and document
+findings in `docs/design-system-audit.md`. Centralize the closer desktop/mobile
+font and radius scales; use smaller mobile text while preserving the project
+16 px input minimum and 44 px touch targets. Unify ellipsis for displayed names,
+including Collection/Item/folder headings, labels, menus and confirmations. Keep
+full values in DOM/accessibility and editable controls. Constrain native date
+controls and their containing field rows. Preserve copy/prose wrapping, flows,
+validation, privacy, gallery column behavior and reduced motion. Register custom
+semantic font sizes with the class-merging helper so sizes and colors do not
+overwrite each other. Exact-name deletion instructions remain fully readable.
+
+Verification: responsive token/contrast contracts, long-name and native date
+component checks, existing feature/modal/axe suite, formatting/lint/strict types,
+production build and compiled CSS checks; independent review and staged diff/secret
+scan. No browser tests, dependencies or database changes. One Conventional Commit
+with tracker update, no push. Device-rendered visual acceptance remains open.

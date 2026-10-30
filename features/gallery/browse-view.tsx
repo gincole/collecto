@@ -1,4 +1,5 @@
 "use client";
+import { DisplayName } from "@/components/shared/display-name";
 
 import { ArrowLeft, FolderOpen } from "lucide-react";
 import type { Route } from "next";
@@ -84,13 +85,13 @@ export function BrowseView({
                   (field?.id ?? null) === tab.id ? "page" : undefined
                 }
                 className={cn(
-                  "touch-target focus-ring rounded-pill inline-flex shrink-0 items-center justify-center border px-4 text-sm font-semibold whitespace-nowrap",
+                  "touch-target focus-ring rounded-pill inline-flex max-w-48 shrink-0 items-center justify-center border px-4 text-sm font-semibold whitespace-nowrap",
                   (field?.id ?? null) === tab.id
                     ? "border-selection-border bg-art-lavender"
                     : "border-border bg-surface hover:bg-surface-muted",
                 )}
               >
-                {tab.name}
+                <DisplayName>{tab.name}</DisplayName>
               </Link>
             ))}
           </div>
@@ -103,9 +104,12 @@ export function BrowseView({
       ) : null}
       {field && !state.optionId ? (
         <section aria-label={`${field.name} folders`} className="space-y-4">
-          <h2 className="text-section-title-mobile sm:text-section-title break-words">
-            Browse by {field.name}
-          </h2>
+          <DisplayName
+            as="h2"
+            className="text-section-title-mobile sm:text-section-title"
+          >
+            {`Browse by ${field.name}`}
+          </DisplayName>
           <ul className="grid min-w-0 grid-cols-1 gap-4 min-[360px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {getBrowseFolders(field, items).map((folder) => (
               <li className="min-w-0" key={folder.id}>
@@ -129,9 +133,12 @@ export function BrowseView({
                     <FolderOpen aria-hidden="true" className="size-10" />
                   </div>
                   <div className="sm:p-panel space-y-2 p-4">
-                    <h3 className="text-card-title-mobile sm:text-card-title font-semibold break-words">
+                    <DisplayName
+                      as="h3"
+                      className="text-card-title-mobile sm:text-card-title font-semibold"
+                    >
                       {folder.label}
-                    </h3>
+                    </DisplayName>
                     <p className="text-foreground-muted text-sm">
                       {folder.count} {folder.count === 1 ? "item" : "items"}
                     </p>
@@ -158,11 +165,14 @@ export function BrowseView({
                 }
               >
                 <ArrowLeft aria-hidden="true" className="size-4 shrink-0" />
-                Back to {field.name} folders
+                <DisplayName>{`Back to ${field.name} folders`}</DisplayName>
               </Link>
-              <h2 className="text-section-title-mobile sm:text-section-title break-words">
+              <DisplayName
+                as="h2"
+                className="text-section-title-mobile sm:text-section-title"
+              >
                 {folderName}
-              </h2>
+              </DisplayName>
               <p className="text-foreground-muted text-sm">
                 {folderItems.length}{" "}
                 {folderItems.length === 1 ? "item" : "items"}

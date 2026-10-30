@@ -31,9 +31,10 @@ export function FormSectionHeader({
       <div className="min-w-0 flex-1 space-y-1">
         <Heading
           id={id}
+          title={title}
           data-form-heading={primary ? "primary" : "section"}
           className={cn(
-            "text-section-title-mobile sm:text-section-title",
+            "text-section-title-mobile sm:text-section-title min-w-0 truncate",
             titleClassName,
           )}
         >

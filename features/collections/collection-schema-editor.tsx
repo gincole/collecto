@@ -157,6 +157,7 @@ export function CollectionSchemaEditor({
                   <div className="min-w-0 flex-1 space-y-1">
                     <h3
                       id={`draft-heading-${field.key}`}
+                      title={field.name || "New field"}
                       className="truncate font-semibold"
                     >
                       {field.name || "New field"}

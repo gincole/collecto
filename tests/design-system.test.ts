@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 const css = readFileSync(join(process.cwd(), "app/globals.css"), "utf8");
 const layout = readFileSync(join(process.cwd(), "app/layout.tsx"), "utf8");
 
-function readCssProperty(name: string) {
+function readCssProperty(name: string): string {
   const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const match = css.match(new RegExp(`--${escapedName}:\\s*([^;]+);`));
 
@@ -13,7 +13,9 @@ function readCssProperty(name: string) {
     throw new Error(`Missing CSS property --${name}`);
   }
 
-  return match[1].trim();
+  const value = match[1].trim();
+  const alias = value.match(/^var\(--([^)]*)\)$/);
+  return alias?.[1] ? readCssProperty(alias[1]) : value;
 }
 
 function relativeLuminance(hex: string) {
@@ -48,6 +50,35 @@ function contrastRatio(foreground: string, background: string) {
 }
 
 describe("design-system tokens", () => {
+  it("provides compact mobile type and shape overrides without shrinking editable inputs", () => {
+    const mobile =
+      css.match(/@media \(width < 40rem\) \{([\s\S]*?)\n\}/)?.[1] ?? "";
+    for (const token of [
+      "type-display",
+      "type-page-title",
+      "type-section-title",
+      "type-card-title",
+      "type-body",
+      "type-small",
+      "type-label",
+      "type-ui",
+      "shape-card",
+      "shape-dialog",
+    ])
+      expect(mobile).toContain(`--${token}:`);
+    for (const [token, value] of Object.entries({
+      "type-display": "1.75rem",
+      "type-page-title": "1.5rem",
+      "type-section-title": "1rem",
+      "type-body": "0.8125rem",
+      "shape-card": "1rem",
+      "shape-dialog": "1.25rem",
+    }))
+      expect(mobile).toContain(`--${token}: ${value};`);
+    expect(readCssProperty("text-input")).toBe("1rem");
+    expect(css).toContain("::-webkit-datetime-edit");
+    expect(css).toContain("font-size: var(--text-section-title);");
+  });
   it("supports safe areas without disabling browser zoom", () => {
     expect(layout).toContain('viewportFit: "cover"');
     expect(layout).not.toMatch(/userScalable:\s*false|maximumScale:\s*1/);
@@ -60,15 +91,15 @@ describe("design-system tokens", () => {
       foreground: "#09090b",
       "foreground-muted": "#52525b",
       border: "#ececee",
-      "radius-card": "2.25rem",
+      "radius-card": "1.25rem",
       "radius-control": "0.875rem",
-      "radius-badge": "0.75rem",
-      "radius-artwork": "2.5rem",
+      "radius-badge": "0.5rem",
+      "radius-artwork": "1.25rem",
       "container-page": "75rem",
       "shadow-card": "none",
-      "text-display": "4rem",
-      "text-page-title": "2.5rem",
-      "text-section-title": "2rem",
+      "text-display": "2.25rem",
+      "text-page-title": "1.75rem",
+      "text-section-title": "1.25rem",
     }))
       expect(readCssProperty(token), token).toBe(value);
     expect(css).toContain("scrollbar-gutter: stable");

@@ -33,9 +33,9 @@ const sizeStyles: Record<
   PresetArtworkSize,
   { container: string; icon: string }
 > = {
-  lg: { container: "size-24", icon: "size-10" },
-  md: { container: "size-16", icon: "size-7" },
-  sm: { container: "size-12", icon: "size-5" },
+  lg: { container: "size-16 sm:size-24", icon: "size-7 sm:size-10" },
+  md: { container: "size-12 sm:size-16", icon: "size-6 sm:size-7" },
+  sm: { container: "size-10 sm:size-12", icon: "size-4 sm:size-5" },
 };
 
 type PresetArtworkProps = {

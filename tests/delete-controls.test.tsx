@@ -13,7 +13,7 @@ describe("destructive action controls", () => {
     expect(button).toHaveTextContent("Delete");
     expect(button).toHaveClass(
       "h-11",
-      "text-sm",
+      "text-ui",
       "px-4",
       "shrink-0",
       "border-destructive",
@@ -28,7 +28,7 @@ describe("destructive action controls", () => {
     const { rerender } = render(<DeleteButton confirm onClick={click} />);
     expect(
       screen.getByRole("button", { name: "Delete permanently" }),
-    ).toHaveClass("h-11", "text-sm", "px-4", "bg-destructive");
+    ).toHaveClass("h-11", "text-ui", "px-4", "bg-destructive");
     rerender(<DeleteButton confirm pending onClick={click} />);
     const pending = screen.getByRole("button", { name: "Deleting…" });
     expect(pending).toBeDisabled();
@@ -43,7 +43,7 @@ describe("destructive action controls", () => {
     ).toHaveTextContent("Delete");
     expect(screen.getByRole("link")).toHaveClass(
       "h-11",
-      "text-sm",
+      "text-ui",
       "text-destructive",
     );
     expect(screen.getByRole("link").querySelector("svg")).toBeInTheDocument();

@@ -19,10 +19,20 @@ import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
 const controlClassName =
-  "border-control-border bg-surface text-foreground placeholder:text-foreground-muted focus:border-focus focus:ring-focus/20 rounded-control min-h-11 w-full min-w-0 border px-4 text-base outline-none transition-[border-color,box-shadow] focus:ring-4 disabled:cursor-not-allowed disabled:bg-disabled-surface";
+  "border-control-border bg-surface text-foreground placeholder:text-foreground-muted focus:border-focus focus:ring-focus/20 rounded-control min-h-11 w-full min-w-0 max-w-full border px-4 text-input outline-none transition-[border-color,box-shadow] focus:ring-4 disabled:cursor-not-allowed disabled:bg-disabled-surface";
 
-function Input({ className, ...props }: ComponentProps<"input">) {
-  return <input className={cn(controlClassName, className)} {...props} />;
+function Input({ className, type, ...props }: ComponentProps<"input">) {
+  return (
+    <input
+      type={type}
+      className={cn(
+        controlClassName,
+        type === "date" && "native-date h-11",
+        className,
+      )}
+      {...props}
+    />
+  );
 }
 
 function Textarea({ className, ...props }: ComponentProps<"textarea">) {
@@ -184,13 +194,22 @@ function Select({
                 aria-selected={selected === optionValue}
                 data-value={optionValue}
                 disabled={option.props.disabled}
-                className="relative py-2 pr-8 text-base"
+                className="text-ui relative min-w-0 py-2 pr-8"
                 onSelect={() => {
                   choose(optionValue);
                 }}
               >
                 {optionIcon?.(optionValue)}
-                {option.props.children}
+                <span
+                  className="min-w-0 flex-1 truncate"
+                  title={
+                    typeof option.props.children === "string"
+                      ? option.props.children
+                      : undefined
+                  }
+                >
+                  {option.props.children}
+                </span>
                 {selected === optionValue ? (
                   <Check
                     aria-hidden="true"

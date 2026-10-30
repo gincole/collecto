@@ -26,38 +26,47 @@
   --font-sans:
     var(--font-dm-sans), var(--font-noto-thai), "Noto Sans Thai", ui-sans-serif,
     system-ui, sans-serif;
-  --text-display: 4rem;
+  --text-display: var(--type-display);
   --text-display--line-height: 1.12;
   --text-display--font-weight: 600;
-  --text-display-mobile: 2.5rem;
+  --text-display-mobile: var(--type-display);
   --text-display-mobile--line-height: 1.12;
   --text-display-mobile--font-weight: 600;
-  --text-page-title: 2.5rem;
+  --text-page-title: var(--type-page-title);
   --text-page-title--line-height: 1.28;
   --text-page-title--font-weight: 600;
-  --text-page-title-mobile: 2rem;
+  --text-page-title-mobile: var(--type-page-title);
   --text-page-title-mobile--line-height: 1.2;
   --text-page-title-mobile--font-weight: 600;
-  --text-section-title: 2rem;
+  --text-section-title: var(--type-section-title);
   --text-section-title--line-height: 1.28;
   --text-section-title--font-weight: 600;
-  --text-section-title-mobile: 1.5rem;
+  --text-section-title-mobile: var(--type-section-title);
   --text-section-title-mobile--line-height: 1.3;
   --text-section-title-mobile--font-weight: 600;
-  --text-card-title: 1.25rem;
+  --text-card-title: var(--type-card-title);
   --text-card-title--line-height: 1.4;
   --text-card-title--font-weight: 600;
-  --text-card-title-mobile: 1.125rem;
+  --text-card-title-mobile: var(--type-card-title);
   --text-card-title-mobile--line-height: 1.4;
   --text-card-title-mobile--font-weight: 600;
-  --text-body: 0.9375rem;
+  --text-ui: var(--type-ui);
+  --text-ui--line-height: 1.25rem;
+  --text-input: 1rem;
+  --text-input--line-height: 1.5;
+  --text-modal-title: var(--type-modal-title);
+  --text-modal-title--line-height: 1.3;
+  --text-modal-title--font-weight: 600;
+  --text-sm: var(--type-small);
+  --text-base: var(--type-body);
+  --text-body: var(--type-body);
   --text-body--line-height: 1.45;
-  --text-body-sm: 0.875rem;
+  --text-body-sm: var(--type-small);
   --text-body-sm--line-height: 1.25rem;
-  --text-label: 0.875rem;
+  --text-label: var(--type-label);
   --text-label--line-height: 1.25rem;
   --text-label--font-weight: 500;
-  --text-caption: 0.75rem;
+  --text-caption: var(--type-caption);
   --text-caption--line-height: 1.64;
   --spacing: 0.25rem;
   --spacing-page-mobile: 1rem;
@@ -71,10 +80,10 @@
   --spacing-panel: 1.75rem;
   --spacing-section: 5rem;
   --radius-control: 0.875rem;
-  --radius-card: 2.25rem;
-  --radius-dialog: 2.25rem;
-  --radius-badge: 0.75rem;
-  --radius-artwork: 2.5rem;
+  --radius-card: var(--shape-card);
+  --radius-dialog: var(--shape-dialog);
+  --radius-badge: 0.5rem;
+  --radius-artwork: var(--shape-artwork);
   --radius-pill: 10000px;
   --shadow-card: none;
   --shadow-button: inset 0 0.5px 0 rgb(255 255 255 / 50%);
@@ -99,6 +108,19 @@
 }
 
 :root {
+  --type-display: 2.25rem;
+  --type-page-title: 1.75rem;
+  --type-section-title: 1.25rem;
+  --type-card-title: 1.125rem;
+  --type-body: 0.875rem;
+  --type-small: 0.8125rem;
+  --type-label: 0.8125rem;
+  --type-caption: 0.75rem;
+  --type-ui: 0.875rem;
+  --type-modal-title: 1.375rem;
+  --shape-card: 1.25rem;
+  --shape-dialog: 1.5rem;
+  --shape-artwork: 1.25rem;
   --art-butter: #f4f4f5;
   --art-lavender: #ececee;
   --art-mint: #f4f4f5;
@@ -124,6 +146,40 @@
   color-scheme: light;
   background: var(--background);
   color: var(--foreground);
+}
+
+@media (width < 40rem) {
+  :root {
+    --type-display: 1.75rem;
+    --type-page-title: 1.5rem;
+    --type-section-title: 1rem;
+    --type-card-title: 0.875rem;
+    --type-body: 0.8125rem;
+    --type-small: 0.75rem;
+    --type-label: 0.75rem;
+    --type-caption: 0.6875rem;
+    --type-ui: 0.75rem;
+    --type-modal-title: 1.125rem;
+    --shape-card: 1rem;
+    --shape-dialog: 1.25rem;
+    --shape-artwork: 1rem;
+  }
+}
+
+/* Constrain native date controls without replacing the platform date picker. */
+.native-date {
+  display: block;
+  inline-size: 100%;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+.native-date::-webkit-date-and-time-value {
+  min-inline-size: 0;
+  text-align: left;
+}
+.native-date::-webkit-datetime-edit {
+  min-inline-size: 0;
+  padding: 0;
 }
 
 html {
@@ -295,9 +351,9 @@ button:disabled,
 
 .dialog-content [data-modal-body] [data-form-heading="primary"],
 .dialog-content [data-form-heading="section"] {
-  font-size: var(--text-card-title);
-  line-height: var(--text-card-title--line-height);
-  font-weight: var(--text-card-title--font-weight);
+  font-size: var(--text-section-title);
+  line-height: var(--text-section-title--line-height);
+  font-weight: var(--text-section-title--font-weight);
 }
 
 .dialog-content [data-section-description] {

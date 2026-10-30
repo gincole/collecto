@@ -369,3 +369,18 @@ verify:deployment` passed formatting, lint, strict TypeScript, all 364 tests
 - Scope/acceptance: see M7-T02AD in `docs/implementation-plan.md`.
 - Verification: not started.
 - Commit: pending.
+
+## M7-T02AE: Audit and tighten shared presentation across pages and mobile
+
+- Status: Complete; dependency M7-T02AC is complete; M7-T02AD remains queued.
+- Scope/acceptance: see M7-T02AE in `docs/implementation-plan.md`.
+- Changes: responsive type/shape scale, shared name ellipsis, native date bounds,
+  compact artwork and audit documentation across route/feature/shared UI.
+- Verification: route types, formatting, lint, strict TypeScript, all 386 tests
+  across 56 files (two workers), and production build passed. Final section-role
+  checks/build passed; compiled CSS confirms responsive typography/shape aliases,
+  native date bounds and the 16 px input role. Name, size/color merging, exact
+  deletion instruction and axe regressions pass. Independent review and staged
+  diff/secret scan passed. No browser testing; actual mobile/date-picker visual
+  acceptance remains open as documented in `docs/design-system-audit.md`.
+- Commit: SELF (this commit).

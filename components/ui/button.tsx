@@ -5,7 +5,7 @@ import type { ComponentProps } from "react";
 import { cn } from "@/lib/utils/cn";
 
 const buttonVariants = cva(
-  "touch-target duration-base ease-standard focus-ring inline-flex max-w-full shrink-0 items-center justify-center gap-2 rounded-control px-4 text-sm font-normal whitespace-nowrap transition-[color,background-color,border-color,opacity,transform] active:scale-[0.98] motion-reduce:transition-none motion-reduce:active:scale-100 disabled:pointer-events-none disabled:bg-disabled-surface disabled:text-disabled-foreground disabled:opacity-100 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "touch-target duration-base ease-standard focus-ring inline-flex max-w-full shrink-0 items-center justify-center gap-2 rounded-control px-4 text-ui font-normal whitespace-nowrap transition-[color,background-color,border-color,opacity,transform] active:scale-[0.98] motion-reduce:transition-none motion-reduce:active:scale-100 disabled:pointer-events-none disabled:bg-disabled-surface disabled:text-disabled-foreground disabled:opacity-100 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     defaultVariants: {
       size: "default",

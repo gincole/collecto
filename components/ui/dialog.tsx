@@ -34,7 +34,13 @@ function DialogTitle({
   className,
   ...props
 }: ComponentProps<typeof DialogPrimitive.Title>) {
-  return <DialogPrimitive.Title className={cn("pr-0", className)} {...props} />;
+  return (
+    <DialogPrimitive.Title
+      title={typeof props.children === "string" ? props.children : undefined}
+      className={cn("min-w-0 truncate pr-0", className)}
+      {...props}
+    />
+  );
 }
 const DialogTrigger = DialogPrimitive.Trigger;
 

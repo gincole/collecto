@@ -53,7 +53,10 @@ export function AppHeader({ email, logoutAction }: AppHeaderProps) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-[min(18rem,calc(100vw-2rem))] p-3">
-              <DropdownMenuLabel className="text-foreground-muted block truncate px-2 py-2 text-sm">
+              <DropdownMenuLabel
+                title={email}
+                className="text-foreground-muted block truncate px-2 py-2 text-sm"
+              >
                 {email}
               </DropdownMenuLabel>
               <form noValidate action={formAction}>

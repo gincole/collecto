@@ -413,7 +413,8 @@ export function EditFieldDialog({
         <DialogHeader>
           <DialogTitle
             data-form-heading="primary"
-            className="text-section-title-mobile"
+            className="text-modal-title"
+            title={`Edit ${field.name}`}
           >
             Edit {field.name}
           </DialogTitle>
@@ -473,10 +474,7 @@ export function AddFieldDialog({
         }}
       >
         <DialogHeader>
-          <DialogTitle
-            data-form-heading="primary"
-            className="text-section-title-mobile"
-          >
+          <DialogTitle data-form-heading="primary" className="text-modal-title">
             Add custom field
           </DialogTitle>
         </DialogHeader>

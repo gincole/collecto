@@ -55,3 +55,17 @@ the body padding so their dividers align with section dividers rather than the
 outer modal edge; both include horizontal safe areas. Wizard steps are rendered
 directly in the title slot with their existing small text size, with no portal or
 duplicate body label. This refines M7-T02S without changing field/page behavior.
+
+## Compact consistency pass — M7-T02AE
+
+The user's subsequent review requests a tighter, more balanced scale, smaller
+mobile typography, restrained radii, ellipsized displayed names and consistent
+native date controls. This supersedes the earlier numeric type/radius mapping,
+while retaining its palette, font family, control geometry and behavior.
+
+See `docs/design-system-audit.md` for the full coverage and role matrix. Responsive
+`--type-*` and `--shape-*` values now supply all shared utility aliases. Editable
+controls retain the existing 16 px minimum, and all targets stay at least 44 px.
+Cards use 20/16 px desktop/mobile corners, dialogs 24/20 px and controls 14 px.
+Displayed names use one-line ellipses while preserving full text for accessibility;
+prose continues to wrap. No browser/device visual acceptance is claimed.
