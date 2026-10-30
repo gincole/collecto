@@ -747,3 +747,11 @@ spacing and make adjacent dropdown controls switch with a single click, with
 consistent open/close animation. Preserve top spacing, fixed modal footers, focus,
 keyboard interaction, field validation and reduced-motion behavior. No browser
 checks. See docs/dropdown-spacing.md for scope, acceptance and verification.
+
+## M8-T03A: Deployment verification artifact boundary
+
+Fix the user-reported Vercel formatter exit 2 without weakening source checks.
+Exclude deployment/tool caches from Git, formatting, ESLint and TypeScript;
+provide a checked-in verify:deployment gate and reproduce cloud artifact shapes
+in an isolated source-copy check. See docs/deployment-build.md for acceptance,
+commands and limitations. This repair does not close M8-T02 or certify production.

@@ -1,0 +1,3 @@
+# Deployment-generated files are not application source.
+/.vercel/
+/.pnpm-store/

@@ -15,6 +15,7 @@
     "format:check": "prettier --check .",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
+    "verify:deployment": "next typegen && pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "test": "vitest run",
     "test:auth:ssr": "node supabase/tests/auth_ssr.mjs",
     "test:storage": "node supabase/tests/storage_api.mjs",

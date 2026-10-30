@@ -1,5 +1,9 @@
 # dependencies
 /node_modules
+/.pnpm-store
+
+# Vercel-generated tooling, cache and deployment output
+/.vercel
 
 # Next.js
 /.next

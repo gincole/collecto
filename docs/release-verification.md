@@ -2,7 +2,7 @@
 
 ## Status
 
-**In progress; release readiness is not established.** M8-T01 is complete. Required dependency M7-T02 remains open because actual-browser viewport, keyboard, zoom, device and rendered accessibility evidence has not been collected under the owner's no-browser instruction. Documentation preparation can proceed independently, but it does not waive this dependency. Deployment remains M8-T03 and requires explicit authorization.
+**In progress; release readiness is not established.** M8-T01 is complete. Required dependency M7-T02 remains open because actual-browser viewport, keyboard, zoom, device and rendered accessibility evidence has not been collected under the owner's no-browser instruction. Documentation preparation can proceed independently, but it does not waive this dependency. The owner has now begun manual deployment under M8-T03; successful hosted and mobile acceptance evidence remains pending.
 
 ## Reproduction scope
 
@@ -37,7 +37,7 @@ Final executed results are recorded in the M8-T02 tracker row. This ledger must 
 - The isolated run verifies compilation and test commands, not interactive `dev`/`start` server behavior or application HTTP journeys. Supabase `start` is documented for contributor setup; this run reused the already running stack instead.
 - Clean-database bootstrap/reset is documented but not rerun against the existing developer stack because it would delete data. Local integration checks use the migrated stack; a truly fresh database initialization still needs an isolated disposable stack or operator evidence.
 - Hosted project migration, Auth redirect setup, actual demo account seeding/password rotation and hosted two-account testing remain operator work. [Demo instructions](demo-operations.md) explicitly separate seed/reset from ordinary application startup.
-- No production deployment or smoke test is authorized or performed. A successful local build is not production acceptance.
+- The owner initiated Vercel deployment attempts on 30 October. No successful production deployment or smoke-test evidence is recorded. M8-T03A repairs the generated-cache formatter failure with isolated local verification; hosted redeployment remains pending. A successful local build is not production acceptance.
 - Administrative seed/reset and Storage cleanup commands must not be run against real user data merely to validate documentation. Their local disposable-fixture evidence is in M8-T01/M7-T03.
 
 Do not mark M8-T02 Complete until its dependencies and remaining release acceptance have been resolved with recorded evidence or explicit approved scope changes. No exception here silently changes the approved product requirements.
