@@ -1238,3 +1238,16 @@ component checks, existing feature/modal/axe suite, formatting/lint/strict types
 production build and compiled CSS checks; independent review and staged diff/secret
 scan. No browser tests, dependencies or database changes. One Conventional Commit
 with tracker update, no push. Device-rendered visual acceptance remains open.
+
+## M7-T02AF: Place draft field Type beside Name
+
+Explicit user request after M7-T02AE (complete); M7-T02AD remains queued. In New
+Collection's draft field editors, use a two-to-one Name/Type row once the card's
+content is at least 28 rem wide. Name stays left and wider, Type right and narrower.
+Keep narrow cards stacked so native-size select text, type icons and dropdown
+controls fit at 320 px. Reuse existing controls, labels and error handling; preserve
+editing, immutable-after-create types, preset drafts and option behavior.
+
+Verify existing draft/validation/accessibility checks and deployment checks; inspect
+the responsive CSS and staged diff/secrets. No browser tests, dependencies or schema
+changes. One Conventional Commit with tracker update, no push.

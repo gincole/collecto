@@ -145,7 +145,7 @@ export function CollectionSchemaEditor({
           {fields.map((field, index) => (
             <li
               data-draft-field
-              className="border-border bg-surface rounded-control min-w-0 space-y-5 border p-4"
+              className="border-border bg-surface rounded-control @container min-w-0 space-y-5 border p-4"
               key={field.key}
             >
               <div
@@ -203,8 +203,11 @@ export function CollectionSchemaEditor({
                     </Button>
                   </div>
                 </div>
-                <div className="grid min-w-0 gap-4">
-                  <div className="space-y-2">
+                <div
+                  data-draft-field-identity
+                  className="grid min-w-0 gap-4 @[28rem]:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]"
+                >
+                  <div className="min-w-0 space-y-2">
                     <label
                       className="text-label block"
                       htmlFor={`draft-name-${field.key}`}
@@ -224,7 +227,7 @@ export function CollectionSchemaEditor({
                     />
                     <DraftError path={`${index}.name`} errors={errors} />
                   </div>
-                  <div className="space-y-2">
+                  <div className="min-w-0 space-y-2">
                     <label
                       className="text-label block"
                       htmlFor={`draft-type-${field.key}`}

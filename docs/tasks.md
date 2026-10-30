@@ -384,3 +384,15 @@ verify:deployment` passed formatting, lint, strict TypeScript, all 364 tests
   diff/secret scan passed. No browser testing; actual mobile/date-picker visual
   acceptance remains open as documented in `docs/design-system-audit.md`.
 - Commit: SELF (this commit).
+
+## M7-T02AF: Place draft field Type beside Name
+
+- Status: Complete; dependency M7-T02AE is complete; M7-T02AD remains queued.
+- Scope/acceptance: see M7-T02AF in `docs/implementation-plan.md`.
+- Changes: wider Name / narrower Type row on sufficiently wide field cards,
+  with stacked layout retained for narrow phones.
+- Verification: route types, formatting, lint, strict TypeScript, all 386 tests
+  across 56 files (two workers) and production build passed. Compiled CSS confirms
+  the 28 rem card-width query and 2:1 grid tracks. Diff/secret checks passed.
+  No browser testing.
+- Commit: SELF (this commit).
