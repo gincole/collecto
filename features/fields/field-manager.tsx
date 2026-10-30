@@ -1,8 +1,9 @@
 "use client";
 
-import { GripVertical, LockKeyhole } from "lucide-react";
+import { GripVertical, LockKeyhole, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useState, useTransition, type RefObject } from "react";
+import { Button } from "@/components/ui/button";
 import { useFlowBusy } from "@/components/shared/flow-modal";
 import { useFeedback } from "@/components/shared/feedback";
 import { fieldActionsWithFeedback } from "./feedback-actions";
@@ -61,7 +62,11 @@ function FieldManager({
   actions: rawActions,
   collectionId,
   fields,
+  onAddField,
+  addFieldTriggerRef,
 }: {
+  onAddField?: () => void;
+  addFieldTriggerRef?: RefObject<HTMLButtonElement | null>;
   actions: FieldManagerActions;
   collectionId: string;
   fields: CollectionRecord["fields"];
@@ -106,11 +111,23 @@ function FieldManager({
               Field order controls Add Item, Edit Item, and Item Details.
             </p>
           </div>
-          <AddFieldDialog
-            actions={actions}
-            collectionId={collectionId}
-            disabled={atLimit}
-          />
+          {onAddField ? (
+            <Button
+              disabled={atLimit || pending}
+              onClick={onAddField}
+              ref={addFieldTriggerRef}
+              type="button"
+            >
+              <Plus aria-hidden="true" />
+              Add field
+            </Button>
+          ) : (
+            <AddFieldDialog
+              actions={actions}
+              collectionId={collectionId}
+              disabled={atLimit}
+            />
+          )}
         </div>
         {pending ? (
           <p className="text-foreground-muted mb-4 text-sm" role="status">

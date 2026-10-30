@@ -763,3 +763,22 @@ to NODE_ENV=test. Reproduce the production parent environment, preserve the real
 production application build, keep every validation gate and replay the full
 pipeline with cloud cache fixtures. See docs/deployment-build.md for evidence and
 acceptance. No new deployment, runtime smoke test or release certification.
+
+## M7-T02J: Add Field within the Collection Settings modal
+
+User request (30 October 2026): replace the stacked Add Field dialog with a
+second screen inside the existing Collection Settings modal, like the Collection
+creation wizard. Depends on completed M7-T02G and M7-T02I. This explicitly changes
+the earlier nested-dialog presentation; field types, writes and security remain
+as specified. Edit Field and destructive confirmations are outside this task.
+
+Acceptance: one dialog/overlay and unchanged URL; Add Field opens immediately;
+Back and successful creation return to Settings with unsaved identity edits and
+trigger focus preserved; X/backdrop/Escape close the whole modal when idle;
+creation actions occupy the fixed footer; pending writes block dismissal; failed
+writes retain the Field draft and existing option-retry behavior without duplicate
+Field creation. Reuse the creation form for standalone callers.
+
+Verification: focused Settings step, field UI and local-dialog component tests,
+then `corepack pnpm verify:deployment`, independent review and staged diff/secret
+inspection. Browser/device testing is omitted at the user's explicit request.

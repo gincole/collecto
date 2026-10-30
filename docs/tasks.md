@@ -94,3 +94,15 @@ Reported by the user on 30 October 2026. The M7-T01 state audit and implementati
 | Day 2 feature complete  | M4-T02 through M6-T03    | Not started | Must include images, fields, gallery settings, and Browse.                  |
 | Day 2 release candidate | M7-T01 through M8-T02    | Not started | All local checks and acceptance evidence complete.                          |
 | Deployment              | M8-T03                   | Not started | Vercel is intentionally deferred until authorized deployment.               |
+
+## M7-T02J: Add Field inside Collection Settings
+
+- Status: Complete; dependencies M7-T02G and M7-T02I are complete.
+- Scope and acceptance: see M7-T02J in `docs/implementation-plan.md`; user-approved
+  replacement of the stacked Add Field dialog with a screen in the same modal.
+- Verification: focused component checks passed (22 tests across 3 files);
+  `corepack pnpm verify:deployment` passed formatting, lint, strict TypeScript,
+  all 340 tests across 53 files, and the production build. Independent review
+  found no actionable defects. Staged diff and secret inspection passed.
+  No browser testing, deployment or push.
+- Commit: SELF (this commit).

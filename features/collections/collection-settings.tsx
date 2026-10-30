@@ -38,6 +38,7 @@ type SettingsAction = (
 
 type CollectionSettingsProps = {
   children?: ReactNode;
+  active?: boolean;
   initialSection?: "delete";
   collection: CollectionRecord;
   deleteAction: SettingsAction;
@@ -46,6 +47,7 @@ type CollectionSettingsProps = {
 
 export function CollectionSettings({
   children,
+  active = true,
   initialSection,
   collection,
   deleteAction,
@@ -205,16 +207,18 @@ export function CollectionSettings({
               Review the highlighted fields and try again.
             </FeedbackMessage>
           ) : null}
-          <ModalActions>
-            <Button
-              form={formId}
-              aria-busy={updatePending}
-              disabled={!dirty || updatePending}
-              type="submit"
-            >
-              {updatePending ? "Saving…" : "Save changes"}
-            </Button>
-          </ModalActions>
+          {active ? (
+            <ModalActions>
+              <Button
+                form={formId}
+                aria-busy={updatePending}
+                disabled={!dirty || updatePending}
+                type="submit"
+              >
+                {updatePending ? "Saving…" : "Save changes"}
+              </Button>
+            </ModalActions>
+          ) : null}
         </form>
       </section>
 
