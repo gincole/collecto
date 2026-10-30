@@ -229,10 +229,6 @@ export function GallerySettings({
           onClose={() => onOpenChange(false)}
         >
           <FlowGuard onClose={() => onOpenChange(false)} busy={pending} />
-          <p className="text-foreground-muted mb-5">
-            Preview changes before saving. These settings apply to every view in
-            this Collection.
-          </p>
           <div className="space-y-6">
             <fieldset className="space-y-5" disabled={pending}>
               <legend className="mb-5">
@@ -240,6 +236,10 @@ export function GallerySettings({
                   Display settings
                 </h3>
               </legend>
+              <p className="text-foreground-muted">
+                Preview changes before saving. These settings apply to every
+                view in this Collection.
+              </p>
               <SettingRow label="Sort order" icon={ArrowUpDown}>
                 <Select
                   aria-label="Sort order"

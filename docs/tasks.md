@@ -333,3 +333,18 @@ verify:deployment` passed formatting, lint, strict TypeScript, all 364 tests
   waits for its asynchronous action label. Independent review and staged
   diff/secret checks passed. No browser testing.
 - Commit: SELF (this commit).
+
+## M7-T02AB: Correct modal hierarchy and preset action
+
+- Status: Complete; dependency M7-T02AA is complete.
+- Scope/acceptance: see M7-T02AB in `docs/implementation-plan.md`.
+- Changes: Display settings precedes its description and controls; the entire
+  preset strip is one shared Button with two labels and preserved draft state.
+- Verification: route types, formatting, lint, strict TypeScript, all 376 tests
+  across 55 files (`corepack pnpm test --maxWorkers=2`) and production build
+  passed. Full-strip/label/keyboard activation and draft preservation checks pass.
+  Independent review and staged diff/secret checks passed. No browser testing.
+  Initial default-concurrency run hit an existing Item-focus timing failure; the
+  lower-concurrency full suite passed. Separate field-guidance wording edit was
+  preserved outside this commit.
+- Commit: SELF (this commit).

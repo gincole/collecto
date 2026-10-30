@@ -69,11 +69,11 @@ describe("Collection schema draft wizard", () => {
     expect(screen.getByDisplayValue("Fiction")).toBeInTheDocument();
     await user.clear(screen.getByLabelText("Field 1 name"));
     await user.type(screen.getByLabelText("Field 1 name"), "Writer");
-    await user.click(screen.getByRole("button", { name: "Change preset" }));
+    await user.click(screen.getByRole("button", { name: /Change preset/ }));
     await user.click(screen.getByRole("button", { name: "Custom preset" }));
     await user.click(screen.getByRole("button", { name: "Continue" }));
     expect(screen.queryByLabelText("Field 1 name")).not.toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Change preset" }));
+    await user.click(screen.getByRole("button", { name: /Change preset/ }));
     await user.click(screen.getByRole("button", { name: "Books preset" }));
     await user.click(screen.getByRole("button", { name: "Continue" }));
     expect(screen.getByLabelText("Field 1 name")).toHaveValue("Writer");

@@ -299,25 +299,19 @@ export function CollectionWizard({
                 </p>
               </div>
 
-              <div
+              <Button
                 data-preset-summary
-                role="group"
-                aria-label="Selected preset"
-                className="rounded-control bg-foreground text-surface flex min-h-11 items-center justify-between gap-3 px-4 py-3"
+                aria-label={`Change preset: ${preset.label}`}
+                className="w-full justify-between gap-3 text-left"
+                disabled={pending}
+                onClick={() => changeStep(1)}
+                type="button"
               >
-                <span className="min-w-0 font-semibold">
+                <span className="min-w-0 truncate">
                   {preset.key === "blank" ? "Custom" : `${preset.label} preset`}
                 </span>
-                <Button
-                  disabled={pending}
-                  className="text-surface hover:bg-surface/10 hover:text-surface [--focus:var(--surface)]"
-                  variant="ghost"
-                  onClick={() => changeStep(1)}
-                  type="button"
-                >
-                  Change preset
-                </Button>
-              </div>
+                <span className="shrink-0">Change preset</span>
+              </Button>
 
               <div
                 className="grid gap-6"

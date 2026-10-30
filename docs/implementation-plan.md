@@ -1163,3 +1163,20 @@ gutters. Verification: grouped-editor/option/axe tests, shared pointer-overlay a
 existing transfer/sort/focus checks, Custom selection/strip regressions; full
 deployment gate, independent review, staged diff/secret scan. No browser tests,
 dependencies or database changes. One Conventional Commit, tracker update, no push.
+
+## M7-T02AB: Correct modal hierarchy and preset action
+
+User-approved corrections after M7-T02AA (complete), including the follow-up
+request to make the entire preset strip clickable. Move the Gallery appearance
+intro into Display settings immediately after its legend, before Sort order.
+Replace the nested preset strip action with one full-width shared Button: selected
+preset on the left, Change preset on the right. The entire surface and both labels
+activate the same action. Use the normal modal height, radius, transition, focus
+and pending styling; remove the inverse focus override now that focus sits outside
+the black button on the white modal. Preserve preset selection and all drafts.
+
+Verify existing Gallery checks and a regression for left label, whole strip and
+keyboard activation with draft preservation. Run deployment checks with two test
+workers to avoid previously observed timing flakes. Inspect diff and staged
+secrets; no browser tests, dependencies or schema changes. One Conventional Commit
+with tracker update, no push.

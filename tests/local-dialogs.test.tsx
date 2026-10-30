@@ -176,11 +176,11 @@ describe("ready local dialogs", () => {
       "rounded-card",
     );
     expect(
-      within(dialog).getByRole("group", { name: "Selected preset" }),
+      within(dialog).getByRole("button", { name: /Change preset/ }),
     ).toHaveClass("bg-foreground", "text-surface");
     expect(
-      within(dialog).getByRole("button", { name: "Change preset" }),
-    ).toHaveClass("[--focus:var(--surface)]", "h-11", "rounded-control");
+      within(dialog).getByRole("button", { name: /Change preset/ }),
+    ).toHaveClass("w-full", "h-11", "rounded-control");
     const fieldHeading = within(dialog).getByRole("heading", {
       name: "Custom fields",
     });
@@ -188,7 +188,7 @@ describe("ready local dialogs", () => {
       within(dialog).getByRole("button", { name: "Add field" }),
     );
     expect(
-      within(dialog).getByText("Title and Description included.").parentElement,
+      within(dialog).getByText(/Title and Description included./).parentElement,
     ).toHaveClass("text-sm");
     expect(dialog.querySelector("[data-schema-editor]")).toHaveAttribute(
       "data-form-panel",
@@ -203,6 +203,32 @@ describe("ready local dialogs", () => {
     expect(dialog.querySelector("[data-modal-body]")).not.toHaveTextContent(
       "Step 1 of 2",
     );
+  });
+
+  it("makes the entire selected preset strip one action and preserves the draft", async () => {
+    const user = userEvent.setup();
+    render(<LibraryContent collections={[]} />);
+    await user.click(screen.getByRole("button", { name: "New collection" }));
+    await user.click(screen.getByRole("button", { name: "Custom preset" }));
+    await user.click(screen.getByRole("button", { name: "Continue" }));
+    await user.type(screen.getByLabelText("Collection name"), "Memories");
+    let strip = screen.getByRole("button", { name: "Change preset: Custom" });
+    expect(strip).toHaveClass("w-full", "h-11", "rounded-control");
+    expect(strip.querySelector("button")).toBeNull();
+    await user.click(within(strip).getByText("Custom"));
+    expect(
+      screen.getByRole("heading", { name: "What are you collecting?" }),
+    ).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Continue" }));
+    expect(screen.getByLabelText("Collection name")).toHaveValue("Memories");
+    strip = screen.getByRole("button", { name: "Change preset: Custom" });
+    await user.click(strip);
+    await user.click(screen.getByRole("button", { name: "Continue" }));
+    screen.getByRole("button", { name: "Change preset: Custom" }).focus();
+    await user.keyboard("{Enter}");
+    expect(
+      screen.getByRole("heading", { name: "What are you collecting?" }),
+    ).toBeVisible();
   });
 
   it("keeps Home free of Back and opens New Collection synchronously with unchanged URL", async () => {
