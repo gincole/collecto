@@ -145,7 +145,13 @@ export function FlowModal({
           close();
         }}
       >
-        <header className="flex items-center justify-between gap-4 px-5 pt-4">
+        <header
+          className={
+            showTitle
+              ? "flex items-center justify-between gap-4 px-5 pt-4"
+              : "relative z-10 h-0"
+          }
+        >
           <DialogTitle
             data-form-heading="primary"
             className={showTitle ? "text-section-title-mobile pr-0" : "sr-only"}
@@ -153,7 +159,7 @@ export function FlowModal({
             {title}
           </DialogTitle>
           <Button
-            className="ml-auto"
+            className={showTitle ? "ml-auto" : "absolute top-5 right-5"}
             type="button"
             variant="ghost"
             size="icon"

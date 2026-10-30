@@ -117,6 +117,11 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
     else leave();
   }
 
+  const modal = Boolean(dismissFlow);
+  const titleClassName = modal
+    ? "text-section-title-mobile"
+    : "text-page-title-mobile sm:text-page-title";
+
   function leave() {
     startLeaving(async () => {
       if (dismissFlow) dismissFlow();
@@ -126,8 +131,13 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
 
   return (
     <>
-      <div className="space-y-8">
-        <div className="flex items-center justify-between gap-4">
+      <div className={modal ? "space-y-6" : "space-y-8"}>
+        <div
+          className={cn(
+            "flex items-center justify-between gap-4",
+            modal && "min-h-11 pr-12",
+          )}
+        >
           <p className="text-foreground-muted text-sm font-medium">
             Step {step} of 2
           </p>
@@ -142,14 +152,16 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
                 Back
               </button>
             ) : null}
-            <button
-              disabled={pending}
-              className="touch-target focus-ring rounded-control text-foreground-muted hover:bg-surface-muted px-3 text-sm font-semibold"
-              onClick={cancel}
-              type="button"
-            >
-              Cancel
-            </button>
+            {!modal ? (
+              <button
+                disabled={pending}
+                className="touch-target focus-ring rounded-control text-foreground-muted hover:bg-surface-muted px-3 text-sm font-semibold"
+                onClick={cancel}
+                type="button"
+              >
+                Cancel
+              </button>
+            ) : null}
           </div>
         </div>
         {leaving ? (
@@ -163,7 +175,7 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
             <div className="space-y-2">
               <h1
                 data-form-heading="primary"
-                className="text-page-title-mobile sm:text-page-title"
+                className={titleClassName}
                 id="preset-title"
               >
                 What are you collecting?
@@ -173,7 +185,12 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+            <div
+              className={cn(
+                "grid grid-cols-2 gap-3 sm:grid-cols-3",
+                !modal && "lg:grid-cols-4",
+              )}
+            >
               {presets.map((option) => {
                 const selected = option.key === presetKey;
                 return (
@@ -182,7 +199,8 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
                     aria-label={`${option.label} preset`}
                     aria-pressed={selected}
                     className={cn(
-                      "focus-ring rounded-card bg-surface sm:p-panel relative flex min-h-36 flex-col items-center justify-center gap-4 border-2 p-5 text-center transition-[border-color,transform] motion-safe:hover:-translate-y-0.5 sm:min-h-40",
+                      "focus-ring rounded-card bg-surface relative flex min-h-36 flex-col items-center justify-center gap-4 border-2 text-center transition-[border-color,transform] motion-safe:hover:-translate-y-0.5",
+                      modal ? "p-4" : "sm:p-panel p-5 sm:min-h-40",
                       selected
                         ? "border-selection-border"
                         : "border-border hover:border-control-border",
@@ -214,7 +232,7 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
                 className="ml-auto w-full sm:w-auto"
                 disabled={pending || !presetKey}
                 onClick={() => setStep(2)}
-                size="lg"
+                size={modal ? "default" : "lg"}
                 type="button"
               >
                 Continue
@@ -262,7 +280,7 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
               <div className="space-y-2">
                 <h1
                   data-form-heading="primary"
-                  className="text-page-title-mobile sm:text-page-title"
+                  className={titleClassName}
                   id="details-title"
                 >
                   Set up your collection
@@ -275,7 +293,10 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
 
               <div
                 data-form-panel
-                className="bg-art-lavender rounded-card flex items-center justify-between gap-3 px-4 py-3"
+                className={cn(
+                  "flex items-center justify-between gap-3",
+                  !modal && "bg-art-lavender rounded-card px-4 py-3",
+                )}
               >
                 <span className="font-semibold">{preset.label}</span>
                 <button
@@ -361,6 +382,7 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
                 </div>
 
                 <CollectionSchemaEditor
+                  modal={modal}
                   fields={draft}
                   disabled={pending}
                   errors={draftErrors}
@@ -394,7 +416,7 @@ export function CollectionWizard({ createAction }: CollectionWizardProps) {
               <Button
                 form={formId}
                 disabled={pending || !requestId}
-                size="lg"
+                size={modal ? "default" : "lg"}
                 type="submit"
               >
                 {saving ? "Creating collection…" : "Create collection"}

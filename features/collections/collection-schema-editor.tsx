@@ -10,6 +10,7 @@ import {
 } from "@/features/fields/field-manager-contract";
 import { fieldTypeSchema } from "@/features/fields/schemas";
 import { DATABASE_LIMITS } from "@/lib/validation/limits";
+import { cn } from "@/lib/utils/cn";
 import type { PresetField } from "./presets";
 import type { CollectionFieldDraft } from "./schema-draft";
 
@@ -63,12 +64,14 @@ function DraftError({
 }
 
 export function CollectionSchemaEditor({
+  modal = false,
   fields,
   onChange,
   disabled,
   errors,
   serverError,
 }: {
+  modal?: boolean;
   fields: DraftField[];
   onChange: (fields: DraftField[]) => void;
   disabled: boolean;
@@ -89,11 +92,19 @@ export function CollectionSchemaEditor({
       tabIndex={-1}
       aria-describedby={serverError ? "draft-server-error" : undefined}
       aria-labelledby="draft-fields-title"
-      className="focus-ring border-border bg-surface rounded-card sm:p-panel border p-4"
+      className={cn(
+        "focus-ring",
+        !modal && "border-border bg-surface rounded-card sm:p-panel border p-4",
+      )}
     >
       <h2
         data-form-heading="section"
-        className="text-section-title-mobile sm:text-section-title mb-2"
+        className={cn(
+          "mb-2",
+          modal
+            ? "text-card-title"
+            : "text-section-title-mobile sm:text-section-title",
+        )}
         id="draft-fields-title"
       >
         Custom fields
@@ -127,7 +138,10 @@ export function CollectionSchemaEditor({
           {fields.map((field, index) => (
             <li
               data-form-panel
-              className="border-border rounded-control space-y-4 border p-4"
+              className={cn(
+                "space-y-4",
+                !modal && "border-border rounded-control border p-4",
+              )}
               key={field.key}
             >
               <div className="flex flex-wrap items-center justify-between gap-2">

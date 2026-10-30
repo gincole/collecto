@@ -116,6 +116,13 @@ describe("ready local dialogs", () => {
     await user.click(screen.getByRole("button", { name: "New collection" }));
     const dialog = screen.getByRole("dialog", { name: "New collection" });
     expect(
+      within(dialog).getByRole("heading", { name: "What are you collecting?" }),
+    ).toHaveClass("text-section-title-mobile");
+    expect(
+      within(dialog).getByRole("heading", { name: "What are you collecting?" }),
+    ).not.toHaveClass("sm:text-page-title");
+    expect(within(dialog).queryByRole("button", { name: "Cancel" })).toBeNull();
+    expect(
       within(dialog).getByRole("heading", { name: "New collection" }),
     ).toHaveClass("sr-only");
     expect(
@@ -129,6 +136,14 @@ describe("ready local dialogs", () => {
     expect(
       within(dialog).getByRole("heading", { name: "Set up your collection" }),
     ).toHaveAttribute("data-form-heading", "primary");
+    expect(
+      within(dialog).getByRole("heading", { name: "Set up your collection" }),
+    ).toHaveClass("text-section-title-mobile");
+    expect(dialog.querySelector("[data-schema-editor]")).not.toHaveClass(
+      "border",
+      "p-4",
+      "rounded-card",
+    );
     expect(dialog.querySelector("[data-schema-editor]")).toHaveAttribute(
       "data-form-panel",
     );

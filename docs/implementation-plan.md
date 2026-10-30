@@ -820,3 +820,23 @@ Verification: component regressions for wizard heading/selection/footer and
 Settings section hierarchy; existing field/settings/forms tests; full
 `corepack pnpm verify:deployment`; emitted CSS inspection and independent review.
 No browser checks at the user's request. One focused `fix(ui)` commit.
+
+## M7-T02M: Apply explicit New Collection modal layouts
+
+Follow-up to M7-T02L: the user reports both New Collection steps still feel like
+page layouts. Make the wizard and schema editor explicitly render their modal
+presentation, rather than retaining page-sized classes under CSS overrides.
+Depends on completed M7-T02L. Scope is the existing two-step wizard presentation.
+
+Acceptance: both step headings use the modal 24 px role directly; modal preset
+cards use centered, compact spacing and at most three columns; schema groups
+render without panel borders/padding directly; actions use the shared standard
+button size; X occupies the top-right of content without an empty title strip or
+a duplicate Cancel. Preserve page-mode styles, fixed footer, Back, dirty-close
+confirmation, keyboard focus, validation and creation semantics.
+
+Verification: extend the wizard regression through both steps; run existing
+wizard/local-dialog tests and `corepack pnpm verify:deployment`; inspect the
+source/compiled style contract, request independent review and inspect staged
+changes for secrets. No browser checks at user request. One `fix(collections)`
+commit; no push.

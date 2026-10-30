@@ -130,3 +130,15 @@ Reported by the user on 30 October 2026. The M7-T01 state audit and implementati
   after aligning option/gallery section headings. Staged diff and secret checks
   passed. Browser/device visual acceptance remains excluded at user request.
 - Commit: SELF (this commit).
+
+## M7-T02M: Apply explicit New Collection modal layouts
+
+- Status: Complete; dependency M7-T02L is complete.
+- Scope/acceptance: see M7-T02M in `docs/implementation-plan.md`.
+- Changes: both wizard steps and schema groups now choose modal classes directly;
+  compact centered cards/actions and inline X replace the empty shell title strip.
+- Verification: 24 focused wizard/local-dialog tests passed; full deployment
+  gate passed formatting, lint, strict TypeScript, all 347 tests across 53 files
+  and the production build. Source/style inspection and independent review passed.
+  Staged diff/secret checks passed. No browser testing.
+- Commit: SELF (this commit).
