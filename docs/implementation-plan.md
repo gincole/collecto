@@ -722,3 +722,11 @@ footers, Back controls, shared dropdowns and skeleton palette described in
 [modal-consistency.md](modal-consistency.md). This explicitly overrides the original
 page/sheet form factors for the four named flows. Dependencies M7-T02A through
 M7-T02D are complete. One `fix(ui)` commit; browser verification remains excluded.
+
+## M7-T02F: Restore strict route matching for authentication
+
+Fix the reported development startup regression from M7-T02E. Restrict the modal
+catch-all to Collection URLs and explicitly clear it on Library navigation. Retain
+strict route matching, canonical authentication routes and modal dismissal. Verify
+with the installed Next.js development route validator, component regressions,
+formatting, lint, TypeScript and production build; no browser checks.

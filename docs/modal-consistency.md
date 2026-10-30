@@ -55,3 +55,18 @@ TypeScript, production dependency audit and configured production build pass.
 Independent code review found draft reopening and focus-restoration issues; both
 were fixed and covered by menu-to-modal component regressions before committing.
 Concurrent user branding edits were preserved and excluded from the task commit.
+
+## M7-T02F: Development route regression
+
+The original root modal catch-all also matched login/register across route groups.
+Next.js development strict matching then pruned those authentication pages, even
+though the production build passed. The catch-all now applies only below
+Collections, with an explicit empty Library modal route. Strict matching stays
+enabled; no authentication or authorization behavior changes.
+
+A regression scans the real app tree and calls the installed Next.js development
+route validator, checks all pages remain reachable and verifies modal clearing
+for Library and Collection navigation. It reproduces both unmatched auth pages
+before the fix. Afterward, all 320 tests/47 files, formatting, lint, TypeScript and
+production build pass; direct HTTP checks of login/register return 200 from the
+existing development server. No browser testing was used.
